@@ -80,7 +80,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/20 to-secondary/20 backdrop-blur-xl border border-primary/30 rounded-full px-6 py-3 mb-8"
           >
             <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-            <span className="text-primary font-semibold">Elite Mathematics Platform</span>
+            <span className="text-primary font-semibold">Beyond Classroom</span>
             <Zap className="h-5 w-5 text-secondary animate-pulse" />
           </motion.div>
 

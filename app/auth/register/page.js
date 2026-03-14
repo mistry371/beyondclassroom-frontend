@@ -86,12 +86,19 @@ export default function RegisterPage() {
       
       dispatch(setCredentials(response.data))
       
-      // Redirect based on role
-      const userRole = response.data.user?.role
-      if (userRole === 'admin' || userRole === 'super_admin') {
-        router.push('/admin')
+      // Redirect based on role or redirect parameter
+      const urlParams = new URLSearchParams(window.location.search)
+      const redirectUrl = urlParams.get('redirect')
+      
+      if (redirectUrl) {
+        router.push(redirectUrl)
       } else {
-        router.push('/dashboard')
+        const userRole = response.data.user?.role
+        if (userRole === 'admin' || userRole === 'super_admin') {
+          router.push('/admin')
+        } else {
+          router.push('/dashboard')
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
@@ -172,6 +179,17 @@ export default function RegisterPage() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 w-full max-w-md"
       >
+        {/* Back to Home Button */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <motion.div

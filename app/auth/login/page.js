@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, LogIn, Home, ArrowLeft, Shield, CheckCircle, AlertCircle } from 'lucide-react'
+import { Mail, Lock, LogIn, Home, ArrowLeft, Shield, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { setCredentials } from '@/store/slices/authSlice'
 import api from '@/utils/api'
 import Link from 'next/link'
@@ -21,6 +21,7 @@ function LoginContent() {
   const [pendingUser, setPendingUser] = useState(null)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [resendTimer, setResendTimer] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
 
   const startResendTimer = () => {
     setResendTimer(60)
@@ -32,23 +33,19 @@ function LoginContent() {
     }, 1000)
   }
 
-  // Step 1: Validate credentials, then send OTP
   const onSubmit = async (data) => {
     try {
       setLoading(true)
       setError('')
-      // First verify credentials exist (pre-check)
       const checkRes = await api.post('/auth/login-precheck', data)
       if (checkRes.data.success) {
         setPendingUser({ email: data.email, password: data.password })
-        // Send OTP
         const otpRes = await api.post('/otp/send', { email: data.email, purpose: 'login' })
         if (otpRes.data.success) {
           setStep(2)
           startResendTimer()
           if (otpRes.data.otp) {
             console.log('🔐 Login OTP:', otpRes.data.otp)
-            // Auto-fill OTP if returned in response (fallback when email fails)
             const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
             setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
           }
@@ -61,36 +58,17 @@ function LoginContent() {
     }
   }
 
-  // Step 2: Verify OTP then complete login
   const onSubmitOTP = async () => {
     try {
       setLoading(true)
       setError('')
       const otpCode = otp.join('')
-      if (otpCode.length !== 6) {
-        setError('Please enter complete 6-digit OTP')
-        setLoading(false)
-        return
-      }
+      if (otpCode.length !== 6) { setError('Please enter complete 6-digit OTP'); setLoading(false); return }
 
-      // Verify OTP
-      const verifyRes = await api.post('/otp/verify', {
-        email: pendingUser.email,
-        otp: otpCode,
-        purpose: 'login'
-      })
-      if (!verifyRes.data.success) {
-        setError(verifyRes.data.message || 'Invalid OTP')
-        setLoading(false)
-        return
-      }
+      const verifyRes = await api.post('/otp/verify', { email: pendingUser.email, otp: otpCode, purpose: 'login' })
+      if (!verifyRes.data.success) { setError(verifyRes.data.message || 'Invalid OTP'); setLoading(false); return }
 
-      // Complete login
-      const response = await api.post('/auth/login', {
-        email: pendingUser.email,
-        password: pendingUser.password,
-        otpVerified: true
-      })
+      const response = await api.post('/auth/login', { email: pendingUser.email, password: pendingUser.password, otpVerified: true })
       dispatch(setCredentials(response.data))
 
       const redirect = searchParams.get('redirect')
@@ -132,7 +110,6 @@ function LoginContent() {
       if (otpRes.data.success) {
         startResendTimer()
         if (otpRes.data.otp) {
-          console.log('🔐 New Login OTP:', otpRes.data.otp)
           const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
           setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
         }
@@ -175,9 +152,7 @@ function LoginContent() {
         className="bg-gradient-to-br from-dark-100/90 to-dark-200/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
             className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4"
           >
             {step === 1 ? <LogIn className="h-8 w-8 text-white" /> : <Shield className="h-8 w-8 text-white" />}
@@ -204,6 +179,7 @@ function LoginContent() {
             <motion.form key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
               onSubmit={handleSubmit(onSubmit)} className="space-y-5"
             >
+              {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-gray-300 mb-2">Email Address</label>
                 <div className="relative">
@@ -218,16 +194,27 @@ function LoginContent() {
                 {errors.email && <p className="text-red-400 text-sm mt-2">⚠ {errors.email.message}</p>}
               </div>
 
+              {/* Password with show/hide */}
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Password</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-semibold text-gray-300">Password</label>
+                  <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-secondary transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                   <input
                     {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 characters' } })}
-                    type="password"
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="••••••••"
                   />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
                 {errors.password && <p className="text-red-400 text-sm mt-2">⚠ {errors.password.message}</p>}
               </div>
@@ -271,7 +258,6 @@ function LoginContent() {
                       onKeyDown={(e) => { if (e.key === 'Backspace' && !digit && index > 0) document.getElementById(`login-otp-${index - 1}`)?.focus() }}
                       className="w-12 h-14 text-center text-2xl font-bold bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
-        
                   ))}
                 </div>
               </div>
@@ -292,7 +278,7 @@ function LoginContent() {
 
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-sm">
                 <p className="text-primary font-medium mb-1">📧 Check your email</p>
-                <p className="text-gray-400">OTP has been sent to your email. If you don't receive it, the OTP has been auto-filled above.</p>
+                <p className="text-gray-400">OTP has been sent to your email. If not received, it has been auto-filled above.</p>
               </div>
             </motion.div>
           )}

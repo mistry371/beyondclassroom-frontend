@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, User, Shield, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
+import { Mail, Lock, User, Shield, ArrowLeft, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { setCredentials } from '@/store/slices/authSlice'
 import api from '@/utils/api'
 import Link from 'next/link'
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState(null)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [resendTimer, setResendTimer] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
 
   // Step 1: Send OTP
   const onSubmitDetails = async (data) => {
@@ -277,10 +278,15 @@ export default function RegisterPage() {
                       required: 'Password is required', 
                       minLength: { value: 6, message: 'Min 6 characters' } 
                     })}
-                    type="password"
-                    className="w-full pl-10 pr-4 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full pl-10 pr-12 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                     placeholder="••••••••"
                   />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
                 {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>}
               </div>

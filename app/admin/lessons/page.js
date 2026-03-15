@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { FileText, Plus, Edit, Trash2, ArrowLeft, Video } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function AdminLessons() {
+function AdminLessonsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useSelector(state => state.auth)
@@ -344,5 +344,13 @@ export default function AdminLessons() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+export default function AdminLessons() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+      <AdminLessonsContent />
+    </Suspense>
   )
 }

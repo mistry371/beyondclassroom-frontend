@@ -38,10 +38,11 @@ export default function RegisterPage() {
         setStep(2)
         startResendTimer()
         
-        // Show OTP in console for testing
         if (otpRes.data.otp) {
           console.log('🔐 OTP for testing:', otpRes.data.otp)
-          alert(`OTP sent! Check console or email. Test OTP: ${otpRes.data.otp}`)
+          // Auto-fill OTP boxes
+          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
+          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
         }
       }
     } catch (err) {
@@ -148,7 +149,8 @@ export default function RegisterPage() {
         
         if (otpRes.data.otp) {
           console.log('🔐 New OTP:', otpRes.data.otp)
-          alert(`New OTP sent! Test OTP: ${otpRes.data.otp}`)
+          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
+          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
         }
       }
     } catch (err) {

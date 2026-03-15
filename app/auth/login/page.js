@@ -48,6 +48,9 @@ function LoginContent() {
           startResendTimer()
           if (otpRes.data.otp) {
             console.log('🔐 Login OTP:', otpRes.data.otp)
+            // Auto-fill OTP if returned in response (fallback when email fails)
+            const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
+            setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
           }
         }
       }
@@ -128,7 +131,11 @@ function LoginContent() {
       const otpRes = await api.post('/otp/send', { email: pendingUser.email, purpose: 'login' })
       if (otpRes.data.success) {
         startResendTimer()
-        if (otpRes.data.otp) console.log('🔐 New Login OTP:', otpRes.data.otp)
+        if (otpRes.data.otp) {
+          console.log('🔐 New Login OTP:', otpRes.data.otp)
+          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
+          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
+        }
       }
     } catch (err) {
       setError('Failed to resend OTP')
@@ -285,7 +292,7 @@ function LoginContent() {
 
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-sm">
                 <p className="text-primary font-medium mb-1">📧 Check your email</p>
-                <p className="text-gray-400">OTP has been sent to your email address. Check console for test OTP.</p>
+                <p className="text-gray-400">OTP has been sent to your email. If you don't receive it, the OTP has been auto-filled above.</p>
               </div>
             </motion.div>
           )}

@@ -2,28 +2,31 @@
 
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Video, Calendar, Clock, Users, Play, ExternalLink, Mic, MicOff, VideoOff, PhoneOff, MonitorPlay, Circle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Video, Calendar, Clock, Users, Play, ExternalLink, MonitorPlay, Circle, Lock, ShoppingBag } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export default function LiveClassesPage() {
   const { user } = useSelector(state => state.auth)
+  const router = useRouter()
   const [allClasses, setAllClasses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [locked, setLocked] = useState(false)
   const [activeTab, setActiveTab] = useState('upcoming')
-  const [activeClass, setActiveClass] = useState(null)
-  const [micOn, setMicOn] = useState(false)
-  const [camOn, setCamOn] = useState(false)
 
   useEffect(() => {
+    if (!user) { router.push('/auth/login?redirect=/live'); return }
     fetchClasses()
-  }, [])
+  }, [user])
 
   const fetchClasses = async () => {
     try {
       const res = await api.get('/live-classes')
       setAllClasses(res.data.liveClasses || [])
+      setLocked(res.data.locked || false)
     } catch (error) {
       setAllClasses([])
     } finally {
@@ -35,17 +38,34 @@ export default function LiveClassesPage() {
   const upcomingClasses = allClasses.filter(c => c.status === 'upcoming')
   const recordings = allClasses.filter(c => c.status === 'recorded')
 
-  const joinClass = (cls) => {
-    if (cls.zoomLink) {
-      window.open(cls.zoomLink, '_blank')
-    } else {
-      setActiveClass(cls)
-    }
-  }
-
   if (loading) return (
     <div className="min-h-screen bg-dark flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>
+  )
+
+  // Not enrolled in any course — show locked state
+  if (locked) return (
+    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
+      <Navbar />
+      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 text-center">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+          className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-12 max-w-md"
+        >
+          <div className="w-20 h-20 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">Live Classes — Enrolled Students Only</h2>
+          <p className="text-gray-400 mb-6">
+            Live classes and recorded sessions are exclusively available to students who have enrolled in a course.
+          </p>
+          <Link href="/courses"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:opacity-90 transition-all"
+          >
+            <ShoppingBag className="h-5 w-5" /> Browse Courses
+          </Link>
+        </motion.div>
+      </div>
     </div>
   )
 
@@ -82,11 +102,11 @@ export default function LiveClassesPage() {
                     <h3 className="text-white font-bold">{cls.title}</h3>
                     <p className="text-gray-400 text-sm">{cls.instructor} • {cls.enrolled || 0}/{cls.maxStudents} students</p>
                   </div>
-                  <button onClick={() => joinClass(cls)}
+                  <a href={cls.zoomLink} target="_blank" rel="noreferrer"
                     className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all flex items-center gap-2"
                   >
                     <Play className="h-4 w-4" /> Join Now
-                  </button>
+                  </a>
                 </div>
               ))}
             </div>
@@ -107,7 +127,7 @@ export default function LiveClassesPage() {
           ))}
         </div>
 
-        {/* Upcoming Classes */}
+        {/* Upcoming */}
         {activeTab === 'upcoming' && (
           upcomingClasses.length === 0 ? (
             <div className="text-center py-20">
@@ -131,20 +151,18 @@ export default function LiveClassesPage() {
                     <div className="flex items-center gap-2 text-gray-400 text-sm"><Users className="h-4 w-4" />{cls.instructor}</div>
                     <div className="flex items-center gap-2 text-gray-400 text-sm"><Calendar className="h-4 w-4" />{cls.date} at {cls.time}</div>
                     <div className="flex items-center gap-2 text-gray-400 text-sm"><Clock className="h-4 w-4" />{cls.duration}</div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-gray-400" />
-                      <div className="flex-1 bg-dark-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
-                          style={{ width: `${((cls.enrolled || 0) / cls.maxStudents) * 100}%` }} />
-                      </div>
-                      <span className="text-gray-400">{cls.enrolled || 0}/{cls.maxStudents}</span>
-                    </div>
                   </div>
-                  <button onClick={() => joinClass(cls)}
-                    className="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                  >
-                    <ExternalLink className="h-4 w-4" /> Join via Zoom
-                  </button>
+                  {cls.zoomLink ? (
+                    <a href={cls.zoomLink} target="_blank" rel="noreferrer"
+                      className="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                    >
+                      <ExternalLink className="h-4 w-4" /> Join via Zoom
+                    </a>
+                  ) : (
+                    <div className="w-full px-4 py-2 bg-dark-200 text-gray-500 rounded-lg text-center text-sm">
+                      Zoom link will be available soon
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -157,6 +175,7 @@ export default function LiveClassesPage() {
             <div className="text-center py-20">
               <MonitorPlay className="h-16 w-16 text-gray-600 mx-auto mb-4" />
               <p className="text-gray-400 text-xl">No recordings available yet</p>
+              <p className="text-gray-500 text-sm mt-2">Recordings of past live sessions will appear here</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,52 +194,21 @@ export default function LiveClassesPage() {
                     <div className="flex items-center gap-2 text-gray-400 text-sm"><Calendar className="h-4 w-4" />{cls.date}</div>
                     <div className="flex items-center gap-2 text-gray-400 text-sm"><Clock className="h-4 w-4" />{cls.duration}</div>
                   </div>
-                  <button onClick={() => setActiveClass(cls)}
-                    className="w-full px-4 py-2 bg-secondary/20 text-secondary rounded-lg font-medium hover:bg-secondary/30 transition-all flex items-center justify-center gap-2"
-                  >
-                    <Play className="h-4 w-4" /> Watch Recording
-                  </button>
+                  {cls.recordingUrl ? (
+                    <a href={cls.recordingUrl} target="_blank" rel="noreferrer"
+                      className="w-full px-4 py-2 bg-secondary/20 text-secondary rounded-lg font-medium hover:bg-secondary/30 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Play className="h-4 w-4" /> Watch Recording
+                    </a>
+                  ) : (
+                    <div className="w-full px-4 py-2 bg-dark-200 text-gray-500 rounded-lg text-center text-sm">
+                      Recording being processed...
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
           )
-        )}
-
-        {/* Video Player Modal */}
-        {activeClass && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-4xl">
-              <div className="bg-dark-100 rounded-2xl overflow-hidden border border-white/10">
-                <div className="aspect-video bg-black flex items-center justify-center relative">
-                  <div className="text-center">
-                    <MonitorPlay className="h-20 w-20 text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-400 text-lg">{activeClass.title}</p>
-                    <p className="text-gray-500 text-sm mt-2">Recording playback</p>
-                  </div>
-                  <div className="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full">
-                    <span className="text-white text-sm">{activeClass.duration}</span>
-                  </div>
-                </div>
-                <div className="p-4 flex items-center justify-between bg-dark-200">
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => setMicOn(!micOn)} className={`p-3 rounded-xl transition-all ${micOn ? 'bg-primary/20 text-primary' : 'bg-red-500/20 text-red-400'}`}>
-                      {micOn ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
-                    </button>
-                    <button onClick={() => setCamOn(!camOn)} className={`p-3 rounded-xl transition-all ${camOn ? 'bg-primary/20 text-primary' : 'bg-red-500/20 text-red-400'}`}>
-                      {camOn ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
-                    </button>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-white font-medium">{activeClass.title}</p>
-                    <p className="text-gray-400 text-sm">{activeClass.instructor}</p>
-                  </div>
-                  <button onClick={() => setActiveClass(null)} className="p-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-all">
-                    <PhoneOff className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         )}
       </div>
     </div>

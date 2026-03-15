@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const EMPTY_FORM = {
   title: '', instructor: '', date: '', time: '',
-  duration: '60', topic: '', zoomLink: '', maxStudents: 30, status: 'upcoming'
+  duration: '60', topic: '', zoomLink: '', maxStudents: 30, status: 'upcoming', recordingUrl: ''
 }
 
 export default function AdminLiveClasses() {
@@ -52,7 +52,8 @@ export default function AdminLiveClasses() {
       topic: cls.topic || '',
       zoomLink: cls.zoomLink || '',
       maxStudents: cls.maxStudents || 30,
-      status: cls.status || 'upcoming'
+      status: cls.status || 'upcoming',
+      recordingUrl: cls.recordingUrl || ''
     })
     setSaveMsg(null)
     setShowModal(true)
@@ -356,6 +357,18 @@ export default function AdminLiveClasses() {
                     <option value="recorded">Recorded</option>
                   </select>
                 </div>
+
+                {form.status === 'recorded' && (
+                  <div>
+                    <label className="block text-gray-300 text-sm font-medium mb-1">
+                      Recording URL <span className="text-gray-500 font-normal">(Zoom cloud recording link)</span>
+                    </label>
+                    <input type="url" value={form.recordingUrl} onChange={e => setForm({ ...form, recordingUrl: e.target.value })}
+                      placeholder="https://zoom.us/rec/share/..."
+                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                )}
 
                 <div className="flex gap-3 mt-2">
                   <button type="button" onClick={() => setShowModal(false)}

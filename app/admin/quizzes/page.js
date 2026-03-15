@@ -347,7 +347,11 @@ export default function AdminQuizzes() {
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
-                        <p className="text-sm text-gray-400">Correct: {q.correctAnswer}</p>
+                        <p className="text-sm text-gray-400">
+                          Correct: {typeof q.correctAnswer === 'number' && q.options?.[q.correctAnswer]
+                            ? `Option ${q.correctAnswer + 1}: ${q.options[q.correctAnswer]}`
+                            : q.correctAnswer}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -387,13 +391,26 @@ export default function AdminQuizzes() {
                         ))}
                       </div>
                     )}
-                    <input
-                      type="text"
-                      value={currentQuestion.correctAnswer}
-                      onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
-                      placeholder="Correct answer"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
-                    />
+                    {currentQuestion.type === 'mcq' ? (
+                      <select
+                        value={currentQuestion.correctAnswer}
+                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: parseInt(e.target.value) })}
+                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      >
+                        <option value="">Select correct answer</option>
+                        {currentQuestion.options.map((opt, i) => opt && (
+                          <option key={i} value={i}>Option {i + 1}: {opt}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={currentQuestion.correctAnswer}
+                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
+                        placeholder="Correct answer"
+                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={addQuestion}

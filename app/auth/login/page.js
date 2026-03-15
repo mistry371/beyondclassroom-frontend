@@ -52,7 +52,11 @@ function LoginContent() {
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.')
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('Server is starting up (Render cold start). Please wait 30 seconds and try again.')
+      } else {
+        setError(err.response?.data?.message || 'Login failed. Please check your credentials.')
+      }
     } finally {
       setLoading(false)
     }
@@ -222,7 +226,7 @@ function LoginContent() {
               <button type="submit" disabled={loading}
                 className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-xl font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-primary/20"
               >
-                {loading ? <><div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>Sending OTP...</> : <><Shield className="h-5 w-5" />Continue with OTP</>}
+                {loading ? <><div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>Please wait...</> : <><Shield className="h-5 w-5" />Continue with OTP</>}
               </button>
 
               <div className="relative my-4">

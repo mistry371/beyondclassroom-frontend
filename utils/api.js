@@ -4,6 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://beyondclassroom-back
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 30000, // 30s — handles Render cold start
   headers: {
     'Content-Type': 'application/json',
   },

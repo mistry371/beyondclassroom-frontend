@@ -67,7 +67,7 @@ export default function AdminLogs() {
           <button
             onClick={() => {
               const rows = filteredLogs.map(l => [
-                l.type, `"${l.action}"`, l.user?.name || 'System', new Date(l.timestamp).toLocaleString()
+                l.type, `"${l.action}"`, l.user?.name || 'System', new Date(l.timestamp || l.createdAt).toLocaleString()
               ])
               const csv = ['Type,Action,User,Timestamp', ...rows.map(r => r.join(','))].join('\n')
               const blob = new Blob([csv], { type: 'text/csv' })

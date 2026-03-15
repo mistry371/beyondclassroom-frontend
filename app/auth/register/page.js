@@ -47,7 +47,11 @@ export default function RegisterPage() {
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP')
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('Server is starting up. Please wait 30 seconds and try again.')
+      } else {
+        setError(err.response?.data?.message || 'Failed to send OTP')
+      }
     } finally {
       setLoading(false)
     }

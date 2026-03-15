@@ -66,14 +66,15 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       }
 
       const { order, keyId } = orderData
+      const resolvedKey = keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
 
-      if (!keyId || !order?.id) {
+      if (!resolvedKey || !order?.id) {
         await handleDirectEnroll()
         return
       }
 
       const options = {
-        key: keyId,
+        key: resolvedKey,
         amount: order.amount,
         currency: order.currency || 'INR',
         name: 'Beyond Classroom',

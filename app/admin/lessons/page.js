@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { FileText, Plus, Edit, Trash2, ArrowLeft, Eye, Video, Image as ImageIcon } from 'lucide-react'
+import { FileText, Plus, Edit, Trash2, ArrowLeft, Video } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -80,9 +80,12 @@ export default function AdminLessons() {
 
   const handleEdit = (lesson) => {
     setSelectedLesson(lesson)
+    const contentStr = typeof lesson.content === 'object'
+      ? lesson.content?.concept || lesson.description || ''
+      : lesson.content || lesson.description || ''
     setFormData({
       title: lesson.title,
-      content: lesson.content,
+      content: contentStr,
       moduleId: lesson.moduleId,
       order: lesson.order,
       duration: lesson.duration,
@@ -189,7 +192,11 @@ export default function AdminLessons() {
                     <h3 className="text-xl font-bold text-white mb-2">
                       Lesson {lesson.order}: {lesson.title}
                     </h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">{lesson.content}</p>
+                    <p className="text-gray-400 text-sm line-clamp-2">
+                      {typeof lesson.content === 'object'
+                        ? lesson.content?.concept || lesson.description || ''
+                        : lesson.content || lesson.description || ''}
+                    </p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     lesson.isPublished !== false

@@ -69,7 +69,7 @@ export default function AdminDashboard() {
     },
     {
       title: 'Total Revenue',
-      value: `$${stats?.totalRevenue?.toFixed(2) || 0}`,
+      value: `₹${stats?.totalRevenue?.toFixed(2) || 0}`,
       icon: DollarSign,
       color: 'from-green-500 to-emerald-500',
       change: 0
@@ -294,6 +294,13 @@ export default function AdminDashboard() {
               color="from-green-500 to-emerald-500"
               onClick={() => router.push('/admin/settings')}
             />
+            <QuickActionCard
+              title="Live Classes"
+              description="Schedule & manage live sessions"
+              icon={Activity}
+              color="from-red-500 to-orange-500"
+              onClick={() => router.push('/admin/live')}
+            />
           </div>
         </div>
 
@@ -328,7 +335,7 @@ export default function AdminDashboard() {
               {stats?.recentOrders?.slice(0, 5).map(order => (
                 <div key={order._id} className="flex items-center justify-between p-3 bg-dark-200/30 rounded-lg">
                   <div>
-                    <p className="text-white font-medium">${order.totalAmount}</p>
+                    <p className="text-white font-medium">₹{order.totalAmount}</p>
                     <p className="text-gray-400 text-sm">{order.courses?.length} course(s)</p>
                   </div>
                   <span className="text-xs text-gray-500">

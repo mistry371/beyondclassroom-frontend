@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { Clock, Users, Star, ShoppingCart, Heart, BookOpen, Award, CheckCircle, PlayCircle, Lock } from 'lucide-react'
+import { Clock, Users, Star, ShoppingCart, BookOpen, Award, CheckCircle, PlayCircle, Lock } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
 import api from '@/utils/api'
@@ -56,12 +56,12 @@ export default function CourseDetails() {
       return
     }
     
-    // If course is free/demo, enroll directly
+    // If course is free/demo, enroll directly via orders API
     if (course.price === 0 || course.isFree || course.isDemo) {
       try {
-        // Add to purchased courses
-        await api.post('/cart', { courseId: course._id })
-        // Redirect to learning page
+        // Add to cart first, then place order to get it into purchasedCourses
+        await api.post('/cart', { courseId: course._id }).catch(() => {}) // ignore if already in cart
+        await api.post('/orders')
         router.push(`/learn/${course._id}`)
       } catch (error) {
         console.error('Failed to enroll:', error)

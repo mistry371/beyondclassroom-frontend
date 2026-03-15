@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { BookOpen, CheckCircle, ArrowLeft, ArrowRight, Target, Clock, Award, PlayCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import MathRenderer from '@/components/MathRenderer'
+import TrialGuard from '@/components/TrialGuard'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
 
@@ -107,6 +108,7 @@ export default function LessonPage() {
   const practice = practices[currentPractice]
 
   return (
+    <TrialGuard courseId={params.courseId}>
     <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
       <Navbar />
 
@@ -151,7 +153,11 @@ export default function LessonPage() {
               <div className="prose prose-invert max-w-none mb-8">
                 <h2 className="text-2xl font-bold text-white mb-4">📚 Concept Explanation</h2>
                 <div className="text-gray-300 leading-relaxed">
-                  <MathRenderer content={lesson.content?.concept || lesson.description} />
+                  <MathRenderer content={
+                    typeof lesson.content === 'string' ? lesson.content :
+                    typeof lesson.content?.concept === 'string' ? lesson.content.concept :
+                    typeof lesson.description === 'string' ? lesson.description : ''
+                  } />
                 </div>
               </div>
 
@@ -228,7 +234,7 @@ export default function LessonPage() {
                             type="text"
                             value={userAnswer}
                             onChange={(e) => setUserAnswer(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSubmitPractice()}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSubmitPractice()}
                             className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent"
                             placeholder="Enter your answer..."
                           />
@@ -405,5 +411,6 @@ export default function LessonPage() {
         </div>
       </div>
     </div>
+    </TrialGuard>
   )
 }

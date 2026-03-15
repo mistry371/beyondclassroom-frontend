@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowLeft, Upload, Image as ImageIcon, Video, FileText, Trash2, Copy, Search } from 'lucide-react'
+import { ArrowLeft, Upload, Video, FileText, Trash2, Copy, Search } from 'lucide-react'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
 

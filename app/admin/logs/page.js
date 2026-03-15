@@ -64,6 +64,23 @@ export default function AdminLogs() {
               </div>
             </div>
           </div>
+          <button
+            onClick={() => {
+              const rows = filteredLogs.map(l => [
+                l.type, `"${l.action}"`, l.user?.name || 'System', new Date(l.timestamp).toLocaleString()
+              ])
+              const csv = ['Type,Action,User,Timestamp', ...rows.map(r => r.join(','))].join('\n')
+              const blob = new Blob([csv], { type: 'text/csv' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url; a.download = 'activity-logs.csv'; a.click()
+              URL.revokeObjectURL(url)
+            }}
+            className="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-all flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </button>
         </div>
       </div>
 

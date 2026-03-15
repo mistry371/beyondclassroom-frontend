@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Award, Clock, CheckCircle, XCircle, ArrowLeft, Trophy, Target } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import MathRenderer from '@/components/MathRenderer'
+import TrialGuard from '@/components/TrialGuard'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -38,7 +39,7 @@ export default function QuizPage() {
       }, 1000)
       return () => clearInterval(timer)
     }
-  }, [quizStarted, timeLeft])
+  }, [quizStarted, timeLeft, handleSubmitQuiz])
 
   const fetchQuiz = async () => {
     try {
@@ -63,7 +64,7 @@ export default function QuizPage() {
     }))
   }
 
-  const handleSubmitQuiz = async () => {
+  const handleSubmitQuiz = useCallback(async () => {
     setSubmitting(true)
     try {
       const answerArray = quiz.questions.map((_, index) => answers[index] || '')
@@ -83,7 +84,7 @@ export default function QuizPage() {
     } finally {
       setSubmitting(false)
     }
-  }
+  }, [quiz, answers, params.quizId, params.courseId])
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
@@ -114,6 +115,7 @@ export default function QuizPage() {
   // Quiz Start Screen
   if (!quizStarted) {
     return (
+      <TrialGuard courseId={params.courseId}>
       <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
         <Navbar />
         
@@ -180,6 +182,7 @@ export default function QuizPage() {
           </motion.div>
         </div>
       </div>
+      </TrialGuard>
     )
   }
 
@@ -428,7 +431,7 @@ export default function QuizPage() {
               ) : (
                 <button
                   onClick={handleSubmitQuiz}
-                  disabled={submitting || Object.keys(answers).length < quiz.questions.length}
+                  disabled={submitting}
                   className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? (

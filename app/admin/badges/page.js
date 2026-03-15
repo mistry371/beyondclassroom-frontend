@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowLeft, Award, Plus, Edit, Trash2 } from 'lucide-react'
+import { ArrowLeft, Award, Plus, Trash2, Edit } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
+
+const EMPTY_FORM = { name: '', description: '', criteria: '', icon: '🏆' }
 
 export default function AdminBadges() {
   const router = useRouter()
@@ -13,12 +15,8 @@ export default function AdminBadges() {
   const [badges, setBadges] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    criteria: '',
-    icon: '🏆'
-  })
+  const [selectedBadge, setSelectedBadge] = useState(null)
+  const [formData, setFormData] = useState(EMPTY_FORM)
 
   useEffect(() => {
     if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
@@ -39,15 +37,30 @@ export default function AdminBadges() {
     }
   }
 
+  const openCreate = () => {
+    setSelectedBadge(null)
+    setFormData(EMPTY_FORM)
+    setShowModal(true)
+  }
+
+  const openEdit = (badge) => {
+    setSelectedBadge(badge)
+    setFormData({ name: badge.name, description: badge.description, criteria: badge.criteria, icon: badge.icon })
+    setShowModal(true)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await api.post('/admin/badges', formData)
+      if (selectedBadge) {
+        await api.put(`/admin/badges/${selectedBadge._id}`, formData)
+      } else {
+        await api.post('/admin/badges', formData)
+      }
       setShowModal(false)
-      setFormData({ name: '', description: '', criteria: '', icon: '🏆' })
       fetchBadges()
     } catch (error) {
-      alert('Failed to create badge')
+      alert(selectedBadge ? 'Failed to update badge' : 'Failed to create badge')
     }
   }
 
@@ -86,7 +99,7 @@ export default function AdminBadges() {
               </div>
             </div>
             <button
-              onClick={() => setShowModal(true)}
+              onClick={openCreate}
               className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
@@ -113,6 +126,13 @@ export default function AdminBadges() {
                 <p className="text-gray-500 text-xs">Criteria: {badge.criteria}</p>
               </div>
               <div className="flex gap-2">
+                <button
+                  onClick={() => openEdit(badge)}
+                  className="flex-1 px-4 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-all text-sm flex items-center justify-center gap-2"
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </button>
                 <button
                   onClick={() => handleDelete(badge._id)}
                   className="flex-1 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all text-sm flex items-center justify-center gap-2"
@@ -149,7 +169,9 @@ export default function AdminBadges() {
               onClick={(e) => e.stopPropagation()}
               className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">Create Badge</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                {selectedBadge ? 'Edit Badge' : 'Create Badge'}
+              </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-gray-300 text-sm font-medium mb-2">Badge Name</label>
@@ -204,7 +226,7 @@ export default function AdminBadges() {
                     type="submit"
                     className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all"
                   >
-                    Create
+                    {selectedBadge ? 'Update' : 'Create'}
                   </button>
                 </div>
               </form>

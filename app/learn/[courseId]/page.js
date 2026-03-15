@@ -64,11 +64,20 @@ export default function LearnPage() {
     return Math.round((completed / module.lessons.length) * 100)
   }
 
-  const handleStartLesson = (moduleId, lessonId) => {
+  const isModuleUnlocked = (moduleIndex) => {
+    if (moduleIndex === 0) return true // First module always unlocked
+    // Previous module must be completed
+    const prevModule = modules[moduleIndex - 1]
+    return isModuleCompleted(prevModule)
+  }
+
+  const handleStartLesson = (lessonId, moduleIndex) => {
+    if (!isModuleUnlocked(moduleIndex)) return
     router.push(`/learn/${params.courseId}/lesson/${lessonId}`)
   }
 
-  const handleStartQuiz = (moduleId, quizId) => {
+  const handleStartQuiz = (quizId, moduleIndex) => {
+    if (!isModuleUnlocked(moduleIndex)) return
     router.push(`/learn/${params.courseId}/quiz/${quizId}`)
   }
 
@@ -181,17 +190,21 @@ export default function LearnPage() {
               >
                 {/* Module Header */}
                 <button
-                  onClick={() => toggleModule(moduleIndex)}
-                  className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-all"
+                  onClick={() => isModuleUnlocked(moduleIndex) && toggleModule(moduleIndex)}
+                  className={`w-full p-6 flex items-center justify-between transition-all ${isModuleUnlocked(moduleIndex) ? 'hover:bg-white/5' : 'cursor-not-allowed opacity-70'}`}
                 >
                   <div className="flex items-center gap-4 flex-1 text-left">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
                       isModuleCompleted(module)
                         ? 'bg-green-500/20 text-green-400'
+                        : !isModuleUnlocked(moduleIndex)
+                        ? 'bg-gray-500/20 text-gray-500'
                         : 'bg-gradient-to-r from-primary to-secondary text-white'
                     }`}>
                       {isModuleCompleted(module) ? (
                         <CheckCircle className="h-6 w-6" />
+                      ) : !isModuleUnlocked(moduleIndex) ? (
+                        <Lock className="h-6 w-6" />
                       ) : (
                         moduleIndex + 1
                       )}
@@ -239,6 +252,15 @@ export default function LearnPage() {
                   </div>
                 </button>
 
+                {!isModuleUnlocked(moduleIndex) && (
+                  <div className="px-6 pb-4">
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center gap-3">
+                      <Lock className="h-5 w-5 text-yellow-400 flex-shrink-0" />
+                      <p className="text-yellow-400 text-sm">Complete <strong>{modules[moduleIndex - 1]?.title}</strong> to unlock this module.</p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Module Content */}
                 <AnimatePresence>
                   {expandedModules.includes(moduleIndex) && (
@@ -282,14 +304,19 @@ export default function LearnPage() {
                             </div>
 
                             <button
-                              onClick={() => handleStartLesson(module._id, lesson._id)}
+                              onClick={() => handleStartLesson(lesson._id, moduleIndex)}
+                              disabled={!isModuleUnlocked(moduleIndex)}
                               className={`px-6 py-2 rounded-lg font-medium transition-all flex-shrink-0 ml-4 ${
-                                isLessonCompleted(lesson._id)
+                                !isModuleUnlocked(moduleIndex)
+                                  ? 'bg-gray-500/20 text-gray-500 cursor-not-allowed'
+                                  : isLessonCompleted(lesson._id)
                                   ? 'bg-white/10 text-white hover:bg-white/20'
                                   : 'bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90'
                               }`}
                             >
-                              {isLessonCompleted(lesson._id) ? 'Review' : 'Start'}
+                              {!isModuleUnlocked(moduleIndex) ? (
+                                <span className="flex items-center gap-2"><Lock className="h-4 w-4" />Locked</span>
+                              ) : isLessonCompleted(lesson._id) ? 'Review' : 'Start'}
                             </button>
                           </motion.div>
                         ))}
@@ -314,8 +341,8 @@ export default function LearnPage() {
                             </div>
 
                             <button
-                              onClick={() => handleStartQuiz(module._id, module.quiz._id)}
-                              disabled={getModuleProgress(module) < 100}
+                              onClick={() => handleStartQuiz(module.quiz._id, moduleIndex)}
+                              disabled={getModuleProgress(module) < 100 || !isModuleUnlocked(moduleIndex)}
                               className="px-6 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ml-4"
                             >
                               {getModuleProgress(module) < 100 ? (

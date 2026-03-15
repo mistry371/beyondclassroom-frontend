@@ -181,8 +181,18 @@ export default function AdminAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={(entry) => entry.name}
-                  outerRadius={80}
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                    const RADIAN = Math.PI / 180
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN)
+                    return percent > 0.05 ? (
+                      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={12}>
+                        {`${(percent * 100).toFixed(0)}%`}
+                      </text>
+                    ) : null
+                  }}
+                  outerRadius={100}
                   fill="#8884d8"
                   dataKey="enrollments"
                 >
@@ -190,7 +200,11 @@ export default function AdminAnalytics() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
+                  formatter={(value, name, props) => [value, props.payload.name]}
+                />
+                <Legend formatter={(value, entry) => <span style={{ color: '#ccc', fontSize: 12 }}>{entry.payload.name}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>

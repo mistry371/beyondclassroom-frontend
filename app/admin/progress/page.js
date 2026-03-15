@@ -11,21 +11,27 @@ export default function AdminProgress() {
   const router = useRouter()
   const { user } = useSelector(state => state.auth)
   const [progress, setProgress] = useState([])
+  const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [courseFilter, setCourseFilter] = useState('all')
 
   useEffect(() => {
     if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
       router.push('/')
       return
     }
-    fetchProgress()
+    fetchAll()
   }, [user])
 
-  const fetchProgress = async () => {
+  const fetchAll = async () => {
     try {
-      const res = await api.get('/admin/progress')
-      setProgress(res.data.progress || [])
+      const [progressRes, courseRes] = await Promise.all([
+        api.get('/admin/progress'),
+        api.get('/admin/courses')
+      ])
+      setProgress(progressRes.data.progress || [])
+      setCourses(courseRes.data.courses || [])
     } catch (error) {
       console.error('Failed to fetch progress:', error)
     } finally {
@@ -33,10 +39,35 @@ export default function AdminProgress() {
     }
   }
 
-  const filteredProgress = progress.filter(p =>
-    p.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.course?.title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredProgress = progress.filter(p => {
+    const matchesSearch =
+      (p.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.course?.title || '').toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCourse = courseFilter === 'all' || p.course?._id === courseFilter
+    return matchesSearch && matchesCourse
+  })
+
+  const exportCSV = () => {
+    const rows = filteredProgress.map(p => [
+      p.user?.name || 'Unknown',
+      p.user?.email || '',
+      p.course?.title || 'Unknown',
+      `${p.completionPercentage || 0}%`,
+      p.lessonsCompleted?.length || 0,
+      p.quizzesCompleted?.length || 0,
+      p.quizScores?.length > 0
+        ? Math.round(p.quizScores.reduce((s, q) => s + (q.score || 0), 0) / p.quizScores.length) + '%'
+        : '0%'
+    ])
+    const csv = ['Student,Email,Course,Completion,Lessons,Quizzes,Avg Score', ...rows.map(r => r.join(','))].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'student-progress.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   if (loading) {
     return (
@@ -59,16 +90,23 @@ export default function AdminProgress() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Progress Tracking
                 </h1>
-                <p className="text-gray-400 mt-1">Monitor student learning progress</p>
+                <p className="text-gray-400 mt-1">{filteredProgress.length} records</p>
               </div>
             </div>
+            <button
+              onClick={exportCSV}
+              className="px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-all flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <div className="relative">
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
@@ -78,6 +116,16 @@ export default function AdminProgress() {
               className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
             />
           </div>
+          <select
+            value={courseFilter}
+            onChange={(e) => setCourseFilter(e.target.value)}
+            className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary min-w-[200px]"
+          >
+            <option value="all">All Courses</option>
+            {courses.map(c => (
+              <option key={c._id} value={c._id}>{c.title}</option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-4">
@@ -92,7 +140,8 @@ export default function AdminProgress() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1">{item.user?.name}</h3>
-                  <p className="text-gray-400 text-sm">{item.course?.title}</p>
+                  <p className="text-gray-400 text-sm">{item.user?.email}</p>
+                  <p className="text-primary text-sm mt-1">{item.course?.title}</p>
                 </div>
                 <span className="text-2xl font-bold text-primary">{item.completionPercentage || 0}%</span>
               </div>
@@ -107,15 +156,19 @@ export default function AdminProgress() {
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
                   <p className="text-gray-400">Lessons Completed</p>
-                  <p className="text-white font-bold">{item.lessonsCompleted || 0}/{item.totalLessons || 0}</p>
+                  <p className="text-white font-bold">{item.lessonsCompleted?.length || 0}</p>
                 </div>
                 <div>
                   <p className="text-gray-400">Quizzes Passed</p>
-                  <p className="text-white font-bold">{item.quizzesPassed || 0}/{item.totalQuizzes || 0}</p>
+                  <p className="text-white font-bold">{item.quizzesCompleted?.length || 0}</p>
                 </div>
                 <div>
                   <p className="text-gray-400">Avg. Score</p>
-                  <p className="text-white font-bold">{item.avgScore || 0}%</p>
+                  <p className="text-white font-bold">
+                    {item.quizScores?.length > 0
+                      ? Math.round(item.quizScores.reduce((sum, s) => sum + (s.score || 0), 0) / item.quizScores.length)
+                      : 0}%
+                  </p>
                 </div>
               </div>
             </motion.div>

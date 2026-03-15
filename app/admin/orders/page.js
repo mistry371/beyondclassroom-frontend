@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowLeft, ShoppingCart, DollarSign, RefreshCw, Download, Eye } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, RefreshCw, Download, ChevronDown, ChevronUp } from 'lucide-react'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
 
@@ -13,6 +13,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [expandedOrder, setExpandedOrder] = useState(null)
 
   useEffect(() => {
     if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
@@ -150,11 +151,11 @@ export default function AdminOrders() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => router.push(`/admin/orders/${order._id}`)}
+                  onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
                   className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all text-sm flex items-center gap-2"
                 >
-                  <Eye className="h-4 w-4" />
-                  View Details
+                  {expandedOrder === order._id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {expandedOrder === order._id ? 'Hide Details' : 'View Details'}
                 </button>
                 {order.status === 'completed' && (
                   <button
@@ -166,6 +167,29 @@ export default function AdminOrders() {
                   </button>
                 )}
               </div>
+
+              {expandedOrder === order._id && (
+                <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500 mb-1">Order ID</p>
+                    <p className="text-white font-mono">{order._id}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Payment Method</p>
+                    <p className="text-white">{order.paymentMethod || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 mb-1">Created At</p>
+                    <p className="text-white">{new Date(order.createdAt).toLocaleString()}</p>
+                  </div>
+                  {order.refundedAt && (
+                    <div>
+                      <p className="text-gray-500 mb-1">Refunded At</p>
+                      <p className="text-white">{new Date(order.refundedAt).toLocaleString()}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>

@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { Bell, ShoppingCart, User, LogOut, Menu, X } from 'lucide-react'
+import { Bell, ShoppingCart, LogOut, Menu, X } from 'lucide-react'
 import { logout } from '@/store/slices/authSlice'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -51,6 +51,10 @@ export default function Navbar() {
                 </Link>
                 <Link href="/tools" className="text-gray-300 hover:text-primary transition-colors">
                   Tools
+                </Link>
+                <Link href="/live" className="text-gray-300 hover:text-primary transition-colors flex items-center gap-1">
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                  Live
                 </Link>
                 <Link href="/blogs" className="text-gray-300 hover:text-primary transition-colors">
                   Blogs
@@ -142,6 +146,7 @@ export default function Navbar() {
                   <Link href="/about" className="block py-2 text-gray-300 hover:text-primary">About</Link>
                   <Link href="/courses" className="block py-2 text-gray-300 hover:text-primary">Courses</Link>
                   <Link href="/tools" className="block py-2 text-gray-300 hover:text-primary">Tools</Link>
+                  <Link href="/live" className="block py-2 text-gray-300 hover:text-primary flex items-center gap-2"><span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>Live Classes</Link>
                   <Link href="/blogs" className="block py-2 text-gray-300 hover:text-primary">Blogs</Link>
                 </>
               )}

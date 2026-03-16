@@ -47,7 +47,7 @@ import { Calculator, Grid3x3, TrendingUp, Percent, Divide, Square, Plus, Sigma, 
 import { motion } from 'framer-motion'
 
 export default function ToolsPage() {
-  const [activeTool, setActiveTool] = useState('basic')
+  const [activeTool, setActiveTool] = useState('advanced-calc')
   const [category, setCategory] = useState('all')
 
   const tools = [
@@ -68,8 +68,7 @@ export default function ToolsPage() {
     { id: 'daily-challenge', name: 'Daily Challenge', icon: Trophy, component: DailyChallenge, category: 'learning', grade: '6-12', desc: 'Daily problem', badge: 'NEW' },
     
     // Basic Math (5th-7th Grade) - 8 tools
-    { id: 'basic', name: 'Basic Calculator', icon: Calculator, component: BasicCalculator, category: 'basic', grade: '5-7', desc: 'Add, subtract, multiply, divide' },
-    { id: 'advanced-calc', name: 'Advanced Calculator', icon: Calculator, component: AdvancedCalculator, category: 'basic', grade: '8-12', desc: 'Scientific calculator with keyboard', badge: 'NEW' },
+    { id: 'advanced-calc', name: 'Advanced Calculator', icon: Calculator, component: AdvancedCalculator, category: 'basic', grade: '5-12', desc: 'Scientific calculator with keyboard', badge: 'NEW' },
     { id: 'percentage', name: 'Percentage', icon: Percent, component: PercentageCalculator, category: 'basic', grade: '5-7', desc: 'Calculate percentages easily' },
     { id: 'fraction', name: 'Fraction', icon: Divide, component: FractionCalculator, category: 'basic', grade: '5-7', desc: 'Fraction operations' },
     { id: 'ratio', name: 'Ratio & Proportion', icon: Divide, component: RatioCalculator, category: 'basic', grade: '6-8', desc: 'Simplify ratios' },

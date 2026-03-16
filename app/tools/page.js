@@ -23,6 +23,7 @@ import PercentageCalculator from '@/components/tools/PercentageCalculator'
 import FractionCalculator from '@/components/tools/FractionCalculator'
 import AreaCalculator from '@/components/tools/AreaCalculator'
 import BasicCalculator from '@/components/tools/BasicCalculator'
+import AdvancedCalculator from '@/components/tools/AdvancedCalculator'
 import QuadraticSolver from '@/components/tools/QuadraticSolver'
 import PrimeChecker from '@/components/tools/PrimeChecker'
 import FactorialCalculator from '@/components/tools/FactorialCalculator'
@@ -68,6 +69,7 @@ export default function ToolsPage() {
     
     // Basic Math (5th-7th Grade) - 8 tools
     { id: 'basic', name: 'Basic Calculator', icon: Calculator, component: BasicCalculator, category: 'basic', grade: '5-7', desc: 'Add, subtract, multiply, divide' },
+    { id: 'advanced-calc', name: 'Advanced Calculator', icon: Calculator, component: AdvancedCalculator, category: 'basic', grade: '8-12', desc: 'Scientific calculator with keyboard', badge: 'NEW' },
     { id: 'percentage', name: 'Percentage', icon: Percent, component: PercentageCalculator, category: 'basic', grade: '5-7', desc: 'Calculate percentages easily' },
     { id: 'fraction', name: 'Fraction', icon: Divide, component: FractionCalculator, category: 'basic', grade: '5-7', desc: 'Fraction operations' },
     { id: 'ratio', name: 'Ratio & Proportion', icon: Divide, component: RatioCalculator, category: 'basic', grade: '6-8', desc: 'Simplify ratios' },

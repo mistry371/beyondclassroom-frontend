@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { FileText, Plus, Edit, Trash2, ArrowLeft, Video } from 'lucide-react'
+import { FileText, Plus, Edit, Trash2, ArrowLeft, Video, BookMarked } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -227,6 +227,13 @@ function AdminLessonsContent() {
                   >
                     <Edit className="h-4 w-4" />
                     Edit
+                  </button>
+                  <button
+                    onClick={() => router.push(`/admin/subtopics?lessonId=${lesson._id}`)}
+                    className="px-4 py-2 bg-teal-500/20 text-teal-400 rounded-lg hover:bg-teal-500/30 transition-all text-sm flex items-center gap-2"
+                  >
+                    <BookMarked className="h-4 w-4" />
+                    Subtopics
                   </button>
                   <button
                     onClick={() => handleDelete(lesson._id)}

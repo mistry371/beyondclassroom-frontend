@@ -152,11 +152,25 @@ export default function AdminDashboard() {
               onClick={() => router.push('/admin/lessons')}
             />
             <QuickActionCard
+              title="Subtopics"
+              description="Manage lesson subtopics"
+              icon={BookOpen}
+              color="from-teal-500 to-cyan-500"
+              onClick={() => router.push('/admin/subtopics')}
+            />
+            <QuickActionCard
               title="Quizzes"
               description="Manage quizzes and questions"
               icon={BookOpen}
               color="from-accent to-primary"
               onClick={() => router.push('/admin/quizzes')}
+            />
+            <QuickActionCard
+              title="Examinations"
+              description="Create & manage full exams"
+              icon={BookOpen}
+              color="from-red-500 to-orange-500"
+              onClick={() => router.push('/admin/exams')}
             />
             <QuickActionCard
               title="Media Library"

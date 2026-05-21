@@ -24,11 +24,17 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      // Clear stale auth data and redirect to login
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
       const currentPath = window.location.pathname
-      if (!currentPath.startsWith('/auth')) {
+
+      // Only redirect to login from pages that actually require authentication
+      // Public pages (home, about, courses, blogs, contact, tools) should never redirect
+      const publicPaths = ['/', '/about', '/courses', '/blogs', '/contact', '/tools', '/career', '/live']
+      const isPublicPath = publicPaths.some(p => currentPath === p || currentPath.startsWith('/courses/') || currentPath.startsWith('/blogs/'))
+
+      if (!isPublicPath && !currentPath.startsWith('/auth')) {
+        // Clear stale auth data and redirect to login
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
         window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
       }
     }

@@ -38,13 +38,7 @@ export default function RegisterPage() {
         setFormData(data)
         setStep(2)
         startResendTimer()
-        
-        if (otpRes.data.otp) {
-          console.log('🔐 OTP for testing:', otpRes.data.otp)
-          // Auto-fill OTP boxes
-          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
-          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
-        }
+        // OTP is sent to email — user must enter it manually
       }
     } catch (err) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
@@ -151,12 +145,7 @@ export default function RegisterPage() {
       
       if (otpRes.data.success) {
         startResendTimer()
-        
-        if (otpRes.data.otp) {
-          console.log('🔐 New OTP:', otpRes.data.otp)
-          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
-          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
-        }
+        // OTP sent to email — user must enter manually
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP')

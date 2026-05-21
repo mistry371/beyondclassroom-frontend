@@ -44,11 +44,7 @@ function LoginContent() {
         if (otpRes.data.success) {
           setStep(2)
           startResendTimer()
-          if (otpRes.data.otp) {
-            console.log('🔐 Login OTP:', otpRes.data.otp)
-            const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
-            setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
-          }
+          // OTP is sent to email — user must enter it manually
         }
       }
     } catch (err) {
@@ -113,10 +109,7 @@ function LoginContent() {
       const otpRes = await api.post('/otp/send', { email: pendingUser.email, purpose: 'login' })
       if (otpRes.data.success) {
         startResendTimer()
-        if (otpRes.data.otp) {
-          const otpDigits = otpRes.data.otp.toString().split('').slice(0, 6)
-          setOtp([...otpDigits, ...Array(6).fill('')].slice(0, 6))
-        }
+        // OTP sent to email — user must enter manually
       }
     } catch (err) {
       setError('Failed to resend OTP')

@@ -111,19 +111,21 @@ export default function ScreenProtection() {
       } catch(_) {}
     }
 
-    // ── 11. DevTools detection (size-based) ───────────────────────────────
+    // ── 11. DevTools detection (size-based, with delay to avoid false positives) ──
     let devtoolsOpen = false
+    let devtoolsCheckCount = 0
     const detectDevTools = () => {
-      const threshold = 160
+      // Skip first 5 checks (3s) to let page fully load and avoid false positives
+      devtoolsCheckCount++
+      if (devtoolsCheckCount < 5) return
+      const threshold = 200
       const widthDiff = window.outerWidth - window.innerWidth
       const heightDiff = window.outerHeight - window.innerHeight
       if ((widthDiff > threshold || heightDiff > threshold) && !devtoolsOpen) {
         devtoolsOpen = true
-        showOverlay()
         document.body.style.filter = 'blur(20px)'
       } else if (widthDiff <= threshold && heightDiff <= threshold && devtoolsOpen) {
         devtoolsOpen = false
-        hideOverlay()
         document.body.style.filter = ''
       }
     }
@@ -135,8 +137,10 @@ export default function ScreenProtection() {
       else hideOverlay()
     }
 
-    // ── 13. Window blur: black screen when window loses focus ──────────────
-    const onBlur = () => showOverlay()
+    // ── 13. Window blur: black screen — only after page has been active 2s ──
+    let pageReady = false
+    const readyTimer = setTimeout(() => { pageReady = true }, 2000)
+    const onBlur = () => { if (pageReady) showOverlay() }
     const onFocus = () => hideOverlay()
 
     // ── 14. Disable text selection via mouse ──────────────────────────────
@@ -181,6 +185,7 @@ export default function ScreenProtection() {
       window.removeEventListener('blur', onBlur)
       window.removeEventListener('focus', onFocus)
       clearInterval(devtoolsInterval)
+      clearTimeout(readyTimer)
       document.getElementById('sp-css')?.remove()
       document.getElementById('sp-watermark')?.remove()
       document.getElementById('sp-forensic')?.remove()

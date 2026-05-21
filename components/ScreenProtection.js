@@ -138,10 +138,11 @@ export default function ScreenProtection() {
     }
 
     // ── 13. Window blur: black screen — only after page has been active 2s ──
+    // NOTE: Only activate on visibility change (tab switch), NOT on window blur
+    // Window blur fires too aggressively (clicking address bar, any popup, etc.)
     let pageReady = false
     const readyTimer = setTimeout(() => { pageReady = true }, 2000)
-    const onBlur = () => { if (pageReady) showOverlay() }
-    const onFocus = () => hideOverlay()
+    // Removed onBlur/onFocus — too aggressive, blocks normal browsing
 
     // ── 14. Disable text selection via mouse ──────────────────────────────
     const blockSelect = (e) => e.preventDefault()
@@ -165,8 +166,6 @@ export default function ScreenProtection() {
     document.addEventListener('touchend', onTouchEnd, { passive: true })
     window.addEventListener('beforeprint', blockPrint)
     window.addEventListener('afterprint', blockPrint)
-    window.addEventListener('blur', onBlur)
-    window.addEventListener('focus', onFocus)
 
     return () => {
       document.removeEventListener('keydown', blockKeys, true)
@@ -182,8 +181,6 @@ export default function ScreenProtection() {
       document.removeEventListener('touchend', onTouchEnd)
       window.removeEventListener('beforeprint', blockPrint)
       window.removeEventListener('afterprint', blockPrint)
-      window.removeEventListener('blur', onBlur)
-      window.removeEventListener('focus', onFocus)
       clearInterval(devtoolsInterval)
       clearTimeout(readyTimer)
       document.getElementById('sp-css')?.remove()

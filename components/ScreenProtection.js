@@ -22,7 +22,7 @@ export default function ScreenProtection() {
     // ── 2. Watermark overlay (user name + email, semi-transparent) ─────────
     const wm = document.createElement('div')
     wm.id = 'sp-watermark'
-    const wmLabel = user ? user.name + ' | ' + user.email : 'Beyond Classroom'
+    const wmLabel = 'Beyond Classroom'
     const wmText = (wmLabel + '   ').repeat(40)
     wm.style.cssText = [
       'position:fixed', 'inset:0', 'z-index:99998', 'pointer-events:none',

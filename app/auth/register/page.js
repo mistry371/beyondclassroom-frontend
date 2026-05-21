@@ -38,7 +38,6 @@ export default function RegisterPage() {
         setFormData(data)
         setStep(2)
         startResendTimer()
-        // OTP is sent to email — user must enter it manually
       }
     } catch (err) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
@@ -145,7 +144,6 @@ export default function RegisterPage() {
       
       if (otpRes.data.success) {
         startResendTimer()
-        // OTP sent to email — user must enter manually
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP')

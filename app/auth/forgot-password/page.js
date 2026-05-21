@@ -41,10 +41,6 @@ export default function ForgotPasswordPage() {
       if (res.data.success) {
         setStep(2)
         startResendTimer()
-        if (res.data.otp) {
-          const digits = res.data.otp.toString().split('').slice(0, 6)
-          setOtp([...digits, ...Array(6).fill('')].slice(0, 6))
-        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send OTP. Check your email address.')
@@ -113,10 +109,6 @@ export default function ForgotPasswordPage() {
       const res = await api.post('/otp/send', { email, purpose: 'password_reset' })
       if (res.data.success) {
         startResendTimer()
-        if (res.data.otp) {
-          const digits = res.data.otp.toString().split('').slice(0, 6)
-          setOtp([...digits, ...Array(6).fill('')].slice(0, 6))
-        }
       }
     } catch (err) {
       setError('Failed to resend OTP')

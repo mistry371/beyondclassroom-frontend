@@ -156,7 +156,7 @@ export default function Home() {
 
                     <div className="flex items-center justify-between pt-4 border-t border-primary/10">
                       <div>
-                        {course.price === 0 || course.isFree ? (
+                        {course.isFree || course.isDemo ? (
                           <span className="text-2xl font-bold text-green-400">FREE</span>
                         ) : (
                           <span className="text-2xl font-bold text-primary">₹{course.price}</span>
@@ -166,7 +166,7 @@ export default function Home() {
                         href={`/courses/${course._id}`}
                         className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark rounded-lg hover:opacity-90 transition-all flex items-center gap-2 font-semibold"
                       >
-                        {course.price === 0 || course.isFree ? 'Start Free' : 'View Course'}
+                        {course.isFree || course.isDemo ? 'Start Free' : 'View Course'}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </div>

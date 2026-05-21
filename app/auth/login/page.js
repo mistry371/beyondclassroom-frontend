@@ -44,7 +44,6 @@ function LoginContent() {
         if (otpRes.data.success) {
           setStep(2)
           startResendTimer()
-          // OTP is sent to email — user must enter it manually
         }
       }
     } catch (err) {
@@ -275,7 +274,7 @@ function LoginContent() {
 
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-sm">
                 <p className="text-primary font-medium mb-1">📧 Check your email</p>
-                <p className="text-gray-400">OTP has been sent to your email. If not received, it has been auto-filled above.</p>
+                <p className="text-gray-400">OTP has been sent to your email address. Please check your inbox and spam folder.</p>
               </div>
             </motion.div>
           )}

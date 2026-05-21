@@ -1,12 +1,18 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
+import { usePathname } from 'next/navigation'
 
 export default function ScreenProtection() {
   const overlayRef = useRef(null)
   const { user } = useSelector(state => state.auth)
+  const pathname = usePathname()
+
+  // Only apply protection on student learning pages
+  const isProtectedPage = pathname?.startsWith('/learn/')
 
   useEffect(() => {
+    if (!isProtectedPage) return  // no protection outside learn pages
     // ── 1. Global CSS: disable selection, drag, highlight ─────────────────
     const css = document.createElement('style')
     css.id = 'sp-css'
@@ -14,7 +20,8 @@ export default function ScreenProtection() {
       *{-webkit-user-select:none!important;-moz-user-select:none!important;
         -ms-user-select:none!important;user-select:none!important;
         -webkit-touch-callout:none!important;}
-      img,video,canvas,iframe{pointer-events:none!important;-webkit-user-drag:none!important;}
+      img,video,canvas{pointer-events:none!important;-webkit-user-drag:none!important;}
+      iframe:not([src*="razorpay"]):not([src*="checkout"]){pointer-events:none!important;}
       @media print{body{display:none!important;visibility:hidden!important;}}
     `
     document.head.appendChild(css)
@@ -56,6 +63,11 @@ export default function ScreenProtection() {
       const shift = e.shiftKey
       const alt = e.altKey
 
+      // Allow all input inside Razorpay iframe or any input/textarea
+      const tag = e.target?.tagName?.toLowerCase()
+      const isInput = tag === 'input' || tag === 'textarea' || e.target?.isContentEditable
+      if (isInput) return  // don't block typing in any input field
+
       // PrintScreen (all variants)
       if (k === 'printscreen' || k === 'print' || k === 'snapshot') {
         e.preventDefault(); e.stopPropagation(); flashOverlay(); return false
@@ -72,8 +84,8 @@ export default function ScreenProtection() {
       if (ctrl && shift && k === 's') {
         e.preventDefault(); e.stopPropagation(); return false
       }
-      // Ctrl combos
-      if (ctrl && ['c','a','s','p','u','x','v','j','n','t','w','r'].includes(k)) {
+      // Ctrl combos (only block non-input shortcuts)
+      if (ctrl && ['a','s','p','u','j','n','t','w','r'].includes(k)) {
         e.preventDefault(); e.stopPropagation(); return false
       }
       // F keys
@@ -199,14 +211,18 @@ export default function ScreenProtection() {
         flexDirection: 'column', gap: '16px',
       }}
     >
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-      <p style={{ color: '#fff', fontSize: '22px', fontWeight: 'bold', margin: 0 }}>Content Protected</p>
-      <p style={{ color: '#9ca3af', fontSize: '14px', margin: 0, textAlign: 'center', maxWidth: '300px' }}>
-        This content is protected. Screenshots and screen recording are not permitted.
-      </p>
+      {isProtectedPage && (
+        <>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <p style={{ color: '#fff', fontSize: '22px', fontWeight: 'bold', margin: 0 }}>Content Protected</p>
+          <p style={{ color: '#9ca3af', fontSize: '14px', margin: 0, textAlign: 'center', maxWidth: '300px' }}>
+            This content is protected. Screenshots and screen recording are not permitted.
+          </p>
+        </>
+      )}
     </div>
   )
 }

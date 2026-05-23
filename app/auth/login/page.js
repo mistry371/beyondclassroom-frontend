@@ -48,7 +48,7 @@ function LoginContent() {
       }
     } catch (err) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setError('Server is starting up (Render cold start). Please wait 30 seconds and try again.')
+        setError('Request timed out. Server may be busy — please try again.')
       } else {
         setError(err.response?.data?.message || 'Login failed. Please check your credentials.')
       }

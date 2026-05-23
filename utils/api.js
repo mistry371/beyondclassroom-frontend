@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://beyondclassroom-back
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 15000, // reduced from 30s — public pages shouldn't wait that long
+  timeout: 45000, // 45s — enough for Render cold start + MongoDB connect
   headers: {
     'Content-Type': 'application/json',
   },

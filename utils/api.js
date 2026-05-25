@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getCached, setCached } from '@/lib/apiCache'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://beyondclassroom-backend.onrender.com/api'
 
@@ -22,16 +23,31 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const config = error.config
+    if (!config || config.__retry) {
+      // fall through
+    } else if (
+      (!error.response || error.response.status >= 500) &&
+      (config.method === 'get' || config.method === 'GET')
+    ) {
+      config.__retry = true
+      await new Promise((r) => setTimeout(r, 800))
+      return api.request(config)
+    }
+
     if (error.response?.status === 401 && typeof window !== 'undefined') {
       const currentPath = window.location.pathname
 
       // Only redirect to login from pages that actually require authentication
       // Public pages (home, about, courses, blogs, contact, tools) should never redirect
-      const publicPaths = ['/', '/about', '/courses', '/blogs', '/contact', '/tools', '/career', '/live']
-      const isPublicPath = publicPaths.some(p => currentPath === p || currentPath.startsWith('/courses/') || currentPath.startsWith('/blogs/'))
-
-      if (!isPublicPath && !currentPath.startsWith('/auth')) {
+      const publicPaths = ['/', '/about', '/team', '/packages', '/courses', '/blogs', '/contact', '/tools', '/career', '/live', '/promoter', '/learn', '/grades']
+      const isPublicPath = (
+        publicPaths.some(p => currentPath === p || currentPath.startsWith(p + '/'))
+        || currentPath.startsWith('/courses/')
+        || currentPath.startsWith('/blogs/')
+      ) && !currentPath.startsWith('/promoter/dashboard')
+      if (!isPublicPath && !currentPath.startsWith('/auth') && !currentPath.startsWith('/promoter/login') && !currentPath.startsWith('/promoter/register')) {
         // Clear stale auth data and redirect to login
         localStorage.removeItem('token')
         localStorage.removeItem('user')
@@ -41,5 +57,15 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+/** Stale-while-revalidate style GET cache for public read endpoints */
+export async function cachedGet(url, ttlMs = 90 * 1000) {
+  const key = `GET:${url}`
+  const hit = getCached(key)
+  if (hit) return Promise.resolve({ data: hit, status: 200, fromCache: true })
+  const res = await api.get(url)
+  setCached(key, res.data, ttlMs)
+  return res
+}
 
 export default api

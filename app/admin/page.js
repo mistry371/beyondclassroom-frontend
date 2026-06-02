@@ -44,17 +44,17 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Admin Dashboard
               </h1>
-              <p className="text-gray-400 mt-1">Welcome back, {user?.name || 'Admin'}</p>
+              <p className="text-slate-500 mt-1">Welcome back, {user?.name || 'Admin'}</p>
             </div>
-            <Link href="/" className="px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all">
+            <Link href="/" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all">
               Back to Site
             </Link>
           </div>
@@ -63,9 +63,9 @@ export default function AdminDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {fetchError && (
-          <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-200 text-sm flex flex-wrap justify-between items-center gap-3">
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm flex flex-wrap justify-between items-center gap-3">
             <span>{fetchError}</span>
-            <button type="button" onClick={fetchDashboardStats} className="font-semibold underline text-white">
+            <button type="button" onClick={fetchDashboardStats} className="font-semibold underline text-amber-800">
               Retry stats
             </button>
           </div>
@@ -78,13 +78,13 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-xl"
+              className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6"
             >
               <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color} w-fit mb-4`}>
                 <stat.icon className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-gray-400 text-sm mb-1">{stat.title}</h3>
-              <p className="text-3xl font-bold text-white">{statsLoading ? '...' : stat.value}</p>
+              <h3 className="text-slate-500 text-sm mb-1">{stat.title}</h3>
+              <p className="text-3xl font-black text-slate-800">{statsLoading ? '...' : stat.value}</p>
             </motion.div>
           ))}
         </div>
@@ -132,16 +132,16 @@ export default function AdminDashboard() {
 
         {!statsLoading && stats?.recentUsers?.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
+              <h2 className="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" /> Recent Users
               </h2>
               <div className="space-y-3">
                 {stats.recentUsers.slice(0, 5).map((u) => (
-                  <div key={u._id} className="flex items-center justify-between p-3 bg-dark-200/30 rounded-lg">
+                  <div key={u._id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
                     <div>
-                      <p className="text-white font-medium">{u.name}</p>
-                      <p className="text-gray-400 text-sm">{u.email}</p>
+                      <p className="text-slate-800 font-medium">{u.name}</p>
+                      <p className="text-slate-500 text-sm">{u.email}</p>
                     </div>
                   </div>
                 ))}
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
 function AdminSection({ title, children }) {
   return (
     <div className="mb-6">
-      <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+      <h2 className="text-xl font-bold text-slate-700 mb-4">{title}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{children}</div>
     </div>
   )
@@ -167,13 +167,13 @@ function QuickActionCard({ href, title, description, icon: Icon, color }) {
   return (
     <Link
       href={href}
-      className="block bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left hover:border-primary/40 hover:scale-[1.02] transition-all cursor-pointer relative z-10"
+      className="block bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer relative z-10"
     >
       <div className={`p-3 rounded-xl bg-gradient-to-r ${color} w-fit mb-4`}>
         <Icon className="h-6 w-6 text-white" />
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
+      <h3 className="text-lg font-bold text-slate-800 mb-2">{title}</h3>
+      <p className="text-slate-500 text-sm">{description}</p>
     </Link>
   )
 }

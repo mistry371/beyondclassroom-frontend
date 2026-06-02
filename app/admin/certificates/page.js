@@ -6,10 +6,32 @@ import { useSelector } from 'react-redux'
 import { ArrowLeft, Award, Plus, Download, Eye, Trash2, X } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import { showSuccess, showError } from '@/components/ui/Toast'
+
+const loadScript = (src) => {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve()
+      return
+    }
+    const existing = document.querySelector(`script[src="${src}"]`)
+    if (existing) {
+      resolve()
+      return
+    }
+    const script = document.createElement('script')
+    script.src = src
+    script.onload = () => resolve()
+    script.onerror = () => resolve()
+    document.body.appendChild(script)
+  })
+}
 
 export default function AdminCertificates() {
   const router = useRouter()
   const { user } = useSelector(state => state.auth)
+  const { isAdmin, loading: authLoading } = useAdminAuth()
   const [certificates, setCertificates] = useState([])
   const [users, setUsers] = useState([])
   const [courses, setCourses] = useState([])
@@ -18,14 +40,16 @@ export default function AdminCertificates() {
   const [generating, setGenerating] = useState(false)
   const [formData, setFormData] = useState({ userId: '', courseId: '' })
   const [viewCert, setViewCert] = useState(null)
+  const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      router.push('/')
+    if (authLoading) return
+    if (!isAdmin) {
+      router.replace('/auth/login?redirect=%2Fadmin%2Fcertificates')
       return
     }
     fetchAll()
-  }, [user])
+  }, [user, isAdmin, authLoading, router])
 
   const fetchAll = async () => {
     try {
@@ -49,12 +73,12 @@ export default function AdminCertificates() {
     setGenerating(true)
     try {
       await api.post('/admin/certificates/generate', formData)
-      alert('Certificate generated successfully')
+      showSuccess('Certificate generated successfully')
       setShowModal(false)
       setFormData({ userId: '', courseId: '' })
       fetchAll()
     } catch (error) {
-      alert(error.response?.data?.message || 'Generation failed')
+      showError(error.response?.data?.message || 'Generation failed')
     } finally {
       setGenerating(false)
     }
@@ -66,11 +90,11 @@ export default function AdminCertificates() {
       await api.delete(`/admin/certificates/${certId}`)
       fetchAll()
     } catch (error) {
-      alert('Delete failed')
+      showError('Delete failed')
     }
   }
 
-  const handleDownload = (cert) => {
+  const handleDownload = async (cert, format = 'html') => {
     const certHtml = `<!DOCTYPE html>
 <html>
 <head>
@@ -78,6 +102,7 @@ export default function AdminCertificates() {
   <title>Certificate - ${cert.certificateNumber}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+import { showSuccess, showError } from '@/components/ui/Toast'
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #f8f5f0; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Inter', sans-serif; }
     .cert { width: 800px; background: white; padding: 60px; border: 12px solid #c9a84c; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
@@ -128,16 +153,58 @@ export default function AdminCertificates() {
 </body>
 </html>`
 
-    const blob = new Blob([certHtml], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `certificate-${cert.certificateNumber}.html`
-    a.click()
-    URL.revokeObjectURL(url)
+    if (format === 'html') {
+      const blob = new Blob([certHtml], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `certificate-${cert.certificateNumber}.html`
+      a.click()
+      URL.revokeObjectURL(url)
+      return
+    }
+
+    try {
+      setDownloading(true)
+      await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js')
+      await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js')
+
+      const wrapper = document.createElement('div')
+      wrapper.style.position = 'fixed'
+      wrapper.style.left = '-99999px'
+      wrapper.style.top = '0'
+      wrapper.style.width = '900px'
+      wrapper.style.background = '#ffffff'
+      wrapper.innerHTML = certHtml
+      document.body.appendChild(wrapper)
+
+      const certEl = wrapper.querySelector('.cert')
+      const canvas = await window.html2canvas(certEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+      const imageData = canvas.toDataURL('image/png')
+
+      if (format === 'png') {
+        const a = document.createElement('a')
+        a.href = imageData
+        a.download = `certificate-${cert.certificateNumber}.png`
+        a.click()
+      } else if (format === 'pdf') {
+        const { jsPDF } = window.jspdf
+        const pdf = new jsPDF('landscape', 'pt', 'a4')
+        const pageWidth = pdf.internal.pageSize.getWidth()
+        const pageHeight = pdf.internal.pageSize.getHeight()
+        pdf.addImage(imageData, 'PNG', 0, 0, pageWidth, pageHeight)
+        pdf.save(`certificate-${cert.certificateNumber}.pdf`)
+      }
+
+      document.body.removeChild(wrapper)
+    } catch (error) {
+      showError('Download failed. Please try again.')
+    } finally {
+      setDownloading(false)
+    }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -202,11 +269,18 @@ export default function AdminCertificates() {
                   View
                 </button>
                 <button
-                  onClick={() => handleDownload(cert)}
+                  onClick={() => handleDownload(cert, 'png')}
                   className="flex-1 px-3 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-all text-sm flex items-center justify-center gap-1"
                 >
                   <Download className="h-4 w-4" />
-                  Download
+                  PNG
+                </button>
+                <button
+                  onClick={() => handleDownload(cert, 'pdf')}
+                  className="flex-1 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all text-sm flex items-center justify-center gap-1"
+                >
+                  <Download className="h-4 w-4" />
+                  PDF
                 </button>
                 <button
                   onClick={() => handleDelete(cert._id)}
@@ -369,7 +443,7 @@ export default function AdminCertificates() {
               <div className="p-4 bg-gray-50 flex gap-3 justify-end">
                 <button onClick={() => setViewCert(null)} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all">Close</button>
                 <button
-                  onClick={() => handleDownload(viewCert)}
+                  onClick={() => handleDownload(viewCert, 'html')}
                   className="px-6 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2 font-medium"
                 >
                   <Download className="h-4 w-4" />

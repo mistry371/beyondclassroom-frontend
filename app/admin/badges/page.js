@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { ArrowLeft, Award, Plus, Trash2, Edit } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
+import { showSuccess, showError } from '@/components/ui/Toast'
 
 const EMPTY_FORM = { name: '', description: '', criteria: '', icon: '🏆' }
 
@@ -19,10 +20,6 @@ export default function AdminBadges() {
   const [formData, setFormData] = useState(EMPTY_FORM)
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      router.push('/')
-      return
-    }
     fetchBadges()
   }, [user])
 
@@ -60,7 +57,7 @@ export default function AdminBadges() {
       setShowModal(false)
       fetchBadges()
     } catch (error) {
-      alert(selectedBadge ? 'Failed to update badge' : 'Failed to create badge')
+      showError(selectedBadge ? 'Failed to update badge' : 'Failed to create badge')
     }
   }
 
@@ -70,7 +67,7 @@ export default function AdminBadges() {
       await api.delete(`/admin/badges/${badgeId}`)
       fetchBadges()
     } catch (error) {
-      alert('Delete failed')
+      showError('Delete failed')
     }
   }
 

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { ArrowLeft, Clock, CheckCircle, XCircle, MessageSquare } from 'lucide-react'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
+import { showSuccess, showError } from '@/components/ui/Toast'
 
 const STATUS_COLORS = {
   pending:'bg-yellow-500/20 text-yellow-400', reviewing:'bg-blue-500/20 text-blue-400',
@@ -18,23 +19,29 @@ export default function AdminCustomRequests() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
-  const [form, setForm] = useState({ status:'', adminNote:'', quotedPrice:'' })
+  const [form, setForm] = useState({ status:'', adminNote:'', quotedPrice:'', finalPrice:'', finalDuration:'', finalRoadmap:'', assignedToUserId:'', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' })
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) { router.push('/'); return }
     api.get('/custom-requests/admin').then(r => setRequests(r.data.requests || [])).catch(console.error).finally(() => setLoading(false))
   }, [user])
 
-  const openEdit = (req) => { setSelected(req); setForm({ status: req.status, adminNote: req.adminNote || '', quotedPrice: req.quotedPrice || '' }) }
+  const openEdit = (req) => { setSelected(req); setForm({ status: req.status, adminNote: req.adminNote || '', quotedPrice: req.quotedPrice || '', finalPrice: req.finalPrice || '', finalDuration: req.finalDuration || req.estimatedDuration || '', finalRoadmap: req.finalRoadmap || '', assignedToUserId: req.assignedToUserId || req.userId || '', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' }) }
 
   const handleUpdate = async (e) => {
     e.preventDefault()
     try {
-      await api.put('/custom-requests/admin/' + selected._id, form)
+      const payload = { status: form.status, adminNote: form.adminNote, quotedPrice: form.quotedPrice, finalPrice: form.finalPrice, finalDuration: form.finalDuration, finalRoadmap: form.finalRoadmap, assignedToUserId: form.assignedToUserId }
+      if (form.deliveryUrl && form.deliveryTitle) {
+        payload.deliveryItems = [
+          ...(selected.deliveryItems || []),
+          { title: form.deliveryTitle, type: form.deliveryType, url: form.deliveryUrl, note: form.deliveryNote }
+        ]
+      }
+      await api.put('/custom-requests/admin/' + selected._id, payload)
       setSelected(null)
       const r = await api.get('/custom-requests/admin')
       setRequests(r.data.requests || [])
-    } catch (err) { alert('Update failed') }
+    } catch (err) { showError('Update failed') }
   }
 
   const handleDelete = async (id) => {
@@ -79,15 +86,38 @@ export default function AdminCustomRequests() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 mb-3">
-              {req.selectedTopics.map(t => <span key={t.moduleId} className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">{t.moduleTitle}</span>)}
+              {(req.selectedTopics || req.selectedModules || []).map(t => <span key={t.moduleId} className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">{t.moduleTitle}</span>)}
+              {(req.selectedLessons || []).map(t => <span key={t.lessonId} className="px-2 py-0.5 bg-blue-500/10 text-blue-300 rounded text-xs">{t.lessonTitle}</span>)}
+              {(req.selectedSubtopics || []).map(t => <span key={t.subtopicId} className="px-2 py-0.5 bg-green-500/10 text-green-300 rounded text-xs">{t.subtopicTitle}</span>)}
+              {(req.selectedPdfs || []).map(t => <span key={`${t.subtopicId}-${t.name}`} className="px-2 py-0.5 bg-orange-500/10 text-orange-300 rounded text-xs">{t.name}</span>)}
             </div>
             <div className="flex gap-4 text-sm text-gray-400">
-              <span>Type: <span className="text-white">{req.deliverable.replace('_',' ')}</span></span>
+              <span>Type: <span className="text-white">{(req.deliverable || 'custom').replace('_',' ')}</span></span>
               <span>Difficulty: <span className="text-white">{req.difficulty}</span></span>
               {req.budget && <span>Budget: <span className="text-white">Rs.{req.budget}</span></span>}
               {req.quotedPrice && <span className="text-purple-400 font-bold">Quoted: Rs.{req.quotedPrice}</span>}
+              {req.finalPrice && <span className="text-purple-400 font-bold">Final: Rs.{req.finalPrice}</span>}
               {req.deadline && <span>Deadline: <span className="text-white">{req.deadline}</span></span>}
             </div>
+            {(req.roadmap || []).length > 0 && (
+              <div className="mt-3 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                <p className="text-blue-300 text-sm font-semibold mb-2">Student Generated Roadmap</p>
+                <ul className="text-gray-300 text-sm space-y-1">{req.roadmap.map((r, idx) => <li key={`${r}-${idx}`}>- {r}</li>)}</ul>
+              </div>
+            )}
+            {req.preferences && Object.keys(req.preferences).length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {Object.entries(req.preferences).map(([key, value]) => (
+                  <span key={key} className="px-2 py-0.5 bg-white/5 text-gray-300 border border-white/10 rounded text-xs">{key}: {value}</span>
+                ))}
+              </div>
+            )}
+            {(req.studentMessages || []).length > 0 && (
+              <div className="mt-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+                <p className="text-yellow-300 text-sm font-semibold mb-2">Student Messages</p>
+                {(req.studentMessages || []).map((m, idx) => <p key={idx} className="text-gray-300 text-sm">- {m.message}</p>)}
+              </div>
+            )}
             {req.description && <p className="text-gray-400 text-sm mt-2">{req.description}</p>}
             <p className="text-gray-500 text-xs mt-2">{new Date(req.createdAt).toLocaleString('en-IN')}</p>
           </motion.div>
@@ -96,7 +126,7 @@ export default function AdminCustomRequests() {
 
       {selected && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl max-h-[88vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
             <h3 className="text-xl font-bold text-white mb-4">Manage: {selected.title}</h3>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
@@ -115,6 +145,42 @@ export default function AdminCustomRequests() {
                 <label className="block text-gray-300 text-sm mb-1">Quoted Price (Rs.)</label>
                 <input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
                   value={form.quotedPrice} onChange={e => setForm(f => ({...f, quotedPrice: e.target.value}))} placeholder="e.g. 499"/>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-gray-300 text-sm mb-1">Final Price (Rs.)</label>
+                  <input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
+                    value={form.finalPrice} onChange={e => setForm(f => ({...f, finalPrice: e.target.value}))} placeholder="e.g. 999"/>
+                </div>
+                <div>
+                  <label className="block text-gray-300 text-sm mb-1">Final Duration</label>
+                  <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
+                    value={form.finalDuration} onChange={e => setForm(f => ({...f, finalDuration: e.target.value}))} placeholder="e.g. 4 weeks"/>
+                </div>
+              </div>
+              <div>
+                <label className="block text-gray-300 text-sm mb-1">Final Roadmap / Package Plan</label>
+                <textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={4}
+                  value={form.finalRoadmap} onChange={e => setForm(f => ({...f, finalRoadmap: e.target.value}))} placeholder="Write final modules, tests, PDFs, worksheets, and delivery plan..."/>
+              </div>
+              <div>
+                <label className="block text-gray-300 text-sm mb-1">Assign To Student ID</label>
+                <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
+                  value={form.assignedToUserId} onChange={e => setForm(f => ({...f, assignedToUserId: e.target.value}))} placeholder="Default requester userId"/>
+              </div>
+              <div className="border border-white/10 rounded-lg p-3">
+                <p className="text-gray-300 text-sm font-semibold mb-2">Upload/Deliver Custom Material (Link)</p>
+                <input className="w-full mb-2 px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Title e.g. Merged Paper Set 1"/>
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <select className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>
+                    <option value="question_paper">Question Paper</option>
+                    <option value="notes">Notes</option>
+                    <option value="worksheet">Worksheet</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <input className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>
+                </div>
+                <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryNote} onChange={e => setForm(f => ({...f, deliveryNote: e.target.value}))} placeholder="Short note for student"/>
               </div>
               <div>
                 <label className="block text-gray-300 text-sm mb-1">Note to Student</label>

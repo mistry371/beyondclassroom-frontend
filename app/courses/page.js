@@ -1,265 +1,189 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Clock, Users, Star, TrendingUp, BookOpen, Award, Filter, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { ArrowRight, BookOpen, Clock, Filter, Search, SlidersHorizontal, Star, Users, Lock } from 'lucide-react'
 import Navbar from '@/components/Navbar'
+import MarketingShell from '@/components/marketing/MarketingShell'
 import { cachedGet } from '@/utils/api'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { COURSE_CATEGORIES } from '@/lib/constants'
 import CourseCardSkeleton from '@/components/ui/CourseCardSkeleton'
+import { CLASS_GRADES } from '@/lib/constants'
+import { useSelector } from 'react-redux'
 
 export default function CoursesPage() {
-  const router = useRouter()
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
-  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [gradeFilter, setGradeFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const { user } = useSelector((state) => state.auth)
 
   useEffect(() => {
-    fetchCourses()
+    cachedGet('/courses', 120000)
+      .then((response) => setCourses(response.data.courses || []))
+      .catch((error) => console.error('Fetch courses failed:', error))
+      .finally(() => setLoading(false))
   }, [])
 
-  const fetchCourses = async () => {
-    try {
-      const response = await cachedGet('/courses', 120000)
-      setCourses(response.data.courses || [])
-    } catch (error) {
-      console.error('Fetch courses failed:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filteredCourses = courses.filter(course => {
-    const matchesFilter = filter === 'all' || course.difficulty === filter
-    const matchesCategory = categoryFilter === 'all' || course.category === categoryFilter
-    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesFilter && matchesCategory && matchesSearch
-  })
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-dark">
-        <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-16 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => <CourseCardSkeleton key={i} />)}
-        </div>
-      </div>
-    )
-  }
+  const filteredCourses = useMemo(() => courses.filter((course) => {
+    const matchesGrade = gradeFilter === 'all' || (course.grade && course.grade === gradeFilter) || (course.title && course.title.toLowerCase().includes(gradeFilter.toLowerCase()))
+    const title = course.title || ''
+    const description = course.description || ''
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      description.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesGrade && matchesSearch
+  }), [courses, gradeFilter, searchQuery])
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic pb-20 md:pb-0">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-dark via-dark-100 to-dark-200 border-b border-white/10">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <h1 className="text-5xl md:text-6xl font-black mb-6">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
-                Explore Our Courses
-              </span>
+      {/* Hero */}
+      <section className="relative overflow-hidden premium-section">
+        <div className="absolute inset-0 hero-grid opacity-70" />
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
+              <BookOpen className="h-4 w-4" /> Course & Content
+            </span>
+            <h1 className="mt-6 text-4xl font-black leading-tight text-navy sm:text-6xl">
+              Structured Mathematics content for Class 1 to Class 8.
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Master Mathematics and French from Grade 5 to 12 with expert-led courses.
-              Learn at your own pace with structured pathways.
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">
+              Browse curriculum-aligned Mathematics courses organized by class. Preview content freely — login required only for purchases, downloads, and progress tracking.
             </p>
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary transition-all"
-                />
-              </div>
-            </div>
           </motion.div>
+
+          {/* Class Grade Filter Tabs */}
+          <div className="mt-8 flex flex-wrap gap-2">
+            <button
+              onClick={() => setGradeFilter('all')}
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition-all border ${gradeFilter === 'all' ? 'bg-brand-gradient text-white border-transparent shadow-sm' : 'bg-white text-ink border-primary/10 hover:border-primary/30'}`}
+            >
+              All Classes
+            </button>
+            {CLASS_GRADES.map((grade) => (
+              <button
+                key={grade}
+                onClick={() => setGradeFilter(grade)}
+                className={`px-4 py-2 rounded-full font-semibold text-sm transition-all border ${gradeFilter === grade ? 'bg-brand-gradient text-white border-transparent shadow-sm' : 'bg-white text-ink border-primary/10 hover:border-primary/30'}`}
+              >
+                {grade}
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="mt-6 rounded-3xl border border-primary/10 bg-white p-4 shadow-premium max-w-2xl">
+            <label className="relative block">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
+              <input
+                type="text"
+                placeholder="Search courses, topics..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-2xl border border-primary/10 bg-academic py-4 pl-12 pr-4 text-ink outline-none transition focus:border-primary"
+              />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      {/* Course Hierarchy Info */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted font-medium">
+          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Class</span>
+          <ArrowRight className="h-4 w-4" />
+          <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full">Package</span>
+          <ArrowRight className="h-4 w-4" />
+          <span className="px-3 py-1 bg-accent/10 text-accent rounded-full">Module</span>
+          <ArrowRight className="h-4 w-4" />
+          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Topic</span>
+          <ArrowRight className="h-4 w-4" />
+          <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full">Subtopic</span>
+          <span className="ml-4 text-xs text-muted flex items-center gap-1">
+            <Lock className="h-3.5 w-3.5" /> Login required for purchases, downloads & progress
+          </span>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-wrap items-center gap-4 mb-6">
-          <Filter className="h-5 w-5 text-primary" />
-          <span className="text-white font-semibold">Subject:</span>
-          <div className="flex gap-3 flex-wrap">
-            {['all', ...COURSE_CATEGORIES].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategoryFilter(cat)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  categoryFilter === cat
-                    ? 'bg-primary text-white'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                {cat === 'all' ? 'All Subjects' : cat}
-              </button>
-            ))}
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <SlidersHorizontal className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-xl font-black text-navy">Course Library</p>
+              <p className="text-sm text-muted">Showing {loading ? '...' : filteredCourses.length} courses</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-4 mb-8">
-          <span className="text-white font-semibold">Level:</span>
-          <div className="flex gap-3 flex-wrap">
-            {['all', 'Beginner', 'Intermediate', 'Advanced'].map((level) => (
-              <button
-                key={level}
-                onClick={() => setFilter(level)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  filter === level
-                    ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                {level === 'all' ? 'All Courses' : level}
-              </button>
-            ))}
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-semibold text-muted shadow-sm">
+            <Filter className="h-4 w-4 text-secondary" /> Live filters applied instantly
           </div>
         </div>
 
-        {/* Course Count */}
-        <div className="mb-6">
-          <p className="text-gray-400">
-            Showing <span className="text-primary font-semibold">{filteredCourses.length}</span> courses
-          </p>
-        </div>
-
-        {/* Courses Grid */}
-        {filteredCourses.length === 0 ? (
-          <div className="text-center py-20">
-            <BookOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No courses found</p>
-            <p className="text-gray-500 mt-2">Try adjusting your filters or search query</p>
+        {loading ? (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => <CourseCardSkeleton key={i} />)}
+          </div>
+        ) : filteredCourses.length === 0 ? (
+          <div className="rounded-3xl border border-primary/10 bg-white py-20 text-center shadow-premium">
+            <BookOpen className="mx-auto mb-4 h-14 w-14 text-primary/50" />
+            <p className="text-xl font-bold text-ink">No courses found</p>
+            <p className="mt-2 text-muted">Try a different class or search term.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((course, index) => (
-              <motion.div
+              <motion.article
                 key={course._id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.03, y: -10 }}
-                className="group relative"
+                transition={{ delay: Math.min(index * 0.04, 0.3) }}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-premium transition hover:-translate-y-1"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl p-6 border border-primary/10 group-hover:border-primary/50 transition-all h-full flex flex-col">
-                  {/* Course Badge */}
-                  <div className="flex items-start justify-between mb-4">
-                    <span className="px-3 py-1 bg-primary/20 text-primary rounded-lg text-sm font-semibold">
-                      {course.category}
-                    </span>
-                    <span className={`px-3 py-1 rounded-lg text-sm font-semibold ${
-                      course.difficulty === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                      course.difficulty === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
-                      {course.difficulty}
-                    </span>
+                <div className="h-2 bg-brand-gradient" />
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="mb-4 flex items-start justify-between gap-3">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{course.category || 'Mathematics'}</span>
+                    {course.grade && (
+                      <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{course.grade}</span>
+                    )}
                   </div>
 
-                  {/* Course Title */}
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                    {course.title}
-                  </h3>
+                  <h3 className="line-clamp-2 text-xl font-black text-navy transition group-hover:text-primary">{course.title}</h3>
+                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-muted">{course.description}</p>
 
-                  {/* Course Description */}
-                  <p className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
-                    {course.description}
-                  </p>
-
-                  {/* Course Stats */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <Users className="h-4 w-4 text-primary" />
-                      <span>{course.enrolledCount || 0} students enrolled</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <Clock className="h-4 w-4 text-secondary" />
-                      <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < Math.floor(course.rating || 4.8)
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-400">({course.rating || 4.8})</span>
-                    </div>
+                  <div className="mt-5 grid grid-cols-3 gap-3 rounded-2xl bg-academic p-3 text-center">
+                    <span className="text-xs font-semibold text-muted"><Users className="mx-auto mb-1 h-4 w-4 text-primary" />{course.enrolledCount || 0}</span>
+                    <span className="text-xs font-semibold text-muted"><Clock className="mx-auto mb-1 h-4 w-4 text-secondary" />{course.duration || 'Self-paced'}</span>
+                    <span className="text-xs font-semibold text-muted"><Star className="mx-auto mb-1 h-4 w-4 fill-accent text-accent" />{course.rating || 4.8}</span>
                   </div>
 
-                  {/* Price & CTA */}
-                  <div className="flex items-center justify-between pt-4 border-t border-primary/10">
+                  <div className="mt-5 flex items-center justify-between border-t border-primary/10 pt-5">
                     <div>
-                      <span className="text-3xl font-bold text-primary">₹{course.price || 1}</span>
-                      {course.discountPrice && (
-                        <span className="text-sm text-gray-500 line-through ml-2">₹{course.discountPrice}</span>
+                      {course.isFree || course.isDemo ? (
+                        <p className="text-2xl font-black text-secondary">FREE</p>
+                      ) : (
+                        <>
+                          <p className="text-xs font-bold uppercase tracking-wide text-muted">Starts at</p>
+                          <p className="text-2xl font-black text-primary">₹{course.price || 1}</p>
+                        </>
                       )}
                     </div>
-                    <Link
-                      href={`/courses/${course._id}`}
-                      className="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-dark rounded-lg hover:opacity-90 transition-all font-semibold"
-                    >
-                      View Course
+                    <Link href={`/courses/${course._id}`} className="inline-flex items-center gap-2 rounded-full bg-brand-gradient px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-95">
+                      Preview <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>
-              </motion.div>
+              </motion.article>
             ))}
           </div>
         )}
-      </div>
+      </main>
 
-      {/* CTA Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="bg-gradient-to-r from-primary via-secondary to-accent rounded-3xl p-12 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-dark/50"></div>
-          <div className="relative z-10">
-            <h2 className="text-4xl font-black text-white mb-4">
-              Ready to Start Learning?
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of students mastering mathematics with our expert-led courses
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link
-                href="/auth/register"
-                className="px-8 py-4 bg-white text-dark rounded-xl font-bold hover:scale-105 transition-all"
-              >
-                Get Started Free
-              </Link>
-              <Link
-                href="/tools"
-                className="px-8 py-4 bg-white/10 backdrop-blur-xl border-2 border-white/30 rounded-xl font-bold text-white hover:bg-white/20 transition-all"
-              >
-                Explore Tools
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MarketingShell />
     </div>
   )
 }

@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 import promoterApi, { clearPromoterSession, getStoredPromoter } from '@/utils/promoterApi'
 import PromoterOnboarding from '@/components/promoter/PromoterOnboarding'
-import api from '@/utils/api'
 
 export default function PromoterDashboardPage() {
   const router = useRouter()
@@ -64,7 +63,7 @@ export default function PromoterDashboardPage() {
     if (stored) setPromoter(stored)
     if (!localStorage.getItem('promoterTourDone')) setShowTour(true)
     loadDashboard()
-    api.get('/promoters/leaderboard?limit=5').then((r) => {
+    promoterApi.get('/promoters/leaderboard?limit=5').then((r) => {
       if (r.data.success) setLeaderboard(r.data.leaderboard || [])
     }).catch(() => {})
   }, [router])
@@ -77,7 +76,7 @@ export default function PromoterDashboardPage() {
   }
 
   const shareWhatsApp = () => {
-    const text = `Join Beyond Classroom — premium Mathematics & French learning! Use my link: ${promoter?.referralLink}`
+    const text = `Join Beyond Classroom — premium Mathematics learning for Class 1–8! Use my link: ${promoter?.referralLink}`
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener')
   }
 

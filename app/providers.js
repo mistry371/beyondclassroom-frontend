@@ -8,7 +8,6 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 
 function AuthRestorer({ children }) {
   useEffect(() => {
-    // Restore auth state from localStorage on mount
     store.dispatch(restoreAuth())
   }, [])
 

@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Mail, Lock, TrendingUp, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { Phone, Lock, TrendingUp, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import promoterApi, { savePromoterSession } from '@/utils/promoterApi'
 
 export default function PromoterLoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -21,13 +21,23 @@ export default function PromoterLoginPage() {
     try {
       setLoading(true)
       setError('')
-      const res = await promoterApi.post('/promoters/login', { email, password })
+      const value = loginId.trim()
+      const isEmail = value.includes('@')
+      const res = await promoterApi.post('/promoters/login', {
+        phone: isEmail ? '' : value,
+        email: isEmail ? value.toLowerCase() : '',
+        password,
+      }, { timeout: 45000 })
       if (res.data.success) {
         savePromoterSession(res.data.token, res.data.promoter)
         router.push('/promoter/dashboard')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed')
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('Server is busy or waking up. Please wait 30-60 seconds and try again.')
+      } else {
+        setError(err.userMessage || err.response?.data?.message || 'Login failed')
+      }
     } finally {
       setLoading(false)
     }
@@ -52,12 +62,12 @@ export default function PromoterLoginPage() {
           )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="text-white/80 text-sm font-medium mb-2 block">Email</label>
+              <label className="text-white/80 text-sm font-medium mb-2 block">Mobile Number (or Email)</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                <input type="text" value={loginId} onChange={(e) => setLoginId(e.target.value)} required
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"
-                  placeholder="promoter@email.com"
+                  placeholder="9876543210 or email@example.com"
                 />
               </div>
             </div>

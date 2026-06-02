@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { FileText, Plus, Edit, Trash2, ArrowLeft, Video, BookMarked } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
+import { showSuccess, showError } from '@/components/ui/Toast'
 
 function AdminLessonsContent() {
   const router = useRouter()
@@ -28,10 +29,6 @@ function AdminLessonsContent() {
   })
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      router.push('/')
-      return
-    }
     fetchModules()
   }, [user])
 
@@ -106,7 +103,7 @@ function AdminLessonsContent() {
       setShowModal(false)
       fetchLessons()
     } catch (error) {
-      alert(error.response?.data?.message || 'Operation failed')
+      showError(error.response?.data?.message || 'Operation failed')
     }
   }
 
@@ -117,7 +114,7 @@ function AdminLessonsContent() {
       await api.delete(`/lessons/${lessonId}`)
       fetchLessons()
     } catch (error) {
-      alert(error.response?.data?.message || 'Delete failed')
+      showError(error.response?.data?.message || 'Delete failed')
     }
   }
 

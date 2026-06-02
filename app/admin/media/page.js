@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { ArrowLeft, Upload, Video, FileText, Trash2, Copy, Search } from 'lucide-react'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
+import { showSuccess, showError } from '@/components/ui/Toast'
 
 export default function AdminMedia() {
   const router = useRouter()
@@ -16,10 +17,6 @@ export default function AdminMedia() {
   const [filterType, setFilterType] = useState('all')
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      router.push('/')
-      return
-    }
     fetchMedia()
   }, [user])
 
@@ -38,7 +35,25 @@ export default function AdminMedia() {
     const files = e.target.files
     if (!files.length) return
 
-    const formData = new FormData()
+    for (let file of files) {
+      const reader = new FileReader()
+      reader.onload = async () => {
+        try {
+          await api.post('/admin/media/upload', {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            dataUrl: reader.result
+          })
+          fetchMedia()
+        } catch (error) {
+          showError('Upload failed: ' + (error.response?.data?.message || error.message))
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+    return
+    /* const formData = new FormData()
     for (let file of files) {
       formData.append('files', file)
     }
@@ -50,7 +65,7 @@ export default function AdminMedia() {
       fetchMedia()
     } catch (error) {
       alert('Upload failed')
-    }
+    } */
   }
 
   const handleDelete = async (mediaId) => {
@@ -59,13 +74,13 @@ export default function AdminMedia() {
       await api.delete(`/admin/media/${mediaId}`)
       fetchMedia()
     } catch (error) {
-      alert('Delete failed')
+      showError('Delete failed')
     }
   }
 
   const copyUrl = (url) => {
     navigator.clipboard.writeText(url)
-    alert('URL copied to clipboard!')
+    showSuccess('URL copied to clipboard')
   }
 
   const filteredMedia = media.filter(item => {

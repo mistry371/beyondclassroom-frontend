@@ -16,10 +16,6 @@ export default function AdminLogs() {
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      router.push('/')
-      return
-    }
     fetchLogs()
   }, [user, filter])
 

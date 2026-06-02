@@ -1,11 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, ShoppingCart } from 'lucide-react'
 import Navbar from '@/components/Navbar'
+import EmptyState from '@/components/ui/EmptyState'
 import api from '@/utils/api'
+import { cachedGet } from '@/utils/api'
 import { motion } from 'framer-motion'
 
 export default function Dashboard() {
@@ -14,6 +16,7 @@ export default function Dashboard() {
   const [purchasedCourses, setPurchasedCourses] = useState([])
   const [progress, setProgress] = useState([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
   const [trialStatus, setTrialStatus] = useState(null)
 
   useEffect(() => {
@@ -26,14 +29,14 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const profileRes = await api.get('/profile')
+      const profileRes = await cachedGet('/profile', 30 * 1000)
       const userCourses = profileRes.data.user.purchasedCourses || []
 
       const courses = await Promise.all(
         userCourses.map(async (item) => {
           if (item && typeof item === 'object' && item._id) return item
           try {
-            const res = await api.get(`/courses/${item}`)
+            const res = await cachedGet(`/courses/${item}`, 60 * 1000)
             return res.data.course
           } catch { return null }
         })
@@ -43,18 +46,18 @@ export default function Dashboard() {
 
       const progressResults = await Promise.all(
         validCourses.map(course =>
-          api.get(`/progress/course/${course._id}`).catch(() => null)
+          cachedGet(`/progress/course/${course._id}`, 20 * 1000).catch(() => null)
         )
       )
       setProgress(progressResults.filter(r => r !== null).map(r => r.data.progress))
 
       // Fetch trial status
       try {
-        const trialRes = await api.get('/trial/status')
+        const trialRes = await cachedGet('/trial/status', 20 * 1000)
         setTrialStatus(trialRes.data)
       } catch {}
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error)
+      setFetchError(error.userMessage || 'Could not load your dashboard.')
     } finally {
       setLoading(false)
     }
@@ -64,6 +67,11 @@ export default function Dashboard() {
     const courseProgress = progress.find(p => p?.courseId === courseId)
     return courseProgress?.completionPercentage || 0
   }
+
+  const avgProgress = useMemo(() => {
+    if (progress.length === 0) return 0
+    return Math.round(progress.reduce((sum, p) => sum + (p?.completionPercentage || 0), 0) / progress.length)
+  }, [progress])
 
   if (loading) {
     return (
@@ -93,6 +101,12 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {fetchError && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm flex justify-between items-center gap-4 flex-wrap">
+            <span>{fetchError}</span>
+            <button type="button" onClick={() => { setLoading(true); fetchDashboardData() }} className="font-semibold underline text-white">Retry</button>
+          </div>
+        )}
         {/* Trial Banner */}
         {trialStatus && !trialStatus.hasPurchasedCourses && (
           trialStatus.trialExpired ? (
@@ -175,9 +189,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-gray-400 text-sm">Avg. Progress</p>
                 <p className="text-3xl font-bold text-white">
-                  {progress.length > 0 
-                    ? Math.round(progress.reduce((sum, p) => sum + (p?.completionPercentage || 0), 0) / progress.length)
-                    : 0}%
+                  {avgProgress}%
                 </p>
               </div>
             </div>
@@ -216,7 +228,7 @@ export default function Dashboard() {
               <h3 className="text-xl font-bold text-white mb-2">No Courses Yet</h3>
               <p className="text-gray-400 mb-6">Start your learning journey by enrolling in a course</p>
               <button
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/courses')}
                 className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all"
               >
                 Browse Courses
@@ -285,7 +297,7 @@ export default function Dashboard() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/courses')}
             className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left hover:border-primary/30 transition-all"
           >
             <BookOpen className="h-8 w-8 text-primary mb-3" />

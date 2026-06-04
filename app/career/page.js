@@ -1,6 +1,7 @@
 'use client'
 
 import Navbar from '@/components/Navbar'
+import BannerImage from '@/components/BannerImage'
 import { motion } from 'framer-motion'
 import { Briefcase, MapPin, Clock, DollarSign, ArrowRight } from 'lucide-react'
 import { useState } from 'react'
@@ -74,6 +75,7 @@ export default function CareerPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
       <Navbar />
+      <BannerImage />
 
       {/* Hero */}
       <section className="py-20 bg-gradient-to-r from-primary to-secondary text-white">

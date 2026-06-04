@@ -1,6 +1,7 @@
 'use client'
 
 import Navbar from '@/components/Navbar'
+import BannerImage from '@/components/BannerImage'
 import MarketingShell from '@/components/marketing/MarketingShell'
 import { motion } from 'framer-motion'
 import { HelpCircle, Mail, MapPin, Send } from 'lucide-react'
@@ -24,6 +25,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-academic pb-20 md:pb-0">
       <Navbar />
+      <BannerImage />
 
       {/* Hero */}
       <section className="relative overflow-hidden premium-section">

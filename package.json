@@ -22,5 +22,21 @@
     "react-redux": "^9.0.4",
     "recharts": "^3.8.0",
     "tailwindcss": "^3.4.0"
-  }
+  },
+  "description": "Next.js 14 frontend for the Beyond Classroom mathematics learning platform.",
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mistry371/beyondclassroom-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mistry371/beyondclassroom-frontend/issues"
+  },
+  "homepage": "https://github.com/mistry371/beyondclassroom-frontend#readme"
 }

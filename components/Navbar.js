@@ -46,9 +46,9 @@ export default function Navbar() {
   return (
     <nav className={`${navBg} border-b sticky top-0 z-50 backdrop-blur-xl`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           <Link href={user ? dashboardLink : '/'} className="flex items-center space-x-3">
-            <Image src="/logo.jpeg" alt="Beyond Classroom" width={42} height={42} className="rounded-xl interactive shadow-sm" />
+            <Image src="/logo.jpeg" alt="Beyond Classroom" width={110} height={110} className="rounded-xl interactive shadow-sm" />
             <span className="hidden text-lg font-black tracking-tight bg-brand-gradient bg-clip-text text-transparent sm:inline">
               Beyond Classroom
             </span>

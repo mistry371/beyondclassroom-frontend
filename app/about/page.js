@@ -1,6 +1,7 @@
 'use client'
 
 import Navbar from '@/components/Navbar'
+import BannerImage from '@/components/BannerImage'
 import MarketingShell from '@/components/marketing/MarketingShell'
 import SectionHeader from '@/components/marketing/SectionHeader'
 import { motion } from 'framer-motion'
@@ -50,8 +51,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-soft-gradient pb-20 md:pb-0">
       <Navbar />
-
-      {/* Hero */}
+      <BannerImage />
       <section className="relative py-24 premium-section overflow-hidden">
         <div className="absolute inset-0 hero-grid opacity-70" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -85,8 +85,7 @@ export default function AboutPage() {
       {/* What We Do */}
       <section className="py-16 bg-soft-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader badge="What We Do" title="Our Core Offerings" subtitle="Everything you need for structured mathematics practice." />
-          <div className="grid md:grid-cols-2 gap-8">
+ <SectionHeader  title="What We Do"  />          <div className="grid md:grid-cols-2 gap-8">
             {whatWeDo.map((item, i) => (
               <motion.div
                 key={item.title}
@@ -112,7 +111,7 @@ export default function AboutPage() {
       {/* Our Approach */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader badge="Our Approach" title="How We Develop Our Materials" subtitle="Built with a focus on what actually helps students learn." />
+          <SectionHeader badge="Our Approach" title="Our materials are developed with a focus on:"  />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {ourApproach.map((item, i) => {
               const Icon = approachIcons[i % approachIcons.length]
@@ -139,7 +138,7 @@ export default function AboutPage() {
       {/* Why Choose Beyond Classroom */}
       <section className="py-16 bg-soft-gradient">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader badge="Why Choose Us" title="Why Choose Beyond Classroom" subtitle="Trusted by students, educators, and parents across India." />
+          <SectionHeader  title="Why Choose Us" subtitle="Trusted by students, educators, and parents across Globe." />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {whyChoose.map((item, i) => (
               <motion.div

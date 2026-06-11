@@ -62,14 +62,14 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
+      <div className="min-h-screen bg-academic flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -78,7 +78,7 @@ export default function NotificationsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-8"
         >
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-navy flex items-center gap-3">
             <Bell className="h-8 w-8 text-primary" />
             Notifications
             {unreadCount > 0 && (
@@ -100,8 +100,8 @@ export default function NotificationsPage() {
         {notifications.length === 0 ? (
           <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
             <Bell className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">No notifications yet</p>
-            <p className="text-gray-500 text-sm mt-2">You'll see updates about your courses here</p>
+            <p className="text-muted text-lg">No notifications yet</p>
+            <p className="text-muted text-sm mt-2">You'll see updates about your courses here</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -123,9 +123,9 @@ export default function NotificationsPage() {
                     {getIcon(notification.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-white mb-1">{notification.title}</h3>
-                    <p className="text-gray-400 text-sm mb-2">{notification.message}</p>
-                    <p className="text-gray-500 text-xs">
+                    <h3 className="font-bold text-navy mb-1">{notification.title}</h3>
+                    <p className="text-muted text-sm mb-2">{notification.message}</p>
+                    <p className="text-muted text-xs">
                       {new Date(notification.createdAt).toLocaleString()}
                     </p>
                   </div>

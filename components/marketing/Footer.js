@@ -6,14 +6,8 @@ import { Facebook, Instagram, Linkedin, Mail, Youtube } from 'lucide-react'
 
 const links = {
   Subjects: [
-    { href: '/courses?grade=1', label: 'Class 1' },
-    { href: '/courses?grade=2', label: 'Class 2' },
-    { href: '/courses?grade=3', label: 'Class 3' },
-    { href: '/courses?grade=4', label: 'Class 4' },
-    { href: '/courses?grade=5', label: 'Class 5' },
-    { href: '/courses?grade=6', label: 'Class 6' },
-    { href: '/courses?grade=7', label: 'Class 7' },
-    { href: '/courses?grade=8', label: 'Class 8' },
+    { href: '/courses?subject=mathematics', label: 'Mathematics' },
+    { href: '/courses?subject=french', label: 'French' },
   ],
   Platform: [
     { href: '/courses', label: 'Course & Content' },

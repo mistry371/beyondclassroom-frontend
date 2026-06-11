@@ -22,7 +22,10 @@ export default function PackagesPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-soft-gradient pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-cyan-50 pb-20 md:pb-0 relative overflow-hidden">
+      {/* Decorative background blobs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
       <Navbar />
       <BannerImage />
 
@@ -80,71 +83,66 @@ function PackageCard({ pkg, index }) {
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08 }}
-      className={`relative rounded-3xl overflow-hidden flex flex-col border ${
+      className={`relative rounded-[2rem] overflow-hidden flex flex-col bg-white/80 backdrop-blur-xl border ${
         isPopular
-          ? 'border-[#c9a84c] ring-2 ring-[#c9a84c]/50'
-          : 'border-[#c9a84c]/25'
-      }`}
-      style={{ background: 'linear-gradient(160deg, #0b1d40 0%, #0e2d52 60%, #0b1d40 100%)' }}
+          ? 'border-primary shadow-[0_0_40px_-10px_rgba(8,31,140,0.3)] ring-4 ring-primary/10 scale-105 z-10'
+          : 'border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl hover:-translate-y-1 z-0'
+      } transition-all duration-300`}
     >
       {/* Most Popular ribbon */}
       {isPopular && (
-        <div className="bg-gradient-to-r from-[#c9a84c] to-[#f0c060] py-1.5 text-center">
-          <span className="text-navy text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5">
-            <Star className="h-3 w-3 fill-navy" /> Most Popular
+        <div className="bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient py-1.5 text-center">
+          <span className="text-white text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5">
+            <Star className="h-3 w-3 fill-white" /> Recommended Choice
           </span>
         </div>
       )}
 
       {/* ── Header ── */}
-      <div className="px-6 pt-6 pb-5 text-center border-b border-white/10">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-3">
-          <Star className="h-6 w-6 fill-[#c9a84c] text-[#c9a84c]" />
-        </div>
-        <h3 className="text-xl font-black text-white uppercase tracking-wide leading-tight">
+      <div className="px-6 pt-8 pb-6 text-center border-b border-gray-100 bg-white/50">
+        <h3 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary uppercase tracking-wider leading-tight">
           {pkg.name}
         </h3>
         {pkg.nameExtra && (
-          <p className="text-[#a0c4ff] text-xs font-semibold mt-0.5">{pkg.nameExtra}</p>
+          <p className="mt-1 text-sm font-bold text-secondary">{pkg.nameExtra}</p>
         )}
-        <div className="mt-2 px-4 py-1 rounded-full inline-block bg-[#1a5c2e]">
-          <span className="text-white text-[10px] font-bold uppercase tracking-widest">PACKAGE</span>
-        </div>
-        {pkg.tagline && (
-          <p className="mt-2.5 text-[#a0c4ff] text-xs leading-relaxed">
-            <span className="text-[#c9a84c]">★</span> {pkg.tagline} <span className="text-[#c9a84c]">★</span>
+        {pkg.description && (
+          <p className="mt-3 text-slate-500 text-sm leading-relaxed max-w-[250px] mx-auto font-medium">
+            {pkg.description}
           </p>
         )}
       </div>
 
       {/* ── Price ── */}
-      <div className="mx-5 mt-5 rounded-2xl border border-[#c9a84c]/35 bg-[#07122a] p-4 text-center">
-        <div className="flex items-center justify-center gap-1.5 mb-2">
-          <Star className="h-3 w-3 fill-[#c9a84c] text-[#c9a84c]" />
-          <span className="text-[#c9a84c] text-[11px] font-black uppercase tracking-widest">Special Price</span>
-          <Star className="h-3 w-3 fill-[#c9a84c] text-[#c9a84c]" />
-        </div>
-        <p className="text-3xl font-black leading-none">
-          <span className="text-[#c9a84c]">₹{pkg.inr?.toLocaleString('en-IN')}</span>
-          <span className="text-white/30 mx-2 text-2xl">/</span>
-          <span className="text-white">${pkg.usd}</span>
+      <div className="mx-6 mt-6 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/30 p-5 text-center border border-indigo-100/50 shadow-inner">
+        <p className="text-5xl font-black leading-none text-slate-800 tracking-tight">
+          ₹{pkg.priceINR?.toLocaleString('en-IN') || pkg.inr?.toLocaleString('en-IN')}
+          <span className="text-slate-400 text-3xl font-black mx-2">/</span>
+          <span className="text-4xl">${pkg.priceUSD || pkg.usd}</span>
+          <span className="text-slate-400 text-lg font-bold ml-1">/yr</span>
         </p>
-        <p className="text-white/35 text-xs mt-1.5">Valid for {pkg.validity}</p>
+        <div className="mt-3 flex items-center justify-center gap-2">
+          <span className="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+            Valid for {pkg.validity}
+          </span>
+        </div>
       </div>
 
       {/* ── Features ── */}
-      <div className="mx-5 mt-4 bg-[#0d2044]/40 rounded-2xl p-4 flex-1">
-        <ul className="space-y-3">
+      <div className="px-6 mt-8 mb-8 flex-1">
+        <ul className="space-y-4">
           {(pkg.features || []).map((f, fi) => {
             const label = typeof f === 'object' ? f.label : f
             const detail = typeof f === 'object' ? f.detail : null
             return (
-              <li key={fi} className="flex items-start gap-2.5">
-                <CheckCircle className="h-4 w-4 text-[#22c55e] flex-shrink-0 mt-0.5" />
+              <li key={fi} className="flex items-start gap-3">
+                <div className="mt-0.5 bg-emerald-100/50 rounded-full p-1 shrink-0">
+                  <CheckCircle className="h-4 w-4 text-emerald-600" />
+                </div>
                 <div>
-                  <span className="text-white text-sm font-semibold leading-snug block">{label}</span>
+                  <span className="text-slate-700 text-sm font-bold leading-snug block">{label}</span>
                   {detail && (
-                    <span className="text-white/45 text-xs leading-snug block mt-0.5">{detail}</span>
+                    <span className="text-slate-500 text-xs leading-snug block mt-0.5 font-medium">{detail}</span>
                   )}
                 </div>
               </li>
@@ -154,16 +152,16 @@ function PackageCard({ pkg, index }) {
       </div>
 
       {/* ── CTA ── */}
-      <div className="px-5 py-5 mt-auto">
+      <div className="px-6 py-6 mt-auto bg-slate-50/50 border-t border-gray-100">
         <Link
-          href="/auth/register"
-          className={`block text-center py-3.5 rounded-2xl font-black text-sm tracking-wide transition-all ${
+          href={`/packages/${pkg._id || pkg.id}`}
+          className={`block text-center py-4 rounded-xl font-black text-sm uppercase tracking-wider transition-all duration-300 ${
             isPopular
-              ? 'bg-gradient-to-r from-[#c9a84c] to-[#f0c060] text-navy hover:opacity-90'
-              : 'bg-white text-navy hover:bg-[#c9a84c] hover:text-white'
+              ? 'bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5'
+              : 'bg-white text-primary border-2 border-primary/10 hover:border-primary hover:bg-primary hover:text-white shadow-sm hover:shadow-md'
           }`}
         >
-          BUY NOW
+          Explore Package
         </Link>
       </div>
     </motion.div>

@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, Suspense } from 'react'
 import { ArrowRight, BookOpen, Clock, Filter, Search, SlidersHorizontal, Star, Users, Lock } from 'lucide-react'
 import Navbar from '@/components/Navbar'
-import BannerImage from '@/components/BannerImage'
 import MarketingShell from '@/components/marketing/MarketingShell'
 import { cachedGet } from '@/utils/api'
 import { motion } from 'framer-motion'
@@ -12,10 +11,15 @@ import CourseCardSkeleton from '@/components/ui/CourseCardSkeleton'
 import { CLASS_GRADES } from '@/lib/constants'
 import { useSelector } from 'react-redux'
 
-export default function CoursesPage() {
+import { useSearchParams } from 'next/navigation'
+
+function CoursesContent() {
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
-  const [gradeFilter, setGradeFilter] = useState('all')
+  const searchParams = useSearchParams()
+  const initialGradeParam = searchParams.get('grade')
+  const initialGrade = initialGradeParam ? `Class ${initialGradeParam}` : 'all'
+  const [gradeFilter, setGradeFilter] = useState(initialGrade)
   const [searchQuery, setSearchQuery] = useState('')
   const { user } = useSelector((state) => state.auth)
 
@@ -38,16 +42,21 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-academic pb-20 md:pb-0">
       <Navbar />
-      <BannerImage />
 
       {/* Hero */}
       <section className="relative overflow-hidden premium-section">
         <div className="absolute inset-0 hero-grid opacity-70" />
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl">
-          
-            
-            
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-bold text-primary shadow-sm">
+              <BookOpen className="h-4 w-4" /> Course & Content
+            </span>
+            <h1 className="mt-6 text-4xl font-black leading-tight text-navy sm:text-6xl">
+              Structured Mathematics content for Class 1 to Class 8.
+            </h1>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">
+              Browse curriculum-aligned Mathematics courses organized by class. Preview content freely — login required only for purchases, downloads, and progress tracking.
+            </p>
           </motion.div>
 
           {/* Class Grade Filter Tabs */}
@@ -181,5 +190,13 @@ export default function CoursesPage() {
 
       <MarketingShell />
     </div>
+  )
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center">Loading...</div>}>
+      <CoursesContent />
+    </Suspense>
   )
 }

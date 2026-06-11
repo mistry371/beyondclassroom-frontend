@@ -17,11 +17,13 @@ const emptyForm = {
   image: '',
   active: true,
   popular: false,
+  courseIds: [],
 }
 
 export default function AdminPackages() {
   const router = useRouter()
   const [packages, setPackages] = useState([])
+  const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [selectedPkg, setSelectedPkg] = useState(null)
@@ -31,6 +33,7 @@ export default function AdminPackages() {
 
   useEffect(() => {
     fetchPackages()
+    fetchCourses()
   }, [])
 
   const fetchPackages = async () => {
@@ -39,10 +42,18 @@ export default function AdminPackages() {
       const res = await api.get('/packages/admin')
       setPackages(res.data.packages || [])
     } catch {
-      // Fall back to static packages if API not yet implemented
       setPackages([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCourses = async () => {
+    try {
+      const res = await api.get('/courses')
+      setCourses(res.data.courses || [])
+    } catch (err) {
+      console.error('Failed to fetch courses:', err)
     }
   }
 
@@ -58,13 +69,14 @@ export default function AdminPackages() {
     setFormData({
       name: pkg.name || '',
       description: pkg.description || '',
-      features: Array.isArray(pkg.features) ? pkg.features.join('\n') : (pkg.features || ''),
+      features: Array.isArray(pkg.features) ? pkg.features.map(f => typeof f === 'object' ? `${f.label}${f.detail ? ' | ' + f.detail : ''}` : f).join('\n') : (pkg.features || ''),
       priceINR: pkg.priceINR || pkg.inr || '',
       priceUSD: pkg.priceUSD || pkg.usd || '',
       validity: pkg.validity || '',
       image: pkg.image || '',
       active: pkg.active !== false,
       popular: pkg.popular || false,
+      courseIds: pkg.courseIds || [],
     })
     setError('')
     setShowModal(true)
@@ -77,9 +89,14 @@ export default function AdminPackages() {
     try {
       const payload = {
         ...formData,
-        features: formData.features.split('\n').map((f) => f.trim()).filter(Boolean),
+        features: formData.features.split('\n').map((f) => {
+          const parts = f.split('|').map(p => p.trim());
+          if (parts.length > 1) return { label: parts[0], detail: parts[1] };
+          return parts[0];
+        }).filter(f => typeof f === 'object' ? f.label : f),
         priceINR: Number(formData.priceINR),
         priceUSD: Number(formData.priceUSD),
+        courseIds: formData.courseIds,
       }
       if (selectedPkg) {
         await api.put(`/packages/admin/${selectedPkg._id}`, payload)
@@ -124,20 +141,20 @@ export default function AdminPackages() {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       {/* Header */}
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Package Management
                 </h1>
-                <p className="text-gray-400 mt-1">{packages.length} packages configured</p>
+                <p className="text-muted mt-1">{packages.length} packages configured</p>
               </div>
             </div>
             <button
@@ -153,13 +170,23 @@ export default function AdminPackages() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+            
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
           </div>
         ) : packages.length === 0 ? (
           <div className="text-center py-20">
             <Package className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl font-semibold">No packages yet</p>
-            <p className="text-gray-500 mt-2 mb-6">Create your first package to get started.</p>
+            <p className="text-muted text-xl font-semibold">No packages yet</p>
+            <p className="text-muted mt-2 mb-6">Create your first package to get started.</p>
             <button onClick={openCreate} className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold">
               Create Package
             </button>
@@ -175,13 +202,13 @@ export default function AdminPackages() {
                 className={`bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border p-6 ${pkg.active !== false ? 'border-white/10' : 'border-red-500/20 opacity-60'}`}
               >
                 {pkg.image && (
-                  <div className="h-32 rounded-xl overflow-hidden mb-4 bg-dark-200">
+                  <div className="h-32 rounded-xl overflow-hidden mb-4 bg-academic">
                     <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-lg font-bold text-white">{pkg.name}</h3>
+                    <h3 className="text-lg font-bold text-navy">{pkg.name}</h3>
                     {pkg.popular && (
                       <span className="text-xs font-semibold text-accent">★ Most Popular</span>
                     )}
@@ -192,25 +219,25 @@ export default function AdminPackages() {
                 </div>
 
                 {pkg.description && (
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{pkg.description}</p>
+                  <p className="text-muted text-sm mb-3 line-clamp-2">{pkg.description}</p>
                 )}
 
                 <div className="flex gap-4 mb-3 text-sm">
                   <span className="text-primary font-bold">₹{pkg.priceINR || pkg.inr || 0}</span>
-                  <span className="text-gray-500">/ ${pkg.priceUSD || pkg.usd || 0}</span>
-                  {pkg.validity && <span className="text-gray-500">· {pkg.validity}</span>}
+                  <span className="text-muted">/ ${pkg.priceUSD || pkg.usd || 0}</span>
+                  {pkg.validity && <span className="text-muted">· {pkg.validity}</span>}
                 </div>
 
                 {Array.isArray(pkg.features) && pkg.features.length > 0 && (
                   <ul className="space-y-1 mb-4">
                     {pkg.features.slice(0, 3).map((f, i) => (
-                      <li key={i} className="flex items-center gap-2 text-xs text-gray-400">
+                      <li key={i} className="flex items-center gap-2 text-xs text-muted">
                         <CheckCircle className="h-3.5 w-3.5 text-secondary flex-shrink-0" />
-                        {f}
+                        {typeof f === 'object' ? f.label : f}
                       </li>
                     ))}
                     {pkg.features.length > 3 && (
-                      <li className="text-xs text-gray-500">+{pkg.features.length - 3} more features</li>
+                      <li className="text-xs text-muted">+{pkg.features.length - 3} more features</li>
                     )}
                   </ul>
                 )}
@@ -232,7 +259,7 @@ export default function AdminPackages() {
                   <button
                     onClick={() => handleReorder(pkg._id, 'up')}
                     disabled={idx === 0}
-                    className="px-3 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"
+                    className="px-3 py-2 bg-gray-500/20 text-muted rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"
                     title="Move up"
                   >
                     <ArrowUp className="h-4 w-4" />
@@ -240,7 +267,7 @@ export default function AdminPackages() {
                   <button
                     onClick={() => handleReorder(pkg._id, 'down')}
                     disabled={idx === packages.length - 1}
-                    className="px-3 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"
+                    className="px-3 py-2 bg-gray-500/20 text-muted rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"
                     title="Move down"
                   >
                     <ArrowDown className="h-4 w-4" />
@@ -274,13 +301,13 @@ export default function AdminPackages() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-navy">
                   {selectedPkg ? 'Edit Package' : 'Create Package'}
                 </h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white">
+                <button onClick={() => setShowModal(false)} className="text-muted hover:text-white">
                   <X className="h-6 w-6" />
                 </button>
               </div>
@@ -291,34 +318,34 @@ export default function AdminPackages() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Package Name *</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Package Name *</label>
                   <input
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     placeholder="e.g. Basic Package"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Description</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     rows="2"
                     placeholder="Short description of this package"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Features (one per line) *</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Features (one per line) *</label>
                   <textarea
                     required
                     value={formData.features}
                     onChange={(e) => setFormData({ ...formData, features: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary font-mono text-sm"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary font-mono text-sm"
                     rows="6"
                     placeholder="Class 1-8 Mathematics&#10;Structured Practice Papers&#10;Detailed Solutions&#10;Progress Tracking"
                   />
@@ -326,46 +353,46 @@ export default function AdminPackages() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Price INR (₹) *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Price INR (₹) *</label>
                     <input
                       required
                       type="number"
                       min="0"
                       value={formData.priceINR}
                       onChange={(e) => setFormData({ ...formData, priceINR: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       placeholder="999"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Price USD ($)</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Price USD ($)</label>
                     <input
                       type="number"
                       min="0"
                       value={formData.priceUSD}
                       onChange={(e) => setFormData({ ...formData, priceUSD: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       placeholder="15"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Validity</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Validity</label>
                   <input
                     value={formData.validity}
                     onChange={(e) => setFormData({ ...formData, validity: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     placeholder="e.g. 1 month, 3 months, 1 year"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Custom Image URL</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Custom Image URL</label>
                   <input
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     placeholder="/packages/Basic Package.png"
                   />
                 </div>
@@ -378,7 +405,7 @@ export default function AdminPackages() {
                       onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                       className="w-4 h-4 accent-primary"
                     />
-                    <span className="text-gray-300 text-sm">Active (visible to users)</span>
+                    <span className="text-ink text-sm">Active (visible to users)</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -387,7 +414,7 @@ export default function AdminPackages() {
                       onChange={(e) => setFormData({ ...formData, popular: e.target.checked })}
                       className="w-4 h-4 accent-primary"
                     />
-                    <span className="text-gray-300 text-sm">Mark as Most Popular</span>
+                    <span className="text-ink text-sm">Mark as Most Popular</span>
                   </label>
                 </div>
 
@@ -395,7 +422,7 @@ export default function AdminPackages() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>

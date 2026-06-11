@@ -1,0 +1,1009 @@
+# UI Audit - Dark Theme Remnants
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\analytics\page.js
+- Line 54: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 67: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 68: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 72: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 72: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 73: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 79: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">Platform performance insights</p>`
+- Line 86: Found `bg-dark` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 86: Found `bg-dark-100` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 86: Found `border-white/10` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 141: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 156: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 173: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 211: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 215: Found `bg-dark` -> `<div key={student._id} className="flex items-center justify-between p-3 bg-dark-200/30 rounded-lg">`
+- Line 215: Found `bg-dark-200` -> `<div key={student._id} className="flex items-center justify-between p-3 bg-dark-200/30 rounded-lg">`
+- Line 222: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{student.coursesCompleted} courses</p>`
+- Line 241: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 254: Found `text-gray-400` -> `<h3 className="text-gray-400 text-sm mb-1">{title}</h3>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\announcements\page.js
+- Line 63: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 70: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 71: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 75: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 75: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 76: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 82: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{announcements.length} active announcements</p>`
+- Line 104: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 116: Found `text-gray-400` -> `<span className="text-gray-400 text-sm">`
+- Line 121: Found `text-gray-400` -> `<p className="text-gray-400">{announcement.message}</p>`
+- Line 142: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No announcements yet</p>`
+- Line 161: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 161: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 161: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 171: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 171: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 171: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 180: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 180: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 180: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 204: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 204: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 204: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 212: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 212: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\badges\page.js
+- Line 76: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 83: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 84: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 88: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 88: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 89: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 95: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{badges.length} badges created</p>`
+- Line 117: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 122: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mb-3">{badge.description}</p>`
+- Line 148: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No badges created yet</p>`
+- Line 167: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 167: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 167: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 179: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 179: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 179: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 188: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 188: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 188: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 200: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 200: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 200: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 210: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-4xl text-center"`
+- Line 210: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-4xl text-center"`
+- Line 210: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-4xl text-center"`
+- Line 218: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 218: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\certificates\page.js
+- Line 209: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 216: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 217: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 221: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 221: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 222: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 228: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{certificates.length} certificates issued</p>`
+- Line 250: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 258: Found `text-gray-400` -> `<p className="text-gray-400 text-sm text-center mb-1">{cert.course?.title || 'Unknown Course'}</p>`
+- Line 299: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No certificates issued yet</p>`
+- Line 325: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 325: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 325: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 334: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 348: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 348: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 348: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 361: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 361: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 429: Found `text-gray-400` -> `<p className="text-xs text-gray-400 font-mono mt-1">{viewCert.certificateNumber}</p>`
+- Line 437: Found `text-gray-400` -> `<p className="text-xs text-gray-400 mt-1">{new Date(viewCert.issuedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\content\page.js
+- Line 48: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 55: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 56: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 60: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 60: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 61: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 67: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">Manage website content</p>`
+- Line 82: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 space-y-6">`
+- Line 89: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 89: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 89: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 106: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 106: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 106: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 116: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 116: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 116: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 125: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 125: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 125: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\courses\page.js
+- Line 114: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 121: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 122: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 126: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 126: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 127: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 133: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{courses.length} total courses</p>`
+- Line 150: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />`
+- Line 156: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 156: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 156: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 167: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 172: Found `text-gray-400` -> `<p className="text-gray-400 text-sm line-clamp-2">{course.description}</p>`
+- Line 177: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 185: Found `text-gray-400` -> `<span className="text-gray-400">Category:</span>`
+- Line 189: Found `text-gray-400` -> `<span className="text-gray-400">Price:</span>`
+- Line 193: Found `text-gray-400` -> `<span className="text-gray-400">Enrolled:</span>`
+- Line 249: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 249: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 249: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 261: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 261: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 261: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 270: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 270: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 270: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 281: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 281: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 281: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 293: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 293: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 293: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 306: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 306: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 306: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 327: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 327: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 327: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 341: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 341: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 341: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 351: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 351: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 351: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 362: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 362: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\custom-requests\page.js
+- Line 53: Found `bg-dark` -> `if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>`
+- Line 56: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 57: Found `bg-dark` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 57: Found `bg-dark-100` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 57: Found `border-white/10` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 59: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 59: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 59: Found `text-gray-400` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 62: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{requests.length} total requests</p>`
+- Line 68: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 68: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 68: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 70: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No custom requests yet</p>`
+- Line 74: Found `bg-dark` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 74: Found `bg-dark-100` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 74: Found `border-white/10` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 81: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{req.userName} · {req.userEmail}</p>`
+- Line 94: Found `text-gray-400` -> `<div className="flex gap-4 text-sm text-gray-400">`
+- Line 111: Found `border-white/10` -> `<span key={key} className="px-2 py-0.5 bg-white/5 text-gray-300 border border-white/10 rounded text-xs">{key}: {value}</span>`
+- Line 121: Found `text-gray-400` -> `{req.description && <p className="text-gray-400 text-sm mt-2">{req.description}</p>}`
+- Line 129: Found `bg-dark` -> `<div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl max-h-[88vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>`
+- Line 129: Found `bg-dark-100` -> `<div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl max-h-[88vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>`
+- Line 129: Found `border-white/10` -> `<div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl max-h-[88vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>`
+- Line 134: Found `bg-dark` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 134: Found `bg-dark-200` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 134: Found `border-white/10` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 146: Found `bg-dark` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 146: Found `bg-dark-200` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 146: Found `border-white/10` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 152: Found `bg-dark` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 152: Found `bg-dark-200` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 152: Found `border-white/10` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 157: Found `bg-dark` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 157: Found `bg-dark-200` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 157: Found `border-white/10` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 163: Found `bg-dark` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={4}`
+- Line 163: Found `bg-dark-200` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={4}`
+- Line 163: Found `border-white/10` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={4}`
+- Line 168: Found `bg-dark` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 168: Found `bg-dark-200` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 168: Found `border-white/10` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 171: Found `border-white/10` -> `<div className="border border-white/10 rounded-lg p-3">`
+- Line 173: Found `bg-dark` -> `<input className="w-full mb-2 px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Title e.g. Merged Paper Set 1"/>`
+- Line 173: Found `bg-dark-200` -> `<input className="w-full mb-2 px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Title e.g. Merged Paper Set 1"/>`
+- Line 173: Found `border-white/10` -> `<input className="w-full mb-2 px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Title e.g. Merged Paper Set 1"/>`
+- Line 175: Found `bg-dark` -> `<select className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>`
+- Line 175: Found `bg-dark-200` -> `<select className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>`
+- Line 175: Found `border-white/10` -> `<select className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>`
+- Line 181: Found `bg-dark` -> `<input className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>`
+- Line 181: Found `bg-dark-200` -> `<input className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>`
+- Line 181: Found `border-white/10` -> `<input className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>`
+- Line 183: Found `bg-dark` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryNote} onChange={e => setForm(f => ({...f, deliveryNote: e.target.value}))} placeholder="Short note for student"/>`
+- Line 183: Found `bg-dark-200` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryNote} onChange={e => setForm(f => ({...f, deliveryNote: e.target.value}))} placeholder="Short note for student"/>`
+- Line 183: Found `border-white/10` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryNote} onChange={e => setForm(f => ({...f, deliveryNote: e.target.value}))} placeholder="Short note for student"/>`
+- Line 187: Found `bg-dark` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={3}`
+- Line 187: Found `bg-dark-200` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={3}`
+- Line 187: Found `border-white/10` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={3}`
+- Line 191: Found `bg-dark` -> `<button type="button" onClick={() => setSelected(null)} className="flex-1 py-2 bg-dark-200 text-white rounded-xl text-sm hover:bg-gray-600">Cancel</button>`
+- Line 191: Found `bg-dark-200` -> `<button type="button" onClick={() => setSelected(null)} className="flex-1 py-2 bg-dark-200 text-white rounded-xl text-sm hover:bg-gray-600">Cancel</button>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\emails\page.js
+- Line 272: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 278: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 279: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 282: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 282: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 283: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 287: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{TEMPLATES.length} templates • {emails.length} emails sent</p>`
+- Line 297: Found `bg-dark` -> `className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-dark-100 text-gray-400 hover:bg-dark-200'}`}`
+- Line 297: Found `bg-dark-100` -> `className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-dark-100 text-gray-400 hover:bg-dark-200'}`}`
+- Line 297: Found `bg-dark-200` -> `className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-dark-100 text-gray-400 hover:bg-dark-200'}`}`
+- Line 297: Found `text-gray-400` -> `className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-dark-100 text-gray-400 hover:bg-dark-200'}`}`
+- Line 308: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 315: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mb-2">{template.description}</p>`
+- Line 337: Found `bg-dark` -> `<button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-gray-400 rounded-lg hover:bg-dark-200 transition-all text-sm">`
+- Line 337: Found `bg-dark-100` -> `<button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-gray-400 rounded-lg hover:bg-dark-200 transition-all text-sm">`
+- Line 337: Found `bg-dark-200` -> `<button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-gray-400 rounded-lg hover:bg-dark-200 transition-all text-sm">`
+- Line 337: Found `text-gray-400` -> `<button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-gray-400 rounded-lg hover:bg-dark-200 transition-all text-sm">`
+- Line 344: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No emails sent yet</p>`
+- Line 348: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-xl border border-white/10 p-4"`
+- Line 357: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">To: {email.to}</p>`
+- Line 413: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-md"`
+- Line 413: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-md"`
+- Line 413: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-md"`
+- Line 417: Found `bg-dark` -> `<button onClick={() => setSendModal(null)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 417: Found `bg-dark-200` -> `<button onClick={() => setSendModal(null)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 417: Found `text-gray-400` -> `<button onClick={() => setSendModal(null)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 432: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 432: Found `bg-dark-200` -> `className="w-full pl-10 pr-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 432: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 439: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 439: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 439: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 443: Found `bg-dark` -> `<button type="button" onClick={() => setSendModal(null)} className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all">Cancel</button>`
+- Line 443: Found `bg-dark-200` -> `<button type="button" onClick={() => setSendModal(null)} className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all">Cancel</button>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\exams\ExamBuilder.js
+- Line 10: Found `bg-dark` -> `const INP = "w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 10: Found `bg-dark-200` -> `const INP = "w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 10: Found `border-white/10` -> `const INP = "w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"`
+- Line 72: Found `bg-dark` -> `if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>`
+- Line 75: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 76: Found `bg-dark` -> `<div className="bg-dark-100 border-b border-white/10 sticky top-0 z-40">`
+- Line 76: Found `bg-dark-100` -> `<div className="bg-dark-100 border-b border-white/10 sticky top-0 z-40">`
+- Line 76: Found `border-white/10` -> `<div className="bg-dark-100 border-b border-white/10 sticky top-0 z-40">`
+- Line 79: Found `bg-dark` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 79: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 79: Found `text-gray-400` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 82: Found `text-gray-400` -> `<p className="text-gray-400 text-xs">{totalQ} questions · {totalMarks} marks</p>`
+- Line 86: Found `bg-dark` -> `<button onClick={() => handleSave(false)} className="px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 text-sm">Save Draft</button>`
+- Line 86: Found `bg-dark-200` -> `<button onClick={() => handleSave(false)} className="px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 text-sm">Save Draft</button>`
+- Line 95: Found `bg-dark` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 95: Found `bg-dark-100` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 95: Found `border-white/10` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 118: Found `bg-dark` -> `<div key={section._id||si} className="bg-dark-100/80 rounded-2xl border border-white/10 overflow-hidden">`
+- Line 118: Found `bg-dark-100` -> `<div key={section._id||si} className="bg-dark-100/80 rounded-2xl border border-white/10 overflow-hidden">`
+- Line 118: Found `border-white/10` -> `<div key={section._id||si} className="bg-dark-100/80 rounded-2xl border border-white/10 overflow-hidden">`
+- Line 119: Found `bg-dark` -> `<div className="flex items-center justify-between p-4 bg-dark-200/40 cursor-pointer" onClick={()=>setExpandedSection(expandedSection===si?-1:si)}>`
+- Line 119: Found `bg-dark-200` -> `<div className="flex items-center justify-between p-4 bg-dark-200/40 cursor-pointer" onClick={()=>setExpandedSection(expandedSection===si?-1:si)}>`
+- Line 124: Found `text-gray-400` -> `<p className="text-gray-400 text-xs">{section.questions.length} questions · {section.questions.reduce((s,q)=>s+(q.marks||section.marksPerQuestion||4),0)} marks</p>`
+- Line 128: Found `text-gray-400` -> `<button onClick={e=>{e.stopPropagation();removeSection(si)}} className="p-1.5 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400"><Trash2 className="h-4 w-4"/></button>`
+- Line 129: Found `text-gray-400` -> `{expandedSection===si?<ChevronUp className="h-5 w-5 text-gray-400"/>:<ChevronDown className="h-5 w-5 text-gray-400"/>}`
+- Line 142: Found `bg-dark` -> `<div key={q._id||qi} className="bg-dark-200/50 rounded-xl p-4 border border-white/5">`
+- Line 142: Found `bg-dark-200` -> `<div key={q._id||qi} className="bg-dark-200/50 rounded-xl p-4 border border-white/5">`
+- Line 198: Found `text-gray-400` -> `<button onClick={addSection} className="w-full py-3 border border-dashed border-white/20 text-gray-400 rounded-2xl hover:border-primary/40 hover:text-primary transition-all flex items-center justify-center gap-2">`
+- Line 207: Found `text-gray-400` -> `<div><p className="text-3xl font-black text-primary">{totalQ}</p><p className="text-gray-400 text-xs">Questions</p></div>`
+- Line 208: Found `text-gray-400` -> `<div><p className="text-3xl font-black text-secondary">{totalMarks}</p><p className="text-gray-400 text-xs">Total Marks</p></div>`
+- Line 209: Found `text-gray-400` -> `<div><p className="text-3xl font-black text-white">{form.duration}</p><p className="text-gray-400 text-xs">Minutes</p></div>`
+- Line 210: Found `text-gray-400` -> `<div><p className="text-3xl font-black text-green-400">{form.passingMarks}</p><p className="text-gray-400 text-xs">Passing Marks</p></div>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\exams\page.js
+- Line 37: Found `bg-dark` -> `if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>`
+- Line 40: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 41: Found `bg-dark` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 41: Found `bg-dark-100` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 41: Found `border-white/10` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 44: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 44: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 44: Found `text-gray-400` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>`
+- Line 47: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{exams.length} exams total</p>`
+- Line 57: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 57: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 57: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 59: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No exams yet</p>`
+- Line 64: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 69: Found `text-gray-400` -> `<span className={"px-2 py-0.5 rounded-full text-xs font-medium " + (exam.isPublished ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400")}>`
+- Line 73: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{exam.description}</p>`
+- Line 76: Found `text-gray-400` -> `<div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\exams\[examId]\analytics\page.js
+- Line 23: Found `bg-dark` -> `if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>`
+- Line 28: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 29: Found `bg-dark` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 29: Found `bg-dark-100` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 29: Found `border-white/10` -> `<div className="bg-dark-100 border-b border-white/10">`
+- Line 31: Found `bg-dark` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 31: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 31: Found `text-gray-400` -> `<button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>`
+- Line 37: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 37: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 37: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 39: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No attempts yet</p>`
+- Line 51: Found `bg-dark` -> `<div key={i} className="bg-dark-100/80 rounded-2xl border border-white/10 p-5">`
+- Line 51: Found `bg-dark-100` -> `<div key={i} className="bg-dark-100/80 rounded-2xl border border-white/10 p-5">`
+- Line 51: Found `border-white/10` -> `<div key={i} className="bg-dark-100/80 rounded-2xl border border-white/10 p-5">`
+- Line 53: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{s.label}</p>`
+- Line 58: Found `bg-dark` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 58: Found `bg-dark-100` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 58: Found `border-white/10` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 71: Found `bg-dark` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 71: Found `bg-dark-100` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 71: Found `border-white/10` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 83: Found `bg-dark` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 83: Found `bg-dark-100` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 83: Found `border-white/10` -> `<div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 87: Found `bg-dark` -> `<div key={i} className="flex items-center justify-between p-3 bg-dark-200/40 rounded-xl">`
+- Line 87: Found `bg-dark-200` -> `<div key={i} className="flex items-center justify-between p-3 bg-dark-200/40 rounded-xl">`
+- Line 89: Found `bg-dark` -> `<div className={"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm " + (i===0?'bg-yellow-500 text-black':i===1?'bg-gray-400 text-black':i===2?'bg-amber-600 text-white':'bg-dark-200 text-gray-400')}>{i+1}</div>`
+- Line 89: Found `bg-dark-200` -> `<div className={"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm " + (i===0?'bg-yellow-500 text-black':i===1?'bg-gray-400 text-black':i===2?'bg-amber-600 text-white':'bg-dark-200 text-gray-400')}>{i+1}</div>`
+- Line 89: Found `text-gray-400` -> `<div className={"w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm " + (i===0?'bg-yellow-500 text-black':i===1?'bg-gray-400 text-black':i===2?'bg-amber-600 text-white':'bg-dark-200 text-gray-400')}>{i+1}</div>`
+- Line 94: Found `text-gray-400` -> `<p className="text-gray-400 text-xs">{Math.floor(t.time/60)}m {t.time%60}s</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\lessons\page.js
+- Line 123: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 130: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 131: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 135: Found `bg-dark` -> `<button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 135: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 136: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 142: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{lessons.length} lessons in selected module</p>`
+- Line 163: Found `bg-dark` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 163: Found `bg-dark-100` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 163: Found `border-white/10` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 173: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 173: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 173: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 175: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No lessons found</p>`
+- Line 185: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 192: Found `text-gray-400` -> `<p className="text-gray-400 text-sm line-clamp-2">`
+- Line 201: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 207: Found `text-gray-400` -> `<div className="flex items-center gap-4 text-sm text-gray-400 mb-4">`
+- Line 263: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 263: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 263: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 275: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 275: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 275: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 284: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 284: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 284: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 296: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 296: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 296: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 307: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 307: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 307: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 318: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 318: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 318: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 334: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 356: Found `bg-dark` -> `<Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\live\page.js
+- Line 110: Found `text-gray-400` -> `s === 'recorded' ? 'bg-gray-500/20 text-gray-400' :`
+- Line 120: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 126: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 127: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 131: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 131: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 132: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 136: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{classes.length} classes • Zoom auto-integration enabled</p>`
+- Line 154: Found `text-gray-400` -> `<p className="text-gray-400">`
+- Line 165: Found `text-gray-400` -> `<p className="text-gray-400 text-xl mb-4">No live classes scheduled</p>`
+- Line 174: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 187: Found `text-gray-400` -> `<div className="space-y-1 mb-4 text-sm text-gray-400">`
+- Line 196: Found `bg-dark` -> `<div className="flex items-center gap-2 bg-dark-200/50 rounded-lg p-2">`
+- Line 196: Found `bg-dark-200` -> `<div className="flex items-center gap-2 bg-dark-200/50 rounded-lg p-2">`
+- Line 200: Found `text-gray-400` -> `className="text-gray-400 hover:text-white transition-colors flex-shrink-0"`
+- Line 206: Found `bg-dark` -> `<div className="flex items-center gap-2 bg-dark-200/50 rounded-lg p-2">`
+- Line 206: Found `bg-dark-200` -> `<div className="flex items-center gap-2 bg-dark-200/50 rounded-lg p-2">`
+- Line 210: Found `text-gray-400` -> `className="text-gray-400 hover:text-white transition-colors flex-shrink-0"`
+- Line 222: Found `text-gray-400` -> `<div className="flex items-center gap-2 text-xs text-gray-400">`
+- Line 224: Found `bg-dark` -> `<code className="bg-dark-200 px-2 py-0.5 rounded text-yellow-400">{cls.zoomPassword}</code>`
+- Line 224: Found `bg-dark-200` -> `<code className="bg-dark-200 px-2 py-0.5 rounded text-yellow-400">{cls.zoomPassword}</code>`
+- Line 226: Found `text-gray-400` -> `className="text-gray-400 hover:text-white"`
+- Line 262: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"`
+- Line 262: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"`
+- Line 262: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"`
+- Line 266: Found `bg-dark` -> `<button onClick={() => setShowModal(false)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 266: Found `bg-dark-200` -> `<button onClick={() => setShowModal(false)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 266: Found `text-gray-400` -> `<button onClick={() => setShowModal(false)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>`
+- Line 295: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 295: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 295: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 302: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 302: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 302: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 309: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 309: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 309: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 328: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 328: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 328: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 335: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 335: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 335: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 346: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 346: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 346: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 353: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 353: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 353: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 368: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 368: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 368: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 375: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 375: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\logs\page.js
+- Line 40: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 47: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 48: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 52: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 52: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 53: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 59: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{logs.length} log entries</p>`
+- Line 86: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />`
+- Line 92: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 92: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 92: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `bg-dark` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `bg-dark-100` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 98: Found `border-white/10` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 115: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-lg border border-white/10 p-4"`
+- Line 123: Found `text-gray-400` -> `'bg-gray-500/20 text-gray-400'`
+- Line 128: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">by {log.user?.name || 'System'}</p>`
+- Line 141: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No logs found</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\media\page.js
+- Line 94: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 101: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 102: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 106: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 106: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 107: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 113: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{media.length} files uploaded</p>`
+- Line 129: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />`
+- Line 135: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 135: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 135: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 141: Found `bg-dark` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 141: Found `bg-dark-100` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 141: Found `border-white/10` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 158: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"`
+- Line 160: Found `bg-dark` -> `<div className="aspect-square bg-dark-200 flex items-center justify-center">`
+- Line 160: Found `bg-dark-200` -> `<div className="aspect-square bg-dark-200 flex items-center justify-center">`
+- Line 171: Found `text-gray-400` -> `<p className="text-gray-400 text-xs mb-3">{(item.size / 1024).toFixed(2)} KB</p>`
+- Line 195: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No files found</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\modules\page.js
+- Line 127: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 134: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 135: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 139: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 139: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 140: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 146: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{modules.length} modules in selected course</p>`
+- Line 167: Found `bg-dark` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 167: Found `bg-dark-100` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 167: Found `border-white/10` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 180: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 180: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 180: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 182: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No modules found</p>`
+- Line 192: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 205: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{module.description}</p>`
+- Line 210: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 216: Found `text-gray-400` -> `<div className="flex items-center gap-4 text-sm text-gray-400 mb-4">`
+- Line 267: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 267: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 267: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 279: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 279: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 279: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 288: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 288: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 288: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 313: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 313: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 313: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 324: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 324: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 324: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 341: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 341: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\notifications\page.js
+- Line 71: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 78: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 79: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 83: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 83: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 84: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 90: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{notifications.length} notifications sent</p>`
+- Line 112: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 125: Found `text-gray-400` -> `<span className="text-gray-400 text-sm">`
+- Line 130: Found `text-gray-400` -> `<p className="text-gray-400">{notif.message}</p>`
+- Line 152: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No notifications sent yet</p>`
+- Line 172: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 172: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 172: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"`
+- Line 182: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 182: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 182: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 191: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 202: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 202: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 202: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 215: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 215: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 215: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 227: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 227: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\orders\page.js
+- Line 62: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 69: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 70: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 74: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 74: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 75: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 81: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{orders.length} orders</p>`
+- Line 100: Found `bg-dark` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 100: Found `bg-dark-100` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 100: Found `border-white/10` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 116: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 126: Found `text-gray-400` -> `'bg-gray-500/20 text-gray-400'`
+- Line 131: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">Customer: {order.user?.name || 'Unknown'}</p>`
+- Line 132: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{order.user?.email}</p>`
+- Line 136: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{new Date(order.createdAt).toLocaleDateString()}</p>`
+- Line 140: Found `border-white/10` -> `<div className="border-t border-white/10 pt-4 mb-4">`
+- Line 141: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mb-2">Courses:</p>`
+- Line 169: Found `border-white/10` -> `<div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 text-sm">`
+- Line 197: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No orders found</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\packages\page.js
+- Line 140: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 142: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 146: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 146: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 147: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 153: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{packages.length} packages configured</p>`
+- Line 174: Found `text-gray-400` -> `<p className="text-gray-400 text-xl font-semibold">No packages yet</p>`
+- Line 188: Found `border-white/10` -> `className={`bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border p-6 ${pkg.active !== false ? 'border-white/10' : 'border-red-500/20 opacity-60'}`}`
+- Line 191: Found `bg-dark` -> `<div className="h-32 rounded-xl overflow-hidden mb-4 bg-dark-200">`
+- Line 191: Found `bg-dark-200` -> `<div className="h-32 rounded-xl overflow-hidden mb-4 bg-dark-200">`
+- Line 208: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mb-3 line-clamp-2">{pkg.description}</p>`
+- Line 220: Found `text-gray-400` -> `<li key={i} className="flex items-center gap-2 text-xs text-gray-400">`
+- Line 248: Found `text-gray-400` -> `className="px-3 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"`
+- Line 256: Found `text-gray-400` -> `className="px-3 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-all disabled:opacity-30"`
+- Line 290: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 290: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 290: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"`
+- Line 296: Found `text-gray-400` -> `<button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white">`
+- Line 312: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 312: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 312: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary font-mono text-sm"`
+- Line 334: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary font-mono text-sm"`
+- Line 334: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary font-mono text-sm"`
+- Line 349: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 349: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 349: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 360: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 360: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 360: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 371: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 371: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 371: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 381: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 381: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 381: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 411: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 411: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\progress\page.js
+- Line 70: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 77: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 78: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 82: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 82: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 83: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 89: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{filteredProgress.length} records</p>`
+- Line 106: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />`
+- Line 112: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 112: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 112: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 118: Found `bg-dark` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary min-w-[200px]"`
+- Line 118: Found `bg-dark-100` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary min-w-[200px]"`
+- Line 118: Found `border-white/10` -> `className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary min-w-[200px]"`
+- Line 134: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 139: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{item.user?.email}</p>`
+- Line 145: Found `bg-dark` -> `<div className="w-full bg-dark-200 rounded-full h-3 mb-4">`
+- Line 145: Found `bg-dark-200` -> `<div className="w-full bg-dark-200 rounded-full h-3 mb-4">`
+- Line 154: Found `text-gray-400` -> `<p className="text-gray-400">Lessons Completed</p>`
+- Line 158: Found `text-gray-400` -> `<p className="text-gray-400">Quizzes Passed</p>`
+- Line 162: Found `text-gray-400` -> `<p className="text-gray-400">Avg. Score</p>`
+- Line 177: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No progress data found</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\promo-codes\page.js
+- Line 112: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 114: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 118: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 118: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 119: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 125: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{promoCodes.length} promo codes</p>`
+- Line 146: Found `text-gray-400` -> `<p className="text-gray-400 text-xl font-semibold">No promo codes yet</p>`
+- Line 156: Found `border-white/10` -> `<tr className="border-b border-white/10 text-left">`
+- Line 157: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Code</th>`
+- Line 158: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Discount</th>`
+- Line 159: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Expiry</th>`
+- Line 160: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Usage</th>`
+- Line 161: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Assigned To</th>`
+- Line 162: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Status</th>`
+- Line 163: Found `text-gray-400` -> `<th className="pb-3 text-gray-400 font-semibold text-sm px-2">Actions</th>`
+- Line 176: Found `bg-dark` -> `<span className="font-mono font-bold text-white bg-dark-200 px-3 py-1 rounded-lg text-sm">`
+- Line 176: Found `bg-dark-200` -> `<span className="font-mono font-bold text-white bg-dark-200 px-3 py-1 rounded-lg text-sm">`
+- Line 195: Found `text-gray-400` -> `<span className="text-gray-400 text-sm">{code.assignedTo || '—'}</span>`
+- Line 203: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 249: Found `border-white/10` -> `<div key={stat.label} className="bg-gradient-to-br from-dark-100/80 to-dark/80 rounded-xl border border-white/10 p-4 text-center">`
+- Line 251: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mt-1">{stat.label}</p>`
+- Line 273: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"`
+- Line 273: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"`
+- Line 273: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"`
+- Line 279: Found `text-gray-400` -> `<button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white">`
+- Line 295: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white font-mono focus:outline-none focus:border-primary"`
+- Line 295: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white font-mono focus:outline-none focus:border-primary"`
+- Line 295: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white font-mono focus:outline-none focus:border-primary"`
+- Line 310: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 310: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 310: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 321: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 334: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 343: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 343: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 343: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 362: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 362: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\promoters\page.js
+- Line 52: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 59: Found `bg-dark` -> `<div className="min-h-screen bg-dark p-6">`
+- Line 61: Found `text-gray-400` -> `<button onClick={() => router.push('/admin')} className="text-gray-400 hover:text-primary mb-6">`
+- Line 72: Found `bg-dark` -> `<div className="bg-dark-100 rounded-xl border border-primary/20 overflow-x-auto">`
+- Line 72: Found `bg-dark-100` -> `<div className="bg-dark-100 rounded-xl border border-primary/20 overflow-x-auto">`
+- Line 75: Found `text-gray-400` -> `<tr className="text-gray-400 border-b border-primary/10">`
+- Line 109: Found `bg-dark` -> `<div key={p._id} className="bg-dark-100 rounded-xl p-4 border border-primary/20 flex flex-wrap items-center justify-between gap-4">`
+- Line 109: Found `bg-dark-100` -> `<div key={p._id} className="bg-dark-100 rounded-xl p-4 border border-primary/20 flex flex-wrap items-center justify-between gap-4">`
+- Line 112: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{p.promoterEmail}</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\quizzes\page.js
+- Line 155: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 162: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 163: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 167: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 167: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 168: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 174: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{quizzes.length} quizzes in selected module</p>`
+- Line 195: Found `bg-dark` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 195: Found `bg-dark-100` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 195: Found `border-white/10` -> `className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 205: Found `bg-dark` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 205: Found `bg-dark-100` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 205: Found `border-white/10` -> `<div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 207: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No quizzes found</p>`
+- Line 217: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"`
+- Line 222: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{quiz.description}</p>`
+- Line 227: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 233: Found `text-gray-400` -> `<div className="flex items-center gap-4 text-sm text-gray-400 mb-4">`
+- Line 283: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 283: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 283: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"`
+- Line 295: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 295: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 295: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 304: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 304: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 304: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 315: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 325: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 325: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 325: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 331: Found `border-white/10` -> `<div className="border-t border-white/10 pt-6">`
+- Line 336: Found `bg-dark` -> `<div key={index} className="bg-dark-200/50 p-4 rounded-lg">`
+- Line 336: Found `bg-dark-200` -> `<div key={index} className="bg-dark-200/50 p-4 rounded-lg">`
+- Line 347: Found `text-gray-400` -> `<p className="text-sm text-gray-400">`
+- Line 356: Found `bg-dark` -> `<div className="bg-dark-200/30 p-4 rounded-lg space-y-3">`
+- Line 356: Found `bg-dark-200` -> `<div className="bg-dark-200/30 p-4 rounded-lg space-y-3">`
+- Line 362: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 362: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 362: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 367: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 367: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 367: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 386: Found `bg-dark` -> `className="px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 386: Found `bg-dark-200` -> `className="px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 386: Found `border-white/10` -> `className="px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 395: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 395: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 395: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 408: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 408: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 408: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 434: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 434: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\security\page.js
+- Line 58: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 65: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 66: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 70: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 70: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 71: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 77: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">Monitor and manage platform security</p>`
+- Line 87: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 94: Found `bg-dark` -> `<div key={index} className="bg-dark-200/30 p-3 rounded-lg">`
+- Line 94: Found `bg-dark-200` -> `<div key={index} className="bg-dark-200/30 p-3 rounded-lg">`
+- Line 98: Found `text-gray-400` -> `<p className="text-gray-400 text-xs">IP: {attempt.ip}</p>`
+- Line 116: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 123: Found `bg-dark` -> `<div key={index} className="bg-dark-200/30 p-3 rounded-lg flex justify-between items-center">`
+- Line 123: Found `bg-dark-200` -> `<div key={index} className="bg-dark-200/30 p-3 rounded-lg flex justify-between items-center">`
+- Line 138: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 150: Found `bg-dark` -> `className="bg-dark-200/30 p-4 rounded-lg"`
+- Line 150: Found `bg-dark-200` -> `className="bg-dark-200/30 p-4 rounded-lg"`
+- Line 155: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{activity.description}</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\settings\page.js
+- Line 67: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 74: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 75: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 79: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 79: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 80: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 86: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">Configure your platform</p>`
+- Line 110: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-4">`
+- Line 119: Found `bg-dark` -> `: 'text-gray-400 hover:bg-dark-200/50'`
+- Line 119: Found `bg-dark-200` -> `: 'text-gray-400 hover:bg-dark-200/50'`
+- Line 119: Found `text-gray-400` -> `: 'text-gray-400 hover:bg-dark-200/50'`
+- Line 132: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 139: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mb-3">{setting.description}</p>`
+- Line 149: Found `bg-dark` -> `<div className="w-11 h-6 bg-dark-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>`
+- Line 149: Found `bg-dark-200` -> `<div className="w-11 h-6 bg-dark-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>`
+- Line 156: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 156: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 156: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 164: Found `bg-dark` -> `className="h-10 w-20 bg-dark-200 border border-white/10 rounded-lg cursor-pointer"`
+- Line 164: Found `bg-dark-200` -> `className="h-10 w-20 bg-dark-200 border border-white/10 rounded-lg cursor-pointer"`
+- Line 164: Found `border-white/10` -> `className="h-10 w-20 bg-dark-200 border border-white/10 rounded-lg cursor-pointer"`
+- Line 170: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 170: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 170: Found `border-white/10` -> `className="flex-1 px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 178: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 178: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 178: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\tools\page.js
+- Line 56: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 63: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 64: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 67: Found `bg-dark` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 67: Found `bg-dark-200` -> `<button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">`
+- Line 68: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 74: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{enabledCount} of {tools.length} tools enabled</p>`
+- Line 84: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />`
+- Line 90: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-2.5 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 90: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-2.5 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 90: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-2.5 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 99: Found `bg-dark` -> `: 'bg-dark-100 text-gray-400 hover:bg-dark-200'`
+- Line 99: Found `bg-dark-100` -> `: 'bg-dark-100 text-gray-400 hover:bg-dark-200'`
+- Line 99: Found `bg-dark-200` -> `: 'bg-dark-100 text-gray-400 hover:bg-dark-200'`
+- Line 99: Found `text-gray-400` -> `: 'bg-dark-100 text-gray-400 hover:bg-dark-200'`
+- Line 116: Found `border-white/10` -> `tool.enabled ? 'border-white/10' : 'border-white/5 opacity-60'`
+- Line 132: Found `text-gray-400` -> `<p className="text-gray-400 text-xs mb-4 line-clamp-2">{tool.description}</p>`
+- Line 151: Found `text-gray-400` -> `<p className="text-gray-400 text-xl">No tools match your search</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\admin\users\page.js
+- Line 113: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 120: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 122: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 128: Found `bg-dark` -> `className="p-2 hover:bg-dark-200 rounded-lg transition-all"`
+- Line 128: Found `bg-dark-200` -> `className="p-2 hover:bg-dark-200 rounded-lg transition-all"`
+- Line 130: Found `text-gray-400` -> `<ArrowLeft className="h-5 w-5 text-gray-400" />`
+- Line 136: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">{users.length} total users</p>`
+- Line 154: Found `text-gray-400` -> `<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />`
+- Line 160: Found `bg-dark` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 160: Found `bg-dark-100` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 160: Found `border-white/10` -> `className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"`
+- Line 166: Found `bg-dark` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 166: Found `bg-dark-100` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 166: Found `border-white/10` -> `className="px-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 175: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">`
+- Line 178: Found `bg-dark` -> `<thead className="bg-dark-200/50">`
+- Line 178: Found `bg-dark-200` -> `<thead className="bg-dark-200/50">`
+- Line 199: Found `bg-dark` -> `<tr key={user._id} className="hover:bg-dark-200/30 transition-colors">`
+- Line 199: Found `bg-dark-200` -> `<tr key={user._id} className="hover:bg-dark-200/30 transition-colors">`
+- Line 203: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">{user.email}</p>`
+- Line 210: Found `text-gray-400` -> `: 'bg-gray-500/20 text-gray-400'`
+- Line 224: Found `text-gray-400` -> `<td className="px-6 py-4 text-gray-400 text-sm">`
+- Line 279: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 279: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 279: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"`
+- Line 291: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 291: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 291: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 301: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 312: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 312: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 312: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `bg-dark` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `bg-dark-200` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 322: Found `border-white/10` -> `className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"`
+- Line 332: Found `bg-dark` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+- Line 332: Found `bg-dark-200` -> `className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\dashboard\custom-requests\page.js
+- Line 86: Found `bg-dark` -> `if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><Navbar/><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>`
+- Line 89: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 95: Found `text-gray-400` -> `<p className="text-gray-400 mt-1">Select topics from any course and request a custom question paper or study notes</p>`
+- Line 104: Found `bg-dark` -> `<div className="text-center py-16 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 104: Found `bg-dark-100` -> `<div className="text-center py-16 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 104: Found `border-white/10` -> `<div className="text-center py-16 bg-dark-100/50 rounded-2xl border border-white/10">`
+- Line 106: Found `text-gray-400` -> `<p className="text-gray-400 text-lg">No requests yet</p>`
+- Line 113: Found `bg-dark` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 113: Found `bg-dark-100` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 113: Found `border-white/10` -> `className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">`
+- Line 117: Found `text-gray-400` -> `<p className="text-gray-400 text-sm mt-1">{req.description}</p>`
+- Line 119: Found `text-gray-400` -> `<span className={"px-3 py-1 rounded-full text-xs font-bold " + (STATUS_COLORS[req.status] || 'bg-gray-500/20 text-gray-400')}>`
+- Line 137: Found `text-gray-400` -> `<div className="flex gap-4 text-sm text-gray-400">`
+- Line 174: Found `border-white/10` -> `<div className="mt-4 border-t border-white/10 pt-4">`
+- Line 179: Found `bg-dark` -> `className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm mb-3"`
+- Line 179: Found `bg-dark-200` -> `className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm mb-3"`
+- Line 179: Found `border-white/10` -> `className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm mb-3"`
+- Line 213: Found `bg-dark` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl my-8">`
+- Line 213: Found `bg-dark-100` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl my-8">`
+- Line 213: Found `border-white/10` -> `className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl my-8">`
+- Line 218: Found `bg-dark` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 218: Found `bg-dark-200` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 218: Found `border-white/10` -> `<input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 223: Found `bg-dark` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm" rows={3}`
+- Line 223: Found `bg-dark-200` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm" rows={3}`
+- Line 223: Found `border-white/10` -> `<textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm" rows={3}`
+- Line 229: Found `bg-dark` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 229: Found `bg-dark-200` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 229: Found `border-white/10` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 238: Found `bg-dark` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 238: Found `bg-dark-200` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 238: Found `border-white/10` -> `<select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 248: Found `bg-dark` -> `<input type="date" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 248: Found `bg-dark-200` -> `<input type="date" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 248: Found `border-white/10` -> `<input type="date" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 253: Found `bg-dark` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 253: Found `bg-dark-200` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 253: Found `border-white/10` -> `<input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"`
+- Line 261: Found `bg-dark` -> `<div className="max-h-64 overflow-y-auto space-y-2 border border-white/10 rounded-xl p-3 bg-dark-200/30">`
+- Line 261: Found `bg-dark-200` -> `<div className="max-h-64 overflow-y-auto space-y-2 border border-white/10 rounded-xl p-3 bg-dark-200/30">`
+- Line 261: Found `border-white/10` -> `<div className="max-h-64 overflow-y-auto space-y-2 border border-white/10 rounded-xl p-3 bg-dark-200/30">`
+- Line 268: Found `bg-dark` -> `className="w-full text-left px-3 py-2 bg-dark-200/60 rounded-lg text-white text-sm font-medium hover:bg-dark-200 transition-all flex items-center justify-between">`
+- Line 268: Found `bg-dark-200` -> `className="w-full text-left px-3 py-2 bg-dark-200/60 rounded-lg text-white text-sm font-medium hover:bg-dark-200 transition-all flex items-center justify-between">`
+- Line 270: Found `text-gray-400` -> `<span className="text-gray-400 text-xs">{courseMods.length} modules</span>`
+- Line 277: Found `bg-dark` -> `<label key={mod._id} className={"flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all " + (selected ? "bg-primary/20 border border-primary/30" : "hover:bg-dark-200/50")}>`
+- Line 277: Found `bg-dark-200` -> `<label key={mod._id} className={"flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all " + (selected ? "bg-primary/20 border border-primary/30" : "hover:bg-dark-200/50")}>`
+- Line 303: Found `bg-dark` -> `<button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-dark-200 text-white rounded-xl hover:bg-gray-600 text-sm">Cancel</button>`
+- Line 303: Found `bg-dark-200` -> `<button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-dark-200 text-white rounded-xl hover:bg-gray-600 text-sm">Cancel</button>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\promoter\login\page.js
+- Line 49: Found `border-white/10` -> `<div className="glass-dark rounded-3xl p-8 border border-white/10 shadow-premium">`
+- Line 69: Found `border-white/10` -> `className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"`
+- Line 79: Found `border-white/10` -> `className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\promoter\page.js
+- Line 58: Found `border-white/10` -> `<motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-dark rounded-3xl p-8 border border-white/10">`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\promoter\register\page.js
+- Line 38: Found `border-white/10` -> `<div className="glass-dark rounded-3xl p-8 border border-white/10">`
+- Line 60: Found `border-white/10` -> `className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"`
+- Line 70: Found `border-white/10` -> `className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\learn\[courseId]\advanced\page.js
+- Line 70: Found `bg-dark` -> `<div className="min-h-screen bg-dark flex items-center justify-center">`
+- Line 77: Found `bg-dark` -> `<div className="min-h-screen bg-dark">`
+- Line 81: Found `border-white/10` -> `<div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">`
+- Line 93: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">Course Progress</p>`
+- Line 98: Found `bg-dark` -> `<div className="mt-4 bg-dark-200 rounded-full h-3 overflow-hidden">`
+- Line 98: Found `bg-dark-200` -> `<div className="mt-4 bg-dark-200 rounded-full h-3 overflow-hidden">`
+- Line 130: Found `text-gray-400` -> `<p className="text-gray-400 mb-2">No modules available yet</p>`
+- Line 143: Found `bg-dark` -> `: 'bg-dark-200/30 text-gray-300 hover:bg-dark-200/50 border border-white/5'`
+- Line 143: Found `bg-dark-200` -> `: 'bg-dark-200/30 text-gray-300 hover:bg-dark-200/50 border border-white/5'`
+- Line 182: Found `text-gray-400` -> `<p className="text-gray-400 text-sm">No lessons yet</p>`
+- Line 194: Found `bg-dark` -> `: 'bg-dark-200/20 text-gray-300 hover:bg-dark-200/40 border border-white/5'`
+- Line 194: Found `bg-dark-200` -> `: 'bg-dark-200/20 text-gray-300 hover:bg-dark-200/40 border border-white/5'`
+- Line 224: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl"`
+- Line 235: Found `bg-dark` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 235: Found `bg-dark-200` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 235: Found `border-white/10` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 248: Found `bg-dark` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 248: Found `bg-dark-200` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 248: Found `border-white/10` -> `: 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'`
+- Line 265: Found `border-white/10` -> `<div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">`
+- Line 266: Found `text-gray-400` -> `<div className="flex items-center gap-2 text-gray-400">`
+- Line 270: Found `text-gray-400` -> `<div className="flex items-center gap-2 text-gray-400">`
+- Line 277: Found `border-white/10` -> `<div className="mb-8 bg-black rounded-xl aspect-video flex items-center justify-center border border-white/10 overflow-hidden">`
+- Line 347: Found `bg-dark` -> `className="bg-dark/50 rounded-xl p-6 border border-white/5"`
+- Line 349: Found `text-gray-400` -> `__html: (activeLesson.content?.concept || '<p class="text-gray-400">No content available</p>')`
+- Line 369: Found `border-white/10` -> `<div className="flex justify-between mt-10 pt-6 border-t border-white/10">`
+- Line 376: Found `bg-dark` -> `className="px-6 py-3 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"`
+- Line 376: Found `bg-dark-200` -> `className="px-6 py-3 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"`
+- Line 422: Found `text-gray-400` -> `<p className="text-gray-400 mb-6">Test your understanding with these practice problems</p>`
+
+### C:\Users\asus\Downloads\beyondclassroom final\beyondclassroom-frontend\app\learn\[courseId]\quiz\[quizId]\page.js
+- Line 125: Found `text-gray-400` -> `className="flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8"`
+- Line 134: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center"`
+- Line 147: Found `text-gray-400` -> `<div className="text-gray-400">Questions</div>`
+- Line 153: Found `text-gray-400` -> `<div className="text-gray-400">Minutes</div>`
+- Line 159: Found `text-gray-400` -> `<div className="text-gray-400">To Pass</div>`
+- Line 201: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center mb-8"`
+- Line 230: Found `text-gray-400` -> `<div className="text-gray-400">Your Score</div>`
+- Line 237: Found `text-gray-400` -> `<div className="text-gray-400">Points</div>`
+- Line 244: Found `text-gray-400` -> `<div className="text-gray-400">Correct</div>`
+- Line 271: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-8"`
+- Line 302: Found `text-gray-400` -> `<span className="text-gray-400">Your answer: </span>`
+- Line 310: Found `text-gray-400` -> `<span className="text-gray-400">Correct answer: </span>`
+- Line 316: Found `border-white/10` -> `<div className="mt-3 pt-3 border-t border-white/10">`
+- Line 317: Found `text-gray-400` -> `<span className="text-gray-400 block mb-2">Explanation:</span>`
+- Line 345: Found `border-white/10` -> `<div className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6">`
+- Line 349: Found `text-gray-400` -> `<p className="text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</p>`
+- Line 361: Found `bg-dark` -> `<div className="w-full bg-dark-200 rounded-full h-2 overflow-hidden">`
+- Line 361: Found `bg-dark-200` -> `<div className="w-full bg-dark-200 rounded-full h-2 overflow-hidden">`
+- Line 377: Found `border-white/10` -> `className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-8"`
+- Line 395: Found `border-white/10` -> `: 'bg-white/5 border-white/10 text-gray-300 hover:border-primary/50'`
+- Line 415: Found `border-white/10` -> `<div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">`
+- Line 452: Found `border-white/10` -> `<div className="mt-6 bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6">`
+- Line 464: Found `text-gray-400` -> `: 'bg-white/5 text-gray-400 border border-white/10'`
+- Line 464: Found `border-white/10` -> `: 'bg-white/5 text-gray-400 border border-white/10'`
+- Line 471: Found `text-gray-400` -> `<p className="text-sm text-gray-400 mt-4">`
+

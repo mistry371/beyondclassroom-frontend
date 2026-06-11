@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState, Suspense } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X } from 'lucide-react'
 import Navbar from '@/components/Navbar'
@@ -9,6 +9,9 @@ import PaymentModal from '@/components/PaymentModal'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
+import dynamic from 'next/dynamic'
+
+const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { ssr: false })
 
 const steps = ['Modules', 'Lessons', 'Topics', 'PDFs', 'Preferences', 'Summary']
 
@@ -25,9 +28,12 @@ function getDocs(subtopic) {
   return subtopic?.documents || (subtopic?.document ? [subtopic.document] : [])
 }
 
-export default function CourseDetails() {
+function CourseDetailsContent() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const packageId = searchParams.get('packageId')
+  
   const { user } = useSelector((state) => state.auth)
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -162,6 +168,7 @@ export default function CourseDetails() {
         estimatedDuration: roadmap.duration,
         packageSummary: `${selection.selectedModules.length} modules, ${selection.selectedLessons.length} lessons, ${selection.selectedSubtopics.length} subtopics, ${selection.selectedPdfs.length} PDFs`,
         status: 'pending',
+        packageId,
       })
       showSuccess('Customization request sent to admin. You can track it from your dashboard.')
       router.push('/dashboard/custom-requests')
@@ -444,116 +451,11 @@ function SummaryCard({ label, value }) {
   )
 }
 
-// PDF Preview Modal — converts base64 to Blob URL so the PDF actually renders
-function PdfPreviewModal({ doc, onClose }) {
-  const [blobUrl, setBlobUrl] = useState(null)
-  const [error, setError] = useState(false)
-
-  useEffect(() => {
-    if (!doc) return
-    try {
-      // If doc has base64 data, convert to blob URL
-      if (doc.data) {
-        const byteChars = atob(doc.data)
-        const byteNums = new Array(byteChars.length)
-        for (let i = 0; i < byteChars.length; i++) {
-          byteNums[i] = byteChars.charCodeAt(i)
-        }
-        const byteArray = new Uint8Array(byteNums)
-        const blob = new Blob([byteArray], { type: doc.type || 'application/pdf' })
-        const url = URL.createObjectURL(blob)
-        setBlobUrl(url)
-        return () => URL.revokeObjectURL(url)
-      }
-      // If doc has a direct URL
-      if (doc.url) {
-        setBlobUrl(doc.url)
-      }
-    } catch (e) {
-      console.error('PDF preview error:', e)
-      setError(true)
-    }
-  }, [doc])
-
-  // Block right-click and copy shortcuts inside modal
-  useEffect(() => {
-    const block = (e) => {
-      if (e.type === 'contextmenu') { e.preventDefault(); return }
-      const ctrl = e.ctrlKey || e.metaKey
-      if (ctrl && ['s', 'p', 'u', 'c', 'a'].includes(e.key?.toLowerCase())) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    }
-    document.addEventListener('contextmenu', block, true)
-    document.addEventListener('keydown', block, true)
-    return () => {
-      document.removeEventListener('contextmenu', block, true)
-      document.removeEventListener('keydown', block, true)
-    }
-  }, [])
-
+export default function CourseDetails() {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="relative h-[88vh] w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-primary/10 px-5 py-3 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <FileText className="h-5 w-5 text-primary" />
-            <p className="font-bold text-navy truncate max-w-xs">{doc?.name || 'PDF Preview'}</p>
-            <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-semibold">View Only</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-2 text-muted hover:bg-academic hover:text-ink transition-colors"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Watermark */}
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
-          <p className="rotate-[-30deg] text-4xl font-black text-primary/8 whitespace-nowrap select-none">
-            Beyond Classroom — View Only — Beyond Classroom — View Only
-          </p>
-        </div>
-
-        {/* PDF Content */}
-        <div className="flex-1 overflow-hidden relative">
-          {error ? (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-muted">
-              <FileText className="h-16 w-16 text-primary/30" />
-              <p className="font-semibold text-lg">Unable to preview this PDF</p>
-              <p className="text-sm">The file may not be available for preview.</p>
-            </div>
-          ) : !blobUrl ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
-            </div>
-          ) : (
-            <object
-              data={`${blobUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-              type="application/pdf"
-              className="w-full h-full select-none"
-              aria-label="PDF Preview"
-            >
-              {/* Fallback for browsers that don't support object tag for PDFs */}
-              <embed
-                src={`${blobUrl}#toolbar=0&navpanes=0`}
-                type="application/pdf"
-                className="w-full h-full"
-              />
-            </object>
-          )}
-        </div>
-      </div>
-    </div>
+    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center"><div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" /></div>}>
+      <CourseDetailsContent />
+    </Suspense>
   )
 }
+

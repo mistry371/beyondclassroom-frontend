@@ -76,21 +76,21 @@ function ForgotPasswordContent() {
   }
 
   const stepIcons = {
-    1: <Mail className="h-8 w-8 text-white" />,
-    2: <KeyRound className="h-8 w-8 text-white" />,
-    3: <Mail className="h-8 w-8 text-white" />,
-    4: <CheckCircle className="h-8 w-8 text-white" />
+    1: <Mail className="h-8 w-8 text-navy" />,
+    2: <KeyRound className="h-8 w-8 text-navy" />,
+    3: <Mail className="h-8 w-8 text-navy" />,
+    4: <CheckCircle className="h-8 w-8 text-navy" />
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark via-dark-100 to-dark-200 p-4">
-      <Link href="/auth/login" className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
+    <div className="min-h-screen flex items-center justify-center bg-academic p-4">
+      <Link href="/auth/login" className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-xl border border-gray-200 rounded-xl text-navy hover:bg-gray-50 transition-all shadow-sm">
         <ArrowLeft className="h-5 w-5" />
         <span className="hidden sm:inline font-medium">Back to Login</span>
       </Link>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-dark-100/90 to-dark-200/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 w-full max-w-md"
+        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_-15px_rgba(8,31,140,0.1)] border border-gray-100 p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
           <motion.div key={step} initial={{ scale: 0 }} animate={{ scale: 1 }}
@@ -101,7 +101,7 @@ function ForgotPasswordContent() {
           <h1 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-2">
             {stepTitles[step]}
           </h1>
-          <p className="text-gray-400 text-sm">{stepDescriptions[step]}</p>
+          <p className="text-gray-500 text-sm">{stepDescriptions[step]}</p>
         </div>
 
         {error && (
@@ -119,11 +119,11 @@ function ForgotPasswordContent() {
               onSubmit={handleRequestReset} className="space-y-5"
             >
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Email Address</label>
+                <label className="block text-sm font-semibold text-ink mb-2">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-navy placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -148,30 +148,30 @@ function ForgotPasswordContent() {
               onSubmit={handleResetPassword} className="space-y-5"
             >
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">New Password</label>
+                <label className="block text-sm font-semibold text-ink mb-2">New Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input type={showPassword ? 'text' : 'password'} value={newPassword} onChange={e => setNewPassword(e.target.value)} required
-                    className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full pl-12 pr-12 py-3 bg-white border border-gray-200 rounded-xl text-navy placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
                     placeholder="Min 6 characters"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-300 mb-2">Confirm Password</label>
+                <label className="block text-sm font-semibold text-ink mb-2">Confirm Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input type={showConfirm ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
-                    className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full pl-12 pr-12 py-3 bg-white border border-gray-200 rounded-xl text-navy placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
                     placeholder="Repeat password"
                   />
                   <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -199,7 +199,7 @@ function ForgotPasswordContent() {
             <motion.div key="s3" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4 space-y-4">
               <div className="bg-primary/10 border border-primary/30 rounded-lg p-4 text-sm text-left">
                 <p className="text-primary font-medium mb-1">Check your inbox</p>
-                <p className="text-gray-400">We sent a password reset link to <strong className="text-white">{email}</strong>. The link expires in 1 hour.</p>
+                <p className="text-gray-500">We sent a password reset link to <strong className="text-navy">{email}</strong>. The link expires in 1 hour.</p>
               </div>
               <Link href="/auth/login" className="inline-block text-primary hover:text-secondary text-sm font-medium">
                 Back to login
@@ -212,8 +212,8 @@ function ForgotPasswordContent() {
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="h-10 w-10 text-green-400" />
               </div>
-              <p className="text-white font-semibold text-lg mb-2">Password Reset Successful!</p>
-              <p className="text-gray-400 text-sm">Redirecting to login...</p>
+              <p className="text-navy font-semibold text-lg mb-2">Password Reset Successful!</p>
+              <p className="text-gray-500 text-sm">Redirecting to login...</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -224,7 +224,7 @@ function ForgotPasswordContent() {
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
       <ForgotPasswordContent />
     </Suspense>
   )

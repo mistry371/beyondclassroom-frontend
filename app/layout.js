@@ -1,10 +1,9 @@
 import './globals.css'
 import { Providers } from './providers'
-import dynamic from 'next/dynamic'
+import ClientWrappers from '@/components/ClientWrappers'
+import { Inter } from 'next/font/google'
 
-const ClientChrome = dynamic(() => import('@/components/ClientChrome'), { ssr: false, loading: () => null })
-const ToastContainer = dynamic(() => import('@/components/ui/Toast'), { ssr: false, loading: () => null })
-const SessionGuard = dynamic(() => import('@/components/SessionGuard'), { ssr: false, loading: () => null })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 const SITE_URL = 'https://beyondclassroom.co.in'
 
@@ -37,12 +36,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
         <link rel="icon" href="/logo.jpeg" />
         <link rel="preload" href="/logo.jpeg" as="image" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://beyondclassroom-backend.onrender.com" />
         <script
           type="application/ld+json"
@@ -62,9 +59,7 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           {children}
-          <ClientChrome />
-          <ToastContainer />
-          <SessionGuard />
+          <ClientWrappers />
         </Providers>
       </body>
     </html>

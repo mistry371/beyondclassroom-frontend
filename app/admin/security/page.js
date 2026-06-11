@@ -55,26 +55,36 @@ export default function AdminSecurity() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Security Management
                 </h1>
-                <p className="text-gray-400 mt-1">Monitor and manage platform security</p>
+                <p className="text-muted mt-1">Monitor and manage platform security</p>
               </div>
             </div>
           </div>
@@ -85,7 +95,7 @@ export default function AdminSecurity() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Failed Logins */}
           <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-navy mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-400" />
               Failed Login Attempts
             </h2>
@@ -94,8 +104,8 @@ export default function AdminSecurity() {
                 <div key={index} className="bg-dark-200/30 p-3 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-white text-sm">{attempt.email}</p>
-                      <p className="text-gray-400 text-xs">IP: {attempt.ip}</p>
+                      <p className="text-navy text-sm">{attempt.email}</p>
+                      <p className="text-muted text-xs">IP: {attempt.ip}</p>
                     </div>
                     <button
                       onClick={() => blockIP(attempt.ip)}
@@ -104,7 +114,7 @@ export default function AdminSecurity() {
                       Block IP
                     </button>
                   </div>
-                  <p className="text-gray-500 text-xs mt-2">
+                  <p className="text-muted text-xs mt-2">
                     {new Date(attempt.timestamp).toLocaleString()}
                   </p>
                 </div>
@@ -114,14 +124,14 @@ export default function AdminSecurity() {
 
           {/* Blocked IPs */}
           <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-navy mb-4 flex items-center gap-2">
               <Ban className="h-5 w-5 text-red-400" />
               Blocked IP Addresses
             </h2>
             <div className="space-y-3">
               {securityData.blockedIPs?.map((ip, index) => (
                 <div key={index} className="bg-dark-200/30 p-3 rounded-lg flex justify-between items-center">
-                  <p className="text-white text-sm">{ip.address}</p>
+                  <p className="text-navy text-sm">{ip.address}</p>
                   <button
                     onClick={() => unblockIP(ip.address)}
                     className="px-3 py-1 bg-green-500/20 text-green-400 rounded text-xs hover:bg-green-500/30"
@@ -136,7 +146,7 @@ export default function AdminSecurity() {
 
         {/* Suspicious Activity */}
         <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-navy mb-4 flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
             Suspicious Activity
           </h2>
@@ -151,14 +161,14 @@ export default function AdminSecurity() {
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <p className="text-white font-medium">{activity.type}</p>
-                    <p className="text-gray-400 text-sm">{activity.description}</p>
+                    <p className="text-navy font-medium">{activity.type}</p>
+                    <p className="text-muted text-sm">{activity.description}</p>
                   </div>
                   <span className="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">
                     {activity.severity}
                   </span>
                 </div>
-                <p className="text-gray-500 text-xs">
+                <p className="text-muted text-xs">
                   {new Date(activity.timestamp).toLocaleString()}
                 </p>
               </motion.div>

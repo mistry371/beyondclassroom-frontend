@@ -44,55 +44,55 @@ export default function PromoterLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen bg-academic flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="glass-dark rounded-3xl p-8 border border-white/10 shadow-premium">
+        <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-premium">
           <div className="text-center mb-8">
-            <Image src="/logo.jpeg" alt="" width={56} height={56} className="rounded-xl mx-auto mb-4 interactive" />
-            <div className="w-14 h-14 bg-brand-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Image src="/logo.jpeg" alt="" width={56} height={56} className="rounded-xl mx-auto mb-4 interactive shadow-sm" />
+            <div className="w-14 h-14 bg-brand-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
               <TrendingUp className="h-7 w-7 text-white" />
             </div>
-            <h1 className="text-2xl font-black text-white">Promoter Login</h1>
-            <p className="text-white/60 text-sm mt-2">Access your referral dashboard</p>
+            <h1 className="text-2xl font-black text-navy">Promoter Login</h1>
+            <p className="text-muted text-sm mt-2">Access your referral dashboard</p>
           </div>
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl mb-4 text-sm flex gap-2">
+            <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-xl mb-4 text-sm flex gap-2">
               <AlertCircle className="h-5 w-5 flex-shrink-0" />{error}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="text-white/80 text-sm font-medium mb-2 block">Mobile Number (or Email)</label>
+              <label className="text-ink text-sm font-medium mb-2 block">Mobile Number (or Email)</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
                 <input type="text" value={loginId} onChange={(e) => setLoginId(e.target.value)} required
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"
+                  className="w-full pl-12 pr-4 py-3 bg-academic border border-primary/10 rounded-xl text-ink focus:ring-2 focus:ring-primary outline-none transition"
                   placeholder="9876543210 or email@example.com"
                 />
               </div>
             </div>
             <div>
-              <label className="text-white/80 text-sm font-medium mb-2 block">Password</label>
+              <label className="text-ink text-sm font-medium mb-2 block">Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required
-                  className="w-full pl-12 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-secondary"
+                  className="w-full pl-12 pr-12 py-3 bg-academic border border-primary/10 rounded-xl text-ink focus:ring-2 focus:ring-primary outline-none transition"
                   placeholder="••••••••"
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-ink transition">
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
-            <button type="submit" disabled={loading} className="w-full py-4 bg-brand-gradient text-white font-bold rounded-xl hover:opacity-90 disabled:opacity-50">
+            <button type="submit" disabled={loading} className="w-full py-4 bg-brand-gradient text-white font-bold rounded-xl hover:opacity-90 disabled:opacity-50 transition-opacity">
               {loading ? 'Signing in...' : 'Sign In to Dashboard'}
             </button>
           </form>
-          <p className="text-center text-white/60 text-sm mt-6">
-            New promoter? <Link href="/promoter/register" className="text-secondary font-semibold">Register here</Link>
+          <p className="text-center text-muted text-sm mt-6">
+            New promoter? <Link href="/promoter/register" className="text-primary hover:text-primary/80 font-semibold transition-colors">Register here</Link>
           </p>
           <p className="text-center mt-4">
-            <Link href="/promoter" className="text-white/50 text-sm hover:text-white">← Back to program</Link>
+            <Link href="/promoter" className="text-slate-400 text-sm hover:text-ink transition-colors">← Back to program</Link>
           </p>
         </div>
       </motion.div>

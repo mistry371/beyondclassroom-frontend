@@ -48,10 +48,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link href={user ? dashboardLink : '/'} className="flex items-center space-x-3">
-            <Image src="/logo.jpeg" alt="Beyond Classroom" width={110} height={110} className="rounded-xl interactive shadow-sm" />
-            <span className="hidden text-lg font-black tracking-tight bg-brand-gradient bg-clip-text text-transparent sm:inline">
-              Beyond Classroom
-            </span>
+            <div className="relative w-64 h-16 lg:w-[300px] lg:h-[75px]">
+              <Image 
+                src="/full-logo.png" 
+                alt="Beyond Classroom" 
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </Link>
 
           <div className="hidden lg:flex items-center space-x-1 rounded-full border border-primary/10 bg-white/70 px-2 py-2 shadow-sm">

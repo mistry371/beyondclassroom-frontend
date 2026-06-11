@@ -49,6 +49,7 @@ export default function ProfilePage() {
         return
       }
       console.error('Fetch profile failed:', error)
+      setError('Failed to load profile. Please try refreshing the page.')
     } finally {
       setLoading(false)
     }
@@ -78,8 +79,12 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
+          <div className="h-64 bg-primary/5 border border-primary/10 rounded-2xl mb-6"></div>
+          <div className="h-96 bg-primary/5 border border-primary/10 rounded-2xl"></div>
+        </div>
       </div>
     )
   }
@@ -117,7 +122,7 @@ export default function ProfilePage() {
           <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-navy text-3xl font-bold">
                   {profile?.name?.charAt(0).toUpperCase()}
                 </div>
               </div>

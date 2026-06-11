@@ -17,7 +17,7 @@ export default function MathematicsLandingPage() {
   return (
     <div className="min-h-screen bg-soft-gradient pb-20 md:pb-0">
       <Navbar />
-      <section className="py-20 bg-navy-gradient text-center text-white">
+      <section className="py-20 bg-navy-gradient text-center text-navy">
         <div className="max-w-4xl mx-auto px-4">
           <p className="text-secondary font-semibold mb-4">Mathematics · Grades 6–12</p>
           <h1 className="text-4xl md:text-6xl font-black mb-6">Excel in Mathematics With Personalized Learning</h1>

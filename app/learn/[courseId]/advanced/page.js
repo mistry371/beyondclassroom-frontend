@@ -67,35 +67,35 @@ export default function AdvancedLearnPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
+      <div className="min-h-screen bg-academic flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <Navbar />
 
       {/* Course Header */}
-      <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
+      <div className="bg-white border-b border-primary/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">{course?.title}</h1>
-              <p className="text-gray-300">{course?.instructor}</p>
+              <h1 className="text-3xl font-bold text-navy mb-2">{course?.title}</h1>
+              <p className="text-ink">{course?.instructor}</p>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2 text-primary mb-2">
                 <TrendingUp className="h-5 w-5" />
                 <span className="text-2xl font-bold">{progress?.completionPercentage || 0}%</span>
               </div>
-              <p className="text-gray-400 text-sm">Course Progress</p>
+              <p className="text-muted text-sm">Course Progress</p>
             </div>
           </div>
           
           {/* Progress Bar */}
-          <div className="mt-4 bg-dark-200 rounded-full h-3 overflow-hidden">
+          <div className="mt-4 bg-academic rounded-full h-3 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progress?.completionPercentage || 0}%` }}
@@ -119,7 +119,7 @@ export default function AdvancedLearnPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar - Modules */}
           <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-primary/20 p-5 sticky top-24 shadow-xl shadow-primary/5">
+            <div className="bg-white rounded-2xl border border-primary/10 p-5 sticky top-24 shadow-premium">
               <h2 className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4 flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
                 Course Modules
@@ -127,8 +127,8 @@ export default function AdvancedLearnPage() {
               <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                 {modules.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-400 mb-2">No modules available yet</p>
-                    <p className="text-gray-500 text-sm">This course is being prepared</p>
+                    <p className="text-muted mb-2">No modules available yet</p>
+                    <p className="text-muted text-sm">This course is being prepared</p>
                   </div>
                 ) : (
                   modules.map((module, index) => (
@@ -140,7 +140,7 @@ export default function AdvancedLearnPage() {
                       className={`w-full text-left px-4 py-4 rounded-xl transition-all duration-300 ${
                         activeModule?._id === module._id
                           ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30'
-                          : 'bg-dark-200/30 text-gray-300 hover:bg-dark-200/50 border border-white/5'
+                          : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
                       }`}
                     >
                       <div className="flex items-center gap-3 mb-2">
@@ -173,13 +173,13 @@ export default function AdvancedLearnPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Lessons Sidebar */}
               <div className="lg:col-span-1">
-                <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-secondary/20 p-4 shadow-xl shadow-secondary/5">
+                <div className="bg-white rounded-2xl border border-secondary/20 p-4 shadow-premium">
                   <h3 className="text-md font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent mb-4">Lessons</h3>
                   <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                     {lessons.length === 0 ? (
                       <div className="text-center py-6">
                         <FileText className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-                        <p className="text-gray-400 text-sm">No lessons yet</p>
+                        <p className="text-muted text-sm">No lessons yet</p>
                       </div>
                     ) : (
                       lessons.map((lesson) => (
@@ -191,7 +191,7 @@ export default function AdvancedLearnPage() {
                           className={`w-full text-left px-3 py-3 rounded-lg text-sm transition-all duration-200 ${
                             activeLesson?._id === lesson._id
                               ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/20'
-                              : 'bg-dark-200/20 text-gray-300 hover:bg-dark-200/40 border border-white/5'
+                              : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
                           }`}
                         >
                           <div className="flex items-center gap-2">
@@ -221,7 +221,7 @@ export default function AdvancedLearnPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3 }}
-                      className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl"
+                      className="bg-white rounded-2xl border border-primary/10 p-8 shadow-premium"
                     >
                       {/* View Tabs */}
                       <div className="flex gap-3 mb-8">
@@ -232,7 +232,7 @@ export default function AdvancedLearnPage() {
                           className={`px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                             view === 'lesson'
                               ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30'
-                              : 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'
+                              : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
                           }`}
                         >
                           <FileText className="h-4 w-4" />
@@ -245,7 +245,7 @@ export default function AdvancedLearnPage() {
                           className={`px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                             view === 'practice'
                               ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30'
-                              : 'bg-dark-200/50 text-gray-300 hover:bg-dark-200 border border-white/10'
+                              : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
                           }`}
                         >
                           <Award className="h-4 w-4" />
@@ -258,16 +258,16 @@ export default function AdvancedLearnPage() {
                           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-3">
                             {activeLesson.title}
                           </h1>
-                          <p className="text-gray-300 mb-6 text-lg">
+                          <p className="text-ink mb-6 text-lg">
                             {typeof activeLesson.description === 'string' ? activeLesson.description : ''}
                           </p>
 
                           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
-                            <div className="flex items-center gap-2 text-gray-400">
+                            <div className="flex items-center gap-2 text-muted">
                               <Clock className="h-4 w-4" />
                               <span className="text-sm">{activeLesson.duration}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-gray-400">
+                            <div className="flex items-center gap-2 text-muted">
                               <BookOpen className="h-4 w-4" />
                               <span className="text-sm capitalize">{activeLesson.type}</span>
                             </div>
@@ -285,27 +285,27 @@ export default function AdvancedLearnPage() {
                               .lesson-content h2 {
                                 font-size: 1.75rem;
                                 font-weight: 700;
-                                color: #22d3ee;
+                                color: var(--primary);
                                 margin-top: 2rem;
                                 margin-bottom: 1rem;
                                 padding-bottom: 0.5rem;
-                                border-bottom: 2px solid rgba(34, 211, 238, 0.2);
+                                border-bottom: 2px solid rgba(var(--primary-rgb), 0.2);
                               }
                               .lesson-content h3 {
                                 font-size: 1.35rem;
                                 font-weight: 600;
-                                color: #a78bfa;
+                                color: var(--secondary);
                                 margin-top: 1.5rem;
                                 margin-bottom: 0.75rem;
                               }
                               .lesson-content p {
-                                color: #d1d5db;
+                                color: #475569;
                                 line-height: 1.8;
                                 margin-bottom: 1rem;
                                 font-size: 1.05rem;
                               }
                               .lesson-content ul, .lesson-content ol {
-                                color: #d1d5db;
+                                color: #475569;
                                 margin-left: 1.5rem;
                                 margin-bottom: 1rem;
                                 line-height: 1.8;
@@ -320,22 +320,22 @@ export default function AdvancedLearnPage() {
                               }
                               .lesson-content ul li:before {
                                 content: "▹";
-                                color: #22d3ee;
+                                color: var(--primary);
                                 font-weight: bold;
                                 position: absolute;
                                 left: -1.25rem;
                               }
                               .lesson-content ol li {
                                 list-style-type: decimal;
-                                color: #d1d5db;
+                                color: #475569;
                               }
                               .lesson-content strong {
-                                color: #22d3ee;
+                                color: var(--primary);
                                 font-weight: 600;
                               }
                               .lesson-content code {
-                                background: rgba(34, 211, 238, 0.1);
-                                color: #22d3ee;
+                                background: rgba(var(--primary-rgb), 0.1);
+                                color: var(--primary);
                                 padding: 0.2rem 0.5rem;
                                 border-radius: 0.25rem;
                                 font-family: 'Courier New', monospace;
@@ -344,9 +344,9 @@ export default function AdvancedLearnPage() {
                             `}</style>
                             {/* Render content safely — strip script tags before rendering */}
                             <div
-                              className="bg-dark/50 rounded-xl p-6 border border-white/5"
+                              className="bg-academic rounded-xl p-6 border border-primary/10"
                               dangerouslySetInnerHTML={{
-                                __html: (activeLesson.content?.concept || '<p class="text-gray-400">No content available</p>')
+                                __html: (activeLesson.content?.concept || '<p class="text-muted">No content available</p>')
                                   .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
                                   .replace(/on\w+="[^"]*"/gi, '')
                                   .replace(/javascript:/gi, '')
@@ -361,7 +361,7 @@ export default function AdvancedLearnPage() {
                                 <Award className="h-5 w-5" />
                                 Key Takeaways
                               </h3>
-                              <p className="text-gray-300 leading-relaxed">{activeLesson.content.summary}</p>
+                              <p className="text-ink leading-relaxed">{activeLesson.content.summary}</p>
                             </div>
                           )}
 
@@ -373,7 +373,7 @@ export default function AdvancedLearnPage() {
                                 if (currentIndex > 0) setActiveLesson(lessons[currentIndex - 1])
                               }}
                               disabled={lessons.findIndex(l => l._id === activeLesson._id) === 0}
-                              className="px-6 py-3 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                              className="px-6 py-3 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                             >
                               Previous
                             </button>
@@ -418,11 +418,11 @@ export default function AdvancedLearnPage() {
 
                       {view === 'practice' && (
                         <div>
-                          <h2 className="text-2xl font-bold text-white mb-4">Practice Problems</h2>
-                          <p className="text-gray-400 mb-6">Test your understanding with these practice problems</p>
+                          <h2 className="text-2xl font-bold text-navy mb-4">Practice Problems</h2>
+                          <p className="text-muted mb-6">Test your understanding with these practice problems</p>
                           <div className="bg-primary/10 border border-primary/30 rounded-lg p-6 text-center">
                             <Award className="h-12 w-12 text-primary mx-auto mb-3" />
-                            <p className="text-gray-300">Practice problems coming soon!</p>
+                            <p className="text-ink">Practice problems coming soon!</p>
                           </div>
                         </div>
                       )}

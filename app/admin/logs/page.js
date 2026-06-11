@@ -37,26 +37,36 @@ export default function AdminLogs() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Activity Logs
                 </h1>
-                <p className="text-gray-400 mt-1">{logs.length} log entries</p>
+                <p className="text-muted mt-1">{logs.length} log entries</p>
               </div>
             </div>
           </div>
@@ -83,19 +93,19 @@ export default function AdminLogs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search logs..."
-              className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
             />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
           >
             <option value="all">All Logs</option>
             <option value="user">User Actions</option>
@@ -120,14 +130,14 @@ export default function AdminLogs() {
                     log.type === 'security' ? 'bg-red-500/20 text-red-400' :
                     log.type === 'admin' ? 'bg-purple-500/20 text-purple-400' :
                     log.type === 'system' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-gray-500/20 text-gray-400'
+                    'bg-gray-500/20 text-muted'
                   }`}>
                     {log.type}
                   </span>
-                  <p className="text-white text-sm">{log.action}</p>
-                  <p className="text-gray-400 text-sm">by {log.user?.name || 'System'}</p>
+                  <p className="text-navy text-sm">{log.action}</p>
+                  <p className="text-muted text-sm">by {log.user?.name || 'System'}</p>
                 </div>
-                <span className="text-gray-500 text-xs">
+                <span className="text-muted text-xs">
                   {new Date(log.timestamp).toLocaleString()}
                 </span>
               </div>
@@ -138,7 +148,7 @@ export default function AdminLogs() {
         {filteredLogs.length === 0 && (
           <div className="text-center py-20">
             <Activity className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No logs found</p>
+            <p className="text-muted text-xl">No logs found</p>
           </div>
         )}
       </div>

@@ -109,20 +109,20 @@ export default function AdminPromoCodes() {
   const isExpired = (date) => date && new Date(date) < new Date()
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       {/* Header */}
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Promo Code Management
                 </h1>
-                <p className="text-gray-400 mt-1">{promoCodes.length} promo codes</p>
+                <p className="text-muted mt-1">{promoCodes.length} promo codes</p>
               </div>
             </div>
             <button
@@ -138,13 +138,23 @@ export default function AdminPromoCodes() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+            
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
           </div>
         ) : promoCodes.length === 0 ? (
           <div className="text-center py-20">
             <Tag className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl font-semibold">No promo codes yet</p>
-            <p className="text-gray-500 mt-2 mb-6">Create monthly promo codes for students and promoters.</p>
+            <p className="text-muted text-xl font-semibold">No promo codes yet</p>
+            <p className="text-muted mt-2 mb-6">Create monthly promo codes for students and promoters.</p>
             <button onClick={openCreate} className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold">
               Create First Code
             </button>
@@ -154,13 +164,13 @@ export default function AdminPromoCodes() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10 text-left">
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Code</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Discount</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Expiry</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Usage</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Assigned To</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Status</th>
-                  <th className="pb-3 text-gray-400 font-semibold text-sm px-2">Actions</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Code</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Discount</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Expiry</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Usage</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Assigned To</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Status</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,7 +183,7 @@ export default function AdminPromoCodes() {
                     className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
                     <td className="py-4 px-2">
-                      <span className="font-mono font-bold text-white bg-dark-200 px-3 py-1 rounded-lg text-sm">
+                      <span className="font-mono font-bold text-navy bg-academic px-3 py-1 rounded-lg text-sm">
                         {code.code}
                       </span>
                     </td>
@@ -181,18 +191,18 @@ export default function AdminPromoCodes() {
                       <span className="text-secondary font-bold">{code.discountPercent}%</span>
                     </td>
                     <td className="py-4 px-2">
-                      <span className={`text-sm ${isExpired(code.expiryDate) ? 'text-red-400' : 'text-gray-300'}`}>
+                      <span className={`text-sm ${isExpired(code.expiryDate) ? 'text-red-400' : 'text-ink'}`}>
                         {code.expiryDate ? new Date(code.expiryDate).toLocaleDateString('en-IN') : '—'}
                         {isExpired(code.expiryDate) && <span className="ml-1 text-xs">(expired)</span>}
                       </span>
                     </td>
                     <td className="py-4 px-2">
-                      <span className="text-gray-300 text-sm">
+                      <span className="text-ink text-sm">
                         {code.usedCount || 0}{code.usageLimit ? ` / ${code.usageLimit}` : ' / ∞'}
                       </span>
                     </td>
                     <td className="py-4 px-2">
-                      <span className="text-gray-400 text-sm">{code.assignedTo || '—'}</span>
+                      <span className="text-muted text-sm">{code.assignedTo || '—'}</span>
                     </td>
                     <td className="py-4 px-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -200,7 +210,7 @@ export default function AdminPromoCodes() {
                           ? 'bg-red-500/20 text-red-400'
                           : code.active !== false
                           ? 'bg-green-500/20 text-green-400'
-                          : 'bg-gray-500/20 text-gray-400'
+                          : 'bg-gray-500/20 text-muted'
                       }`}>
                         {isExpired(code.expiryDate) ? 'Expired' : code.active !== false ? 'Active' : 'Inactive'}
                       </span>
@@ -247,8 +257,8 @@ export default function AdminPromoCodes() {
               { label: 'Expired', value: promoCodes.filter((c) => isExpired(c.expiryDate)).length },
             ].map((stat) => (
               <div key={stat.label} className="bg-gradient-to-br from-dark-100/80 to-dark/80 rounded-xl border border-white/10 p-4 text-center">
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
+                <p className="text-2xl font-bold text-navy">{stat.value}</p>
+                <p className="text-muted text-sm mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -270,13 +280,13 @@ export default function AdminPromoCodes() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-navy">
                   {selectedCode ? 'Edit Promo Code' : 'Create Promo Code'}
                 </h2>
-                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-white">
+                <button onClick={() => setShowModal(false)} className="text-muted hover:text-white">
                   <X className="h-6 w-6" />
                 </button>
               </div>
@@ -287,19 +297,19 @@ export default function AdminPromoCodes() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Promo Code *</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Promo Code *</label>
                   <input
                     required
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white font-mono focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy font-mono focus:outline-none focus:border-primary"
                     placeholder="e.g. JUNE2026"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Discount % *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Discount % *</label>
                     <input
                       required
                       type="number"
@@ -307,40 +317,40 @@ export default function AdminPromoCodes() {
                       max="100"
                       value={formData.discountPercent}
                       onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       placeholder="10"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Usage Limit</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Usage Limit</label>
                     <input
                       type="number"
                       min="1"
                       value={formData.usageLimit}
                       onChange={(e) => setFormData({ ...formData, usageLimit: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       placeholder="Unlimited"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Expiry Date *</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Expiry Date *</label>
                   <input
                     required
                     type="date"
                     value={formData.expiryDate}
                     onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Assigned To (Promoter, optional)</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Assigned To (Promoter, optional)</label>
                   <input
                     value={formData.assignedTo}
                     onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     placeholder="Promoter name or ID"
                   />
                 </div>
@@ -352,14 +362,14 @@ export default function AdminPromoCodes() {
                     onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
                     className="w-4 h-4 accent-primary"
                   />
-                  <span className="text-gray-300 text-sm">Active (usable by students)</span>
+                  <span className="text-ink text-sm">Active (usable by students)</span>
                 </label>
 
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>

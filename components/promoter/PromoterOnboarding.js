@@ -36,26 +36,26 @@ export default function PromoterOnboarding({ onDone }) {
         <motion.div
           initial={{ scale: 0.95, y: 20 }}
           animate={{ scale: 1, y: 0 }}
-          className="bg-[#050B2B] border border-white/10 rounded-2xl max-w-md w-full p-8 relative"
+          className="bg-white border border-primary/10 rounded-2xl max-w-md w-full p-8 relative shadow-premium"
         >
-          <button onClick={finish} className="absolute top-4 right-4 text-white/50 hover:text-white" aria-label="Close tour">
+          <button onClick={finish} className="absolute top-4 right-4 text-muted hover:text-ink transition-colors" aria-label="Close tour">
             <X className="h-5 w-5" />
           </button>
-          <p className="text-secondary text-sm font-semibold mb-2">Promoter onboarding · {step + 1}/{STEPS.length}</p>
-          <div className="w-14 h-14 rounded-2xl bg-brand-gradient flex items-center justify-center mb-4">
+          <p className="text-primary text-sm font-semibold mb-2">Promoter onboarding · {step + 1}/{STEPS.length}</p>
+          <div className="w-14 h-14 rounded-2xl bg-brand-gradient flex items-center justify-center mb-4 shadow-sm">
             <Icon className="h-7 w-7 text-white" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-2">{STEPS[step].title}</h3>
-          <p className="text-white/70 text-sm mb-8">{STEPS[step].desc}</p>
+          <h3 className="text-xl font-bold text-navy mb-2">{STEPS[step].title}</h3>
+          <p className="text-muted text-sm mb-8">{STEPS[step].desc}</p>
           <div className="flex gap-3">
             {step > 0 && (
-              <button onClick={() => setStep((s) => s - 1)} className="flex-1 py-3 rounded-xl border border-white/20 text-white font-semibold">
+              <button onClick={() => setStep((s) => s - 1)} className="flex-1 py-3 rounded-xl border border-primary/20 text-ink font-semibold hover:bg-academic transition-colors">
                 Back
               </button>
             )}
             <button
               onClick={() => (step < STEPS.length - 1 ? setStep((s) => s + 1) : finish())}
-              className="flex-1 py-3 rounded-xl bg-brand-gradient font-bold"
+              className="flex-1 py-3 rounded-xl bg-brand-gradient text-white font-bold hover:opacity-90 transition-opacity"
             >
               {step < STEPS.length - 1 ? 'Next' : 'Start earning'}
             </button>

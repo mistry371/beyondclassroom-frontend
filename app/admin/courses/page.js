@@ -111,26 +111,36 @@ export default function AdminCourses() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Course Management
                 </h1>
-                <p className="text-gray-400 mt-1">{courses.length} total courses</p>
+                <p className="text-muted mt-1">{courses.length} total courses</p>
               </div>
             </div>
             <button
@@ -147,13 +157,13 @@ export default function AdminCourses() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted" />
             <input
               type="text"
               placeholder="Search courses..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-dark-100 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-white/10 rounded-lg text-navy placeholder-gray-400 focus:outline-none focus:border-primary"
             />
           </div>
         </div>
@@ -168,13 +178,13 @@ export default function AdminCourses() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2">{course.title}</h3>
-                  <p className="text-gray-400 text-sm line-clamp-2">{course.description}</p>
+                  <h3 className="text-lg font-bold text-navy mb-2">{course.title}</h3>
+                  <p className="text-muted text-sm line-clamp-2">{course.description}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                   course.status === 'published' 
                     ? 'bg-green-500/20 text-green-400' 
-                    : 'bg-gray-500/20 text-gray-400'
+                    : 'bg-gray-500/20 text-muted'
                 }`}>
                   {course.status || 'draft'}
                 </span>
@@ -182,16 +192,16 @@ export default function AdminCourses() {
               
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Category:</span>
-                  <span className="text-white">{course.category}</span>
+                  <span className="text-muted">Category:</span>
+                  <span className="text-navy">{course.category}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Price:</span>
+                  <span className="text-muted">Price:</span>
                   <span className="text-primary font-semibold">₹{course.price}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Enrolled:</span>
-                  <span className="text-white">{course.enrolledCount || 0}</span>
+                  <span className="text-muted">Enrolled:</span>
+                  <span className="text-navy">{course.enrolledCount || 0}</span>
                 </div>
               </div>
 
@@ -246,39 +256,39 @@ export default function AdminCourses() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">
+              <h2 className="text-2xl font-bold text-navy mb-6">
                 {selectedCourse ? 'Edit Course' : 'Create Course'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Title</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Title</label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Description</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     rows="3"
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Category</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Category</label>
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     >
                       <option>Mathematics</option>
                       <option>Statistics</option>
@@ -286,11 +296,11 @@ export default function AdminCourses() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Difficulty</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Difficulty</label>
                     <select
                       value={formData.difficulty}
                       onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     >
                       <option>Beginner</option>
                       <option>Intermediate</option>
@@ -299,11 +309,11 @@ export default function AdminCourses() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Class / Grade</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Class / Grade</label>
                   <select
                     value={formData.grade}
                     onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   >
                     <option value="">All Classes (General)</option>
                     <option value="Class 1">Class 1</option>
@@ -315,51 +325,51 @@ export default function AdminCourses() {
                     <option value="Class 7">Class 7</option>
                     <option value="Class 8">Class 8</option>
                   </select>
-                  <p className="text-gray-500 text-xs mt-1">Assign a class so students can filter by grade.</p>
+                  <p className="text-muted text-xs mt-1">Assign a class so students can filter by grade.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Price (₹)</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Price (₹)</label>
                     <input
                       type="number"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       placeholder="e.g. 999"
                       min="1"
                       required
                     />
-                    <p className="text-gray-500 text-xs mt-1">Enter ₹1 or more. Use isFree flag for free courses.</p>
+                    <p className="text-muted text-xs mt-1">Enter ₹1 or more. Use isFree flag for free courses.</p>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Duration</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Duration</label>
                     <input
                       type="text"
                       value={formData.duration}
                       onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                       placeholder="e.g., 8 weeks"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Status</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
-                  <p className="text-gray-500 text-xs mt-1">Published courses are visible to students.</p>
+                  <p className="text-muted text-xs mt-1">Published courses are visible to students.</p>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>

@@ -91,26 +91,36 @@ export default function AdminMedia() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Media Library
                 </h1>
-                <p className="text-gray-400 mt-1">{media.length} files uploaded</p>
+                <p className="text-muted mt-1">{media.length} files uploaded</p>
               </div>
             </div>
             <label className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer">
@@ -126,19 +136,19 @@ export default function AdminMedia() {
         {/* Filters */}
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search files..."
-              className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
             />
           </div>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
           >
             <option value="all">All Files</option>
             <option value="image">Images</option>
@@ -157,7 +167,7 @@ export default function AdminMedia() {
               transition={{ delay: index * 0.05 }}
               className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
             >
-              <div className="aspect-square bg-dark-200 flex items-center justify-center">
+              <div className="aspect-square bg-academic flex items-center justify-center">
                 {item.type.startsWith('image') ? (
                   <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
                 ) : item.type.startsWith('video') ? (
@@ -167,8 +177,8 @@ export default function AdminMedia() {
                 )}
               </div>
               <div className="p-4">
-                <p className="text-white font-medium text-sm truncate mb-2">{item.name}</p>
-                <p className="text-gray-400 text-xs mb-3">{(item.size / 1024).toFixed(2)} KB</p>
+                <p className="text-navy font-medium text-sm truncate mb-2">{item.name}</p>
+                <p className="text-muted text-xs mb-3">{(item.size / 1024).toFixed(2)} KB</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => copyUrl(item.url)}
@@ -192,8 +202,8 @@ export default function AdminMedia() {
         {filteredMedia.length === 0 && (
           <div className="text-center py-20">
             <Upload className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No files found</p>
-            <p className="text-gray-500 mt-2">Upload your first file to get started</p>
+            <p className="text-muted text-xl">No files found</p>
+            <p className="text-muted mt-2">Upload your first file to get started</p>
           </div>
         )}
       </div>

@@ -124,26 +124,26 @@ export default function AdminModules() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+              <button onClick={() => router.push('/admin')} className="p-2 hover:bg-slate-100 rounded-lg transition-all">
+                <ArrowLeft className="h-5 w-5 text-slate-500" />
               </button>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-slate-800">
                   Module Management
                 </h1>
-                <p className="text-gray-400 mt-1">{modules.length} modules in selected course</p>
+                <p className="text-slate-500 mt-1">{modules.length} modules in selected course</p>
               </div>
             </div>
             <button
@@ -160,11 +160,11 @@ export default function AdminModules() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Course Selector */}
         <div className="mb-6">
-          <label className="block text-gray-300 text-sm font-medium mb-2">Filter by Course</label>
+          <label className="block text-slate-700 text-sm font-semibold mb-2">Filter by Course</label>
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
-            className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           >
             <option value="all">All Modules</option>
             <option value="">— No Course (Standalone) —</option>
@@ -177,10 +177,10 @@ export default function AdminModules() {
         {/* Modules List */}
         <div className="space-y-4">
           {modules.length === 0 ? (
-            <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
-              <BookOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-xl">No modules found</p>
-              <p className="text-gray-500 mt-2">Create your first module to get started</p>
+            <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm">
+              <BookOpen className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+              <p className="text-slate-700 font-bold text-xl">No modules found</p>
+              <p className="text-slate-500 mt-2">Create your first module to get started</p>
             </div>
           ) : (
             modules.map((module, index) => (
@@ -189,53 +189,53 @@ export default function AdminModules() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <GripVertical className="h-6 w-6 text-gray-500 cursor-move" />
+                  <div className="flex-shrink-0 mt-1">
+                    <GripVertical className="h-5 w-5 text-slate-400 cursor-move" />
                   </div>
                   
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="text-xl font-bold text-white mb-2">
+                        <h3 className="text-xl font-bold text-slate-800 mb-1">
                           Module {module.order}: {module.title}
                         </h3>
-                        <p className="text-gray-400 text-sm">{module.description}</p>
+                        <p className="text-slate-500 text-sm">{module.description}</p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                         module.isPublished !== false
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-gray-500/20 text-gray-400'
+                          ? 'bg-green-100 text-green-600'
+                          : 'bg-slate-100 text-slate-600'
                       }`}>
                         {module.isPublished !== false ? 'Published' : 'Draft'}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-4 font-medium">
                       <span>Duration: {module.duration || 'Not set'}</span>
                       <span>•</span>
                       <span>Lessons: {module.lessonCount || 0}</span>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                       <button
                         onClick={() => router.push(`/admin/lessons?moduleId=${module._id}`)}
-                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all text-sm"
+                        className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 font-semibold transition-all text-sm"
                       >
                         Manage Lessons
                       </button>
                       <button
                         onClick={() => handleEdit(module)}
-                        className="px-4 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-all text-sm flex items-center gap-2"
+                        className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 font-semibold transition-all text-sm flex items-center gap-2"
                       >
                         <Edit className="h-4 w-4" />
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(module._id)}
-                        className="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all text-sm flex items-center gap-2"
+                        className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 font-semibold transition-all text-sm flex items-center gap-2"
                       >
                         <Trash2 className="h-4 w-4" />
                         Delete
@@ -264,28 +264,28 @@ export default function AdminModules() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"
+              className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full border border-slate-100"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">
+              <h2 className="text-2xl font-bold text-slate-800 mb-6">
                 {selectedModule ? 'Edit Module' : 'Create Module'}
               </h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Module Title</label>
+                  <label className="block text-slate-700 text-sm font-bold mb-2">Module Title</label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Assign to Course <span className="text-gray-500">(optional)</span></label>
+                  <label className="block text-slate-700 text-sm font-bold mb-2">Assign to Course <span className="text-slate-400 font-normal">(optional)</span></label>
                   <select
                     value={formData.courseId}
                     onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   >
                     <option value="">— Standalone (no course) —</option>
                     {courses.map(course => (
@@ -294,59 +294,59 @@ export default function AdminModules() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Description</label>
+                  <label className="block text-slate-700 text-sm font-bold mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     rows="3"
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Order</label>
+                    <label className="block text-slate-700 text-sm font-bold mb-2">Order</label>
                     <input
                       type="number"
                       value={formData.order}
                       onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Duration</label>
+                    <label className="block text-slate-700 text-sm font-bold mb-2">Duration</label>
                     <input
                       type="text"
                       value={formData.duration}
                       onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                       placeholder="e.g., 2 weeks"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     />
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
                   <input
                     type="checkbox"
                     checked={formData.isPublished}
                     onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                    className="w-5 h-5"
+                    className="w-5 h-5 text-primary rounded border-slate-300 focus:ring-primary"
                   />
-                  <label className="text-gray-300">Publish module</label>
+                  <label className="text-slate-700 font-semibold cursor-pointer" onClick={() => setFormData({ ...formData, isPublished: !formData.isPublished })}>Publish module</label>
                 </div>
-                <div className="flex gap-3 mt-6">
+                <div className="flex gap-4 mt-8 pt-4 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all"
                   >
-                    {selectedModule ? 'Update' : 'Create'}
+                    {selectedModule ? 'Update Module' : 'Create Module'}
                   </button>
                 </div>
               </form>

@@ -50,24 +50,41 @@ export default function Hero() {
         <div className="absolute bottom-10 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-brandPink/10 blur-3xl" />
       </motion.div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24 space-y-10">
+      <div className="w-full relative z-10 block bg-white border-b border-primary/10">
+        <img
+          src="/main-header.png"
+          alt="Beyond Classroom: Where Mathematics Meets Personalization"
+          className="w-full h-auto object-cover"
+        />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-16 lg:pt-16 lg:pb-24 space-y-10 z-10">
 
         {/* ── Row 1: Headline + subtitle + CTAs + trust badges ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65 }}
-        >
-
-
-
-
-
-
-
-
-
-        </motion.div>
+          <div className="text-center max-w-4xl mx-auto space-y-6">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold text-sm shadow-sm"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>Premium Mathematics Education</span>
+            </motion.div>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 mt-6">
+              <PremiumButton href="/courses" showIcon>
+                Explore Courses
+              </PremiumButton>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 text-ink font-semibold px-8 py-3.5 rounded-xl border border-primary/10 hover:bg-white hover:shadow-premium hover:-translate-y-0.5 transition-all w-full sm:w-auto justify-center"
+              >
+                <PlayCircle className="h-5 w-5 text-secondary" />
+                Learn More
+              </Link>
+            </div>
+          </div>
 
         {/* ── Row 2: Beyond Classroom — horizontal left/right ── */}
         <motion.div

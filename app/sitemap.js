@@ -1,7 +1,7 @@
 import { SITE_URL } from '@/lib/seo'
 
 export default function sitemap() {
-  const grades = [6, 7, 8, 9, 10, 11, 12]
+  const grades = [1, 2, 3, 4, 5, 6, 7, 8]
   const staticRoutes = [
     '',
     '/about',
@@ -15,11 +15,6 @@ export default function sitemap() {
     '/promoter',
     '/auth/login',
     '/auth/register',
-    '/learn/mathematics',
-    '/learn/french',
-    '/grades/grade-6',
-    '/grades/grade-10',
-    '/grades/grade-12',
   ]
 
   return [

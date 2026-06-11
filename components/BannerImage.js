@@ -2,14 +2,11 @@ import Image from 'next/image'
 
 export default function BannerImage() {
   return (
-    <div className="w-full flex justify-center items-center py-3 bg-white border-b border-primary/10">
-      <Image
-        src="/class_images/banner.jpeg"
+    <div className="w-full block bg-white">
+      <img
+        src="/main-header.png"
         alt="Beyond Classroom"
-        width={320}
-        height={100}
-        className="h-auto object-contain"
-        priority
+        className="w-full h-auto object-cover"
       />
     </div>
   )

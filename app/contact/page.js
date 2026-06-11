@@ -56,6 +56,17 @@ export default function ContactPage() {
                 </div>
               </div>
             ))}
+            
+            {/* Promoter Program Card */}
+            <a href="/promoter" className="rounded-2xl border border-primary/10 bg-brand-gradient p-5 flex items-center gap-4 shadow-sm min-w-[220px] hover:scale-105 transition-transform cursor-pointer group">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 text-white group-hover:bg-white group-hover:text-primary transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+              </span>
+              <div className="text-left">
+                <p className="font-bold text-white text-sm">Promoter Program</p>
+                <p className="mt-0.5 text-sm text-white/80">Earn by sharing</p>
+              </div>
+            </a>
           </div>
         </div>
       </section>

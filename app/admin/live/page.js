@@ -107,7 +107,7 @@ export default function AdminLiveClasses() {
 
   const statusColor = (s) =>
     s === 'live' ? 'bg-red-500/20 text-red-400' :
-    s === 'recorded' ? 'bg-gray-500/20 text-gray-400' :
+    s === 'recorded' ? 'bg-gray-500/20 text-muted' :
     'bg-blue-500/20 text-blue-400'
 
   const zoomBadge = (cls) => {
@@ -117,23 +117,33 @@ export default function AdminLiveClasses() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-dark flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    <div className="min-h-screen bg-academic flex items-center justify-center">
+      
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Live Classes</h1>
-                <p className="text-gray-400 mt-1">{classes.length} classes • Zoom auto-integration enabled</p>
+                <p className="text-muted mt-1">{classes.length} classes • Zoom auto-integration enabled</p>
               </div>
             </div>
             <button onClick={openCreate}
@@ -151,7 +161,7 @@ export default function AdminLiveClasses() {
           <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
           <div className="text-sm">
             <p className="text-green-300 font-semibold mb-1">Zoom Integration Active</p>
-            <p className="text-gray-400">
+            <p className="text-muted">
               Each scheduled class automatically gets a unique Zoom meeting with its own join link, host start URL, and password.
             </p>
           </div>
@@ -162,7 +172,7 @@ export default function AdminLiveClasses() {
         {classes.length === 0 ? (
           <div className="text-center py-20">
             <Video className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl mb-4">No live classes scheduled</p>
+            <p className="text-muted text-xl mb-4">No live classes scheduled</p>
             <button onClick={openCreate} className="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all">
               Schedule First Class
             </button>
@@ -180,11 +190,11 @@ export default function AdminLiveClasses() {
                     {cls.status}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-1">{cls.title}</h3>
+                <h3 className="text-lg font-bold text-navy mb-1">{cls.title}</h3>
                 <p className="text-primary text-sm mb-1">{cls.topic}</p>
                 <div className="mb-3">{zoomBadge(cls)}</div>
 
-                <div className="space-y-1 mb-4 text-sm text-gray-400">
+                <div className="space-y-1 mb-4 text-sm text-muted">
                   <div className="flex items-center gap-2"><Users className="h-4 w-4" />{cls.instructor}</div>
                   <div className="flex items-center gap-2"><Calendar className="h-4 w-4" />{cls.date} at {cls.time}</div>
                   <div className="flex items-center gap-2"><Clock className="h-4 w-4" />{cls.duration} • Max {cls.maxStudents}</div>
@@ -197,7 +207,7 @@ export default function AdminLiveClasses() {
                       <ExternalLink className="h-3 w-3 text-blue-400 flex-shrink-0" />
                       <span className="text-blue-400 text-xs truncate flex-1">Join: {cls.zoomLink}</span>
                       <button onClick={() => copyToClipboard(cls.zoomLink, cls._id + '_join')}
-                        className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+                        className="text-muted hover:text-white transition-colors flex-shrink-0"
                       >
                         {copied === cls._id + '_join' ? <CheckCircle className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
                       </button>
@@ -207,7 +217,7 @@ export default function AdminLiveClasses() {
                         <Video className="h-3 w-3 text-green-400 flex-shrink-0" />
                         <span className="text-green-400 text-xs flex-1">Host Start URL</span>
                         <button onClick={() => copyToClipboard(cls.zoomStartUrl, cls._id + '_start')}
-                          className="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+                          className="text-muted hover:text-white transition-colors flex-shrink-0"
                         >
                           {copied === cls._id + '_start' ? <CheckCircle className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
                         </button>
@@ -219,11 +229,11 @@ export default function AdminLiveClasses() {
                       </div>
                     )}
                     {cls.zoomPassword && (
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-2 text-xs text-muted">
                         <span>Password:</span>
-                        <code className="bg-dark-200 px-2 py-0.5 rounded text-yellow-400">{cls.zoomPassword}</code>
+                        <code className="bg-academic px-2 py-0.5 rounded text-yellow-400">{cls.zoomPassword}</code>
                         <button onClick={() => copyToClipboard(cls.zoomPassword, cls._id + '_pass')}
-                          className="text-gray-400 hover:text-white"
+                          className="text-muted hover:text-white"
                         >
                           {copied === cls._id + '_pass' ? <CheckCircle className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
                         </button>
@@ -259,11 +269,11 @@ export default function AdminLiveClasses() {
           >
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               onClick={e => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl border border-white/10 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white">{editClass ? 'Edit Class' : 'Schedule Live Class'}</h2>
-                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>
+                <h2 className="text-xl font-bold text-navy">{editClass ? 'Edit Class' : 'Schedule Live Class'}</h2>
+                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-muted" /></button>
               </div>
 
               {!editClass && (
@@ -289,68 +299,68 @@ export default function AdminLiveClasses() {
               <form onSubmit={handleSave} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Class Title *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Class Title *</label>
                     <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
                       placeholder="Mathematics Fundamentals - Live Session" required
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Instructor *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Instructor *</label>
                     <input type="text" value={form.instructor} onChange={e => setForm({ ...form, instructor: e.target.value })}
                       placeholder="Dr. Sharma" required
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Topic</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Topic</label>
                     <input type="text" value={form.topic} onChange={e => setForm({ ...form, topic: e.target.value })}
                       placeholder="Quadratic Equations"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Date *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Date *</label>
                     <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Time *</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Time *</label>
                     <input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Duration (minutes)</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Duration (minutes)</label>
                     <input type="number" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })}
                       placeholder="60" min="15" max="480"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Max Students</label>
+                    <label className="block text-ink text-sm font-medium mb-1">Max Students</label>
                     <input type="number" value={form.maxStudents} onChange={e => setForm({ ...form, maxStudents: e.target.value })}
                       placeholder="30"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">
-                    Manual Zoom Link <span className="text-gray-500 font-normal">(optional — auto-created if blank)</span>
+                  <label className="block text-ink text-sm font-medium mb-1">
+                    Manual Zoom Link <span className="text-muted font-normal">(optional — auto-created if blank)</span>
                   </label>
                   <input type="url" value={form.zoomLink} onChange={e => setForm({ ...form, zoomLink: e.target.value })}
                     placeholder="https://zoom.us/j/... (leave blank for auto)"
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Status</label>
+                  <label className="block text-ink text-sm font-medium mb-1">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   >
                     <option value="upcoming">Upcoming</option>
                     <option value="live">Live Now</option>
@@ -360,19 +370,19 @@ export default function AdminLiveClasses() {
 
                 {form.status === 'recorded' && (
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">
-                      Recording URL <span className="text-gray-500 font-normal">(Zoom cloud recording link)</span>
+                    <label className="block text-ink text-sm font-medium mb-1">
+                      Recording URL <span className="text-muted font-normal">(Zoom cloud recording link)</span>
                     </label>
                     <input type="url" value={form.recordingUrl} onChange={e => setForm({ ...form, recordingUrl: e.target.value })}
                       placeholder="https://zoom.us/rec/share/..."
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                 )}
 
                 <div className="flex gap-3 mt-2">
                   <button type="button" onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >Cancel</button>
                   <button type="submit" disabled={saving}
                     className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"

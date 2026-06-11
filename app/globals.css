@@ -13,7 +13,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: #F8FAFC;
   color: #334155;
   overflow-x: hidden;
@@ -388,7 +388,7 @@ input, textarea, select, button, a, label {
 
 /* ── Admin Panel Light Theme ─────────────────────────────────────────────── */
 .admin-panel .min-h-screen.bg-dark,
-.admin-panel .min-h-screen.bg-\[#050B2B\] {
+.admin-panel .min-h-screen.bg-\[\#050B2B\] {
   background: #F8FAFC !important;
 }
 

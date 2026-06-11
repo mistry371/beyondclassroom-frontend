@@ -31,14 +31,14 @@ export const packages = [
   {
     id: 'beta',
     name: 'Beta Package',
-    nameExtra: '(Grade 1 to 4)',
+    nameExtra: 'For Classes 1 to 4',
     tagline: 'Strong Start. Smart Practice. Bright Future.',
     popular: false,
     inr: 499,
     usd: 5.5,
     validity: '365 Days',
     features: [
-      { label: 'Valid for One Class Only', detail: 'Access limited to one class' },
+      { label: 'Classes 1 to 4 Foundation', detail: 'Perfect for primary school math' },
       { label: 'Validity 365 Days', detail: 'Enjoy full access for 365 Days' },
       { label: '5 Practice Paper for Each Topic', detail: 'Comprehensive practice for every topic' },
       { label: '20 Questions in Each Practice Paper', detail: 'Well-structured papers for effective practice' },
@@ -53,14 +53,14 @@ export const packages = [
   {
     id: 'basic',
     name: 'Basic Package',
-    nameExtra: '',
+    nameExtra: 'For Classes 5 to 8',
     tagline: 'Build Concepts. Practice More. Score Better.',
     popular: false,
     inr: 699,
     usd: 7.5,
     validity: '365 Days',
     features: [
-      { label: 'Valid for One Class Only', detail: 'Access limited to one class' },
+      { label: 'Classes 5 to 8 Core Concepts', detail: 'Middle school mathematics focus' },
       { label: 'Validity 365 Days', detail: 'Enjoy full access for 365 Days' },
       { label: '5 Practice Paper for Each Topic', detail: 'Comprehensive practice for every topic' },
       { label: '20 Questions in Each Practice Paper', detail: 'Well-structured papers for effective practice' },
@@ -77,14 +77,14 @@ export const packages = [
   {
     id: 'pro',
     name: 'Pro Package',
-    nameExtra: '',
+    nameExtra: 'For Classes 5 to 8',
     tagline: 'Advanced Practice. Better Preparation. Excellent Results.',
     popular: true,
     inr: 999,
     usd: 10.5,
     validity: '365 Days',
     features: [
-      { label: 'Valid for One Class Only', detail: 'Access limited to one class' },
+      { label: 'Classes 5 to 8 Advanced Prep', detail: 'Competitive & Olympiad focus' },
       { label: 'Validity 365 Days', detail: 'Enjoy full access for 365 Days' },
       { label: 'Include Basic Package Also', detail: 'All Basic Package features included' },
       { label: '10 Practice Paper for Each Topic', detail: 'Comprehensive practice for every topic' },
@@ -102,14 +102,14 @@ export const packages = [
   {
     id: 'teachers',
     name: 'Teachers Package',
-    nameExtra: '',
+    nameExtra: 'All Classes 1 to 8',
     tagline: 'Smart Tools. Better Teaching. Brighter Results.',
     popular: false,
     inr: 1999,
     usd: 21,
     validity: '365 Days',
     features: [
-      { label: 'Valid for One Class Only', detail: 'Access limited to one class' },
+      { label: 'Full Access to Classes 1 to 8', detail: 'Complete primary & middle school library' },
       { label: 'Validity 365 Days', detail: 'Enjoy full access for 365 Days' },
       { label: 'Include Basic + Pro Package', detail: 'All Basic and Pro features included' },
       { label: 'PDF Download', detail: 'Download papers with your logo and name' },
@@ -121,14 +121,14 @@ export const packages = [
   {
     id: 'school',
     name: 'School or Institute Package',
-    nameExtra: '',
+    nameExtra: 'All Classes 1 to 8',
     tagline: 'Complete Solution for Exam Excellence.',
     popular: false,
     inr: 9999,
     usd: 105,
     validity: '365 Days',
     features: [
-      { label: 'Valid for One Class Only', detail: 'Access limited to one class' },
+      { label: 'Full Access to Classes 1 to 8', detail: 'Enterprise access for all students' },
       { label: 'Validity 365 Days', detail: 'Enjoy full access for 365 Days' },
       { label: 'Include Basic + Pro Package', detail: 'All Basic and Pro features included' },
       { label: 'PDF Download with Branding', detail: 'Download papers with your logo and name' },
@@ -156,6 +156,7 @@ export const team = [
   { name: 'Prof. Karan Desai', role: 'Middle School Specialist', degree: 'IIT Bombay, Mathematics', experience: '14+ years', expertise: ['Algebra', 'Olympiad foundations', 'Problem Solving'], initials: 'KD' },
   { name: 'Dr. Sunita Rao', role: 'Middle School Lead', degree: 'MEd Mathematics, NCERT', experience: '18+ years', expertise: ['Class 1-8 Math', 'Foundations', 'Student Engagement'], initials: 'SR' },
   { name: 'Prof. Amit Khanna', role: 'Live Learning Director', degree: 'MSc, BHU Mathematics', experience: '11+ years', expertise: ['Interactive Classes', 'Doubt Solving', 'Mentorship'], initials: 'AK' },
+  { name: 'Team Member', role: 'Team Member', photo: '/team/teammate.jpeg', degree: 'B.sc.(cs), MCA, B.Ed', experience: '12 years', expertise: ['Computer Science', 'Mathematics'], initials: 'TM' },
 ]
 
 export const timeline = [

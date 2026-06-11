@@ -53,25 +53,35 @@ export default function AdminTools() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-4">
             <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-              <ArrowLeft className="h-5 w-5 text-gray-400" />
+              <ArrowLeft className="h-5 w-5 text-muted" />
             </button>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Tool Management
               </h1>
-              <p className="text-gray-400 mt-1">{enabledCount} of {tools.length} tools enabled</p>
+              <p className="text-muted mt-1">{enabledCount} of {tools.length} tools enabled</p>
             </div>
           </div>
         </div>
@@ -81,13 +91,13 @@ export default function AdminTools() {
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search tools..."
-              className="w-full pl-10 pr-4 py-2.5 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
             />
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -96,7 +106,7 @@ export default function AdminTools() {
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   categoryFilter === cat
                     ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                    : 'bg-dark-100 text-gray-400 hover:bg-dark-200'
+                    : 'bg-white text-muted hover:bg-dark-200'
                 }`}
               >
                 {cat}
@@ -118,18 +128,18 @@ export default function AdminTools() {
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-bold text-white truncate">{tool.name}</h3>
+                  <h3 className="text-base font-bold text-navy truncate">{tool.name}</h3>
                   <span className="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded mt-1 inline-block">
                     {tool.category}
                   </span>
                 </div>
                 <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                  tool.enabled ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-500'
+                  tool.enabled ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-muted'
                 }`}>
                   {tool.enabled ? 'On' : 'Off'}
                 </span>
               </div>
-              <p className="text-gray-400 text-xs mb-4 line-clamp-2">{tool.description}</p>
+              <p className="text-muted text-xs mb-4 line-clamp-2">{tool.description}</p>
               <button
                 onClick={() => toggleTool(tool._id, tool.enabled)}
                 className={`w-full px-3 py-2 rounded-lg transition-all text-xs font-medium flex items-center justify-center gap-2 ${
@@ -148,7 +158,7 @@ export default function AdminTools() {
         {filtered.length === 0 && (
           <div className="text-center py-20">
             <Wrench className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No tools match your search</p>
+            <p className="text-muted text-xl">No tools match your search</p>
           </div>
         )}
       </div>

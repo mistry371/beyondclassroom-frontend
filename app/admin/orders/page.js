@@ -59,26 +59,36 @@ export default function AdminOrders() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Order Management
                 </h1>
-                <p className="text-gray-400 mt-1">{orders.length} orders</p>
+                <p className="text-muted mt-1">{orders.length} orders</p>
               </div>
             </div>
             <button
@@ -97,7 +107,7 @@ export default function AdminOrders() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
           >
             <option value="all">All Orders</option>
             <option value="completed">Completed</option>
@@ -118,30 +128,30 @@ export default function AdminOrders() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-white">Order #{order._id.slice(-8)}</h3>
+                    <h3 className="text-xl font-bold text-navy">Order #{order._id.slice(-8)}</h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                       order.status === 'completed' ? 'bg-green-500/20 text-green-400' :
                       order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
                       order.status === 'refunded' ? 'bg-red-500/20 text-red-400' :
-                      'bg-gray-500/20 text-gray-400'
+                      'bg-gray-500/20 text-muted'
                     }`}>
                       {order.status}
                     </span>
                   </div>
-                  <p className="text-gray-400 text-sm">Customer: {order.user?.name || 'Unknown'}</p>
-                  <p className="text-gray-400 text-sm">{order.user?.email}</p>
+                  <p className="text-muted text-sm">Customer: {order.user?.name || 'Unknown'}</p>
+                  <p className="text-muted text-sm">{order.user?.email}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-white">₹{order.totalAmount}</p>
-                  <p className="text-gray-400 text-sm">{new Date(order.createdAt).toLocaleDateString()}</p>
+                  <p className="text-2xl font-bold text-navy">₹{order.totalAmount}</p>
+                  <p className="text-muted text-sm">{new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
 
               <div className="border-t border-white/10 pt-4 mb-4">
-                <p className="text-gray-400 text-sm mb-2">Courses:</p>
+                <p className="text-muted text-sm mb-2">Courses:</p>
                 <div className="space-y-1">
                   {order.courses?.map(course => (
-                    <p key={course._id} className="text-white text-sm">• {course.title}</p>
+                    <p key={course._id} className="text-navy text-sm">• {course.title}</p>
                   ))}
                 </div>
               </div>
@@ -168,21 +178,21 @@ export default function AdminOrders() {
               {expandedOrder === order._id && (
                 <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-500 mb-1">Order ID</p>
-                    <p className="text-white font-mono">{order._id}</p>
+                    <p className="text-muted mb-1">Order ID</p>
+                    <p className="text-navy font-mono">{order._id}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Payment Method</p>
-                    <p className="text-white">{order.paymentMethod || 'N/A'}</p>
+                    <p className="text-muted mb-1">Payment Method</p>
+                    <p className="text-navy">{order.paymentMethod || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Created At</p>
-                    <p className="text-white">{new Date(order.createdAt).toLocaleString()}</p>
+                    <p className="text-muted mb-1">Created At</p>
+                    <p className="text-navy">{new Date(order.createdAt).toLocaleString()}</p>
                   </div>
                   {order.refundedAt && (
                     <div>
-                      <p className="text-gray-500 mb-1">Refunded At</p>
-                      <p className="text-white">{new Date(order.refundedAt).toLocaleString()}</p>
+                      <p className="text-muted mb-1">Refunded At</p>
+                      <p className="text-navy">{new Date(order.refundedAt).toLocaleString()}</p>
                     </div>
                   )}
                 </div>
@@ -194,7 +204,7 @@ export default function AdminOrders() {
         {orders.length === 0 && (
           <div className="text-center py-20">
             <ShoppingCart className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No orders found</p>
+            <p className="text-muted text-xl">No orders found</p>
           </div>
         )}
       </div>

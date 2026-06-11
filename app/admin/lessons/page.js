@@ -120,26 +120,36 @@ function AdminLessonsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Lesson Management
                 </h1>
-                <p className="text-gray-400 mt-1">{lessons.length} lessons in selected module</p>
+                <p className="text-muted mt-1">{lessons.length} lessons in selected module</p>
               </div>
             </div>
             <button
@@ -156,11 +166,11 @@ function AdminLessonsContent() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <label className="block text-gray-300 text-sm font-medium mb-2">Select Module</label>
+          <label className="block text-ink text-sm font-medium mb-2">Select Module</label>
           <select
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
-            className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="w-full px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
           >
             {modules.map(module => (
               <option key={module._id} value={module._id}>{module.title}</option>
@@ -172,8 +182,8 @@ function AdminLessonsContent() {
           {lessons.length === 0 ? (
             <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
               <FileText className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-xl">No lessons found</p>
-              <p className="text-gray-500 mt-2">Create your first lesson to get started</p>
+              <p className="text-muted text-xl">No lessons found</p>
+              <p className="text-muted mt-2">Create your first lesson to get started</p>
             </div>
           ) : (
             lessons.map((lesson, index) => (
@@ -186,10 +196,10 @@ function AdminLessonsContent() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="text-xl font-bold text-navy mb-2">
                       Lesson {lesson.order}: {lesson.title}
                     </h3>
-                    <p className="text-gray-400 text-sm line-clamp-2">
+                    <p className="text-muted text-sm line-clamp-2">
                       {typeof lesson.content === 'object'
                         ? lesson.content?.concept || lesson.description || ''
                         : lesson.content || lesson.description || ''}
@@ -198,13 +208,13 @@ function AdminLessonsContent() {
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     lesson.isPublished !== false
                       ? 'bg-green-500/20 text-green-400'
-                      : 'bg-gray-500/20 text-gray-400'
+                      : 'bg-gray-500/20 text-muted'
                   }`}>
                     {lesson.isPublished !== false ? 'Published' : 'Draft'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                <div className="flex items-center gap-4 text-sm text-muted mb-4">
                   <span>Duration: {lesson.duration || 'Not set'}</span>
                   {lesson.videoUrl && (
                     <>
@@ -260,62 +270,62 @@ function AdminLessonsContent() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">
+              <h2 className="text-2xl font-bold text-navy mb-6">
                 {selectedLesson ? 'Edit Lesson' : 'Create Lesson'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Lesson Title</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Lesson Title</label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Content</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Content</label>
                   <textarea
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     rows="8"
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Order</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Order</label>
                     <input
                       type="number"
                       value={formData.order}
                       onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Duration</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Duration</label>
                     <input
                       type="text"
                       value={formData.duration}
                       onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                       placeholder="e.g., 30 minutes"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Video URL (Optional)</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Video URL (Optional)</label>
                   <input
                     type="url"
                     value={formData.videoUrl}
                     onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
                     placeholder="https://youtube.com/watch?v=..."
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -325,13 +335,13 @@ function AdminLessonsContent() {
                     onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
                     className="w-5 h-5"
                   />
-                  <label className="text-gray-300">Publish lesson</label>
+                  <label className="text-ink">Publish lesson</label>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>
@@ -353,7 +363,17 @@ function AdminLessonsContent() {
 
 export default function AdminLessons() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center">
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+</div>}>
       <AdminLessonsContent />
     </Suspense>
   )

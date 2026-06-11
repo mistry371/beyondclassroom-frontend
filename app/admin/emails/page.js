@@ -269,22 +269,32 @@ export default function AdminEmails() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-dark flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    <div className="min-h-screen bg-academic flex items-center justify-center">
+      
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-4">
             <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-              <ArrowLeft className="h-5 w-5 text-gray-400" />
+              <ArrowLeft className="h-5 w-5 text-muted" />
             </button>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Email Management</h1>
-              <p className="text-gray-400 mt-1">{TEMPLATES.length} templates • {emails.length} emails sent</p>
+              <p className="text-muted mt-1">{TEMPLATES.length} templates • {emails.length} emails sent</p>
             </div>
           </div>
         </div>
@@ -294,7 +304,7 @@ export default function AdminEmails() {
         <div className="flex gap-3 mb-6">
           {['templates', 'logs'].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-dark-100 text-gray-400 hover:bg-dark-200'}`}
+              className={`px-5 py-2 rounded-lg font-medium transition-all capitalize ${activeTab === tab ? 'bg-gradient-to-r from-primary to-secondary text-white' : 'bg-white text-muted hover:bg-dark-200'}`}
             >
               {tab === 'templates' ? `Templates (${TEMPLATES.length})` : `Email Logs (${emails.length})`}
             </button>
@@ -311,9 +321,9 @@ export default function AdminEmails() {
                   <div className="p-2 bg-primary/20 rounded-lg"><Mail className="h-5 w-5 text-primary" /></div>
                   <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">{template.trigger}</span>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-1">{template.name}</h3>
-                <p className="text-gray-400 text-sm mb-2">{template.description}</p>
-                <p className="text-gray-500 text-xs mb-4 truncate">Subject: {template.subject}</p>
+                <h3 className="text-lg font-bold text-navy mb-1">{template.name}</h3>
+                <p className="text-muted text-sm mb-2">{template.description}</p>
+                <p className="text-muted text-xs mb-4 truncate">Subject: {template.subject}</p>
                 <div className="flex gap-2">
                   <button onClick={() => setPreviewTemplate(template)}
                     className="flex-1 px-3 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-all text-sm flex items-center justify-center gap-1"
@@ -334,14 +344,14 @@ export default function AdminEmails() {
         {activeTab === 'logs' && (
           <div className="space-y-3">
             <div className="flex justify-end mb-4">
-              <button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-dark-100 text-gray-400 rounded-lg hover:bg-dark-200 transition-all text-sm">
+              <button onClick={fetchEmails} className="flex items-center gap-2 px-4 py-2 bg-white text-muted rounded-lg hover:bg-dark-200 transition-all text-sm">
                 <RefreshCw className="h-4 w-4" /> Refresh
               </button>
             </div>
             {emails.length === 0 ? (
               <div className="text-center py-20">
                 <Mail className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 text-xl">No emails sent yet</p>
+                <p className="text-muted text-xl">No emails sent yet</p>
               </div>
             ) : emails.map((email, index) => (
               <motion.div key={email._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }}
@@ -353,11 +363,11 @@ export default function AdminEmails() {
                       {email.status === 'sent' ? <CheckCircle className="h-4 w-4 text-green-400" /> : <AlertCircle className="h-4 w-4 text-red-400" />}
                     </div>
                     <div>
-                      <p className="text-white font-medium">{email.subject}</p>
-                      <p className="text-gray-400 text-sm">To: {email.to}</p>
+                      <p className="text-navy font-medium">{email.subject}</p>
+                      <p className="text-muted text-sm">To: {email.to}</p>
                     </div>
                   </div>
-                  <span className="text-gray-500 text-xs">{new Date(email.sentAt).toLocaleString()}</span>
+                  <span className="text-muted text-xs">{new Date(email.sentAt).toLocaleString()}</span>
                 </div>
               </motion.div>
             ))}
@@ -379,7 +389,7 @@ export default function AdminEmails() {
               <div className="flex items-center justify-between p-4 border-b bg-gray-50">
                 <div>
                   <h3 className="font-bold text-gray-900">{previewTemplate.name}</h3>
-                  <p className="text-sm text-gray-500">Subject: {previewTemplate.subject}</p>
+                  <p className="text-sm text-muted">Subject: {previewTemplate.subject}</p>
                 </div>
                 <button onClick={() => setPreviewTemplate(null)} className="p-2 hover:bg-gray-200 rounded-lg transition-all">
                   <X className="h-5 w-5 text-gray-600" />
@@ -410,11 +420,11 @@ export default function AdminEmails() {
           >
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               onClick={e => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-md"
+              className="bg-white rounded-2xl border border-white/10 p-6 w-full max-w-md"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Send: {sendModal.name}</h2>
-                <button onClick={() => setSendModal(null)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-gray-400" /></button>
+                <h2 className="text-xl font-bold text-navy">Send: {sendModal.name}</h2>
+                <button onClick={() => setSendModal(null)} className="p-2 hover:bg-dark-200 rounded-lg"><X className="h-5 w-5 text-muted" /></button>
               </div>
               {sendResult ? (
                 <div className={`p-4 rounded-xl flex items-center gap-3 ${sendResult.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
@@ -424,23 +434,23 @@ export default function AdminEmails() {
               ) : (
                 <form onSubmit={handleSendEmail} className="space-y-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Recipient Email</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Recipient Email</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
                       <input type="email" value={sendData.to} onChange={e => setSendData({ ...sendData, to: e.target.value })} required
                         placeholder="student@example.com"
-                        className="w-full pl-10 pr-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                        className="w-full pl-10 pr-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Subject</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Subject</label>
                     <input type="text" value={sendData.subject} onChange={e => setSendData({ ...sendData, subject: e.target.value })} required
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div className="flex gap-3 mt-6">
-                    <button type="button" onClick={() => setSendModal(null)} className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all">Cancel</button>
+                    <button type="button" onClick={() => setSendModal(null)} className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all">Cancel</button>
                     <button type="submit" disabled={sending}
                       className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >

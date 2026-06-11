@@ -49,19 +49,29 @@ export default function AdminAnalytics() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b']
 
   const userGrowthData = useMemo(() => analytics?.userGrowth?.length ? analytics.userGrowth : [{ date: '—', users: 0 }], [analytics])
   const coursePopularityData = useMemo(() => analytics?.coursePopularity?.length ? analytics.coursePopularity : [{ name: 'No data', enrollments: 0 }], [analytics])
   const revenueData = useMemo(() => analytics?.revenue?.length ? analytics.revenue : [{ date: '—', revenue: 0 }], [analytics])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-dark">

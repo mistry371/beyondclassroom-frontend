@@ -6,6 +6,8 @@ import { useAdminAuth } from '@/hooks/useAdminAuth'
 import {
   Users, BookOpen, DollarSign, TrendingUp, Activity,
   ShoppingCart, Award, Bell, Settings, BarChart3,
+  Package, Tag, Layers, FileText, ListTree, HelpCircle,
+  MessageSquare, CheckSquare, Image, Shield
 } from 'lucide-react'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
@@ -37,10 +39,10 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { title: 'Total Users', value: stats?.totalUsers ?? '—', icon: Users, color: 'from-primary to-secondary', change: stats?.userGrowth?.percentage || 0 },
-    { title: 'Total Courses', value: stats?.totalCourses ?? '—', icon: BookOpen, color: 'from-secondary to-accent', change: 0 },
-    { title: 'Total Revenue', value: stats?.totalRevenue != null ? `₹${Number(stats.totalRevenue).toFixed(2)}` : '—', icon: DollarSign, color: 'from-green-500 to-emerald-500', change: 0 },
-    { title: 'Active Subscriptions', value: stats?.activeSubscriptions ?? '—', icon: Award, color: 'from-orange-500 to-red-500', change: 0 },
+    { title: 'Total Users', value: stats?.totalUsers ?? '—', icon: Users, color: 'bg-blue-50 text-blue-600', change: stats?.userGrowth?.percentage || 0 },
+    { title: 'Total Courses', value: stats?.totalCourses ?? '—', icon: BookOpen, color: 'bg-emerald-50 text-emerald-600', change: 0 },
+    { title: 'Total Revenue', value: stats?.totalRevenue != null ? `₹${Number(stats.totalRevenue).toFixed(2)}` : '—', icon: DollarSign, color: 'bg-green-50 text-green-600', change: 0 },
+    { title: 'Active Subscriptions', value: stats?.activeSubscriptions ?? '—', icon: Award, color: 'bg-orange-50 text-orange-600', change: 0 },
   ]
 
   return (
@@ -80,8 +82,8 @@ export default function AdminDashboard() {
               transition={{ delay: index * 0.05 }}
               className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6"
             >
-              <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color} w-fit mb-4`}>
-                <stat.icon className="h-6 w-6 text-white" />
+              <div className={`p-3 rounded-xl ${stat.color} w-fit mb-4`}>
+                <stat.icon className="h-6 w-6" />
               </div>
               <h3 className="text-slate-500 text-sm mb-1">{stat.title}</h3>
               <p className="text-3xl font-black text-slate-800">{statsLoading ? '...' : stat.value}</p>
@@ -90,44 +92,44 @@ export default function AdminDashboard() {
         </div>
 
         <AdminSection title="Content Management">
-          <QuickActionCard href="/admin/packages" title="Packages" description="Create & manage learning packages" icon={BookOpen} color="from-emerald-500 to-teal-500" />
-          <QuickActionCard href="/admin/promo-codes" title="Promo Codes" description="Monthly promo codes & discounts" icon={BookOpen} color="from-yellow-500 to-amber-500" />
-          <QuickActionCard href="/admin/modules" title="Modules" description="Manage course modules" icon={BookOpen} color="from-primary to-secondary" />
-          <QuickActionCard href="/admin/lessons" title="Lessons" description="Create and edit lessons" icon={BookOpen} color="from-secondary to-accent" />
-          <QuickActionCard href="/admin/subtopics" title="Subtopics" description="Manage lesson subtopics" icon={BookOpen} color="from-teal-500 to-cyan-500" />
-          <QuickActionCard href="/admin/quizzes" title="Quizzes" description="Manage quizzes and questions" icon={BookOpen} color="from-accent to-primary" />
-          <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={BookOpen} color="from-pink-500 to-rose-500" />
-          <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="from-secondary to-primary" />
-          <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={BookOpen} color="from-red-500 to-orange-500" />
-          <QuickActionCard href="/admin/media" title="Media Library" description="Upload and manage media" icon={BookOpen} color="from-purple-500 to-pink-500" />
+          <QuickActionCard href="/admin/packages" title="Packages" description="Create & manage learning packages" icon={Package} color="bg-teal-50 text-teal-600" />
+          <QuickActionCard href="/admin/promo-codes" title="Promo Codes" description="Monthly promo codes & discounts" icon={Tag} color="bg-amber-50 text-amber-600" />
+          <QuickActionCard href="/admin/modules" title="Modules" description="Manage course modules" icon={Layers} color="bg-indigo-50 text-indigo-600" />
+          <QuickActionCard href="/admin/lessons" title="Lessons" description="Create and edit lessons" icon={FileText} color="bg-blue-50 text-blue-600" />
+          <QuickActionCard href="/admin/subtopics" title="Subtopics" description="Manage lesson subtopics" icon={ListTree} color="bg-cyan-50 text-cyan-600" />
+          <QuickActionCard href="/admin/quizzes" title="Quizzes" description="Manage quizzes and questions" icon={HelpCircle} color="bg-purple-50 text-purple-600" />
+          <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={MessageSquare} color="bg-rose-50 text-rose-600" />
+          <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" />
+          <QuickActionCard href="/admin/media" title="Media Library" description="Upload and manage media" icon={Image} color="bg-pink-50 text-pink-600" />
         </AdminSection>
 
         <AdminSection title="Analytics & Reports">
-          <QuickActionCard href="/admin/analytics" title="Analytics" description="View platform analytics" icon={BarChart3} color="from-green-500 to-emerald-500" />
-          <QuickActionCard href="/admin/progress" title="Progress Tracking" description="Monitor student progress" icon={TrendingUp} color="from-blue-500 to-cyan-500" />
-          <QuickActionCard href="/admin/logs" title="Activity Logs" description="View system activity" icon={Activity} color="from-gray-500 to-slate-500" />
-          <QuickActionCard href="/admin/orders" title="Orders" description="Manage orders and payments" icon={ShoppingCart} color="from-orange-500 to-red-500" />
+          <QuickActionCard href="/admin/analytics" title="Analytics" description="View platform analytics" icon={BarChart3} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/progress" title="Progress Tracking" description="Monitor student progress" icon={TrendingUp} color="bg-cyan-50 text-cyan-600" />
+          <QuickActionCard href="/admin/logs" title="Activity Logs" description="View system activity" icon={Activity} color="bg-slate-100 text-slate-600" />
+          <QuickActionCard href="/admin/orders" title="Orders" description="Manage orders and payments" icon={ShoppingCart} color="bg-orange-50 text-orange-600" />
         </AdminSection>
 
         <AdminSection title="Communication">
-          <QuickActionCard href="/admin/notifications" title="Notifications" description="Send notifications" icon={Bell} color="from-yellow-500 to-orange-500" />
-          <QuickActionCard href="/admin/emails" title="Emails" description="Manage email campaigns" icon={Bell} color="from-indigo-500 to-purple-500" />
-          <QuickActionCard href="/admin/announcements" title="Announcements" description="Platform announcements" icon={Bell} color="from-pink-500 to-rose-500" />
-          <QuickActionCard href="/admin/certificates" title="Certificates" description="Manage certificates" icon={Award} color="from-amber-500 to-yellow-500" />
+          <QuickActionCard href="/admin/notifications" title="Notifications" description="Send notifications" icon={Bell} color="bg-amber-50 text-amber-600" />
+          <QuickActionCard href="/admin/emails" title="Emails" description="Manage email campaigns" icon={MessageSquare} color="bg-indigo-50 text-indigo-600" />
+          <QuickActionCard href="/admin/announcements" title="Announcements" description="Platform announcements" icon={Bell} color="bg-rose-50 text-rose-600" />
+          <QuickActionCard href="/admin/certificates" title="Certificates" description="Manage certificates" icon={Award} color="bg-yellow-50 text-yellow-600" />
         </AdminSection>
 
         <AdminSection title="Platform Management">
-          <QuickActionCard href="/admin/users" title="Users" description="Manage all users" icon={Users} color="from-primary to-secondary" />
-          <QuickActionCard href="/admin/courses" title="Courses" description="Manage courses" icon={BookOpen} color="from-secondary to-accent" />
-          <QuickActionCard href="/admin/content" title="Content" description="Edit website content" icon={BookOpen} color="from-teal-500 to-cyan-500" />
-          <QuickActionCard href="/admin/badges" title="Badges" description="Create achievement badges" icon={Award} color="from-purple-500 to-pink-500" />
+          <QuickActionCard href="/admin/users" title="Users" description="Manage all users" icon={Users} color="bg-blue-50 text-blue-600" />
+          <QuickActionCard href="/admin/courses" title="Courses" description="Manage courses" icon={BookOpen} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/content" title="Content" description="Edit website content" icon={FileText} color="bg-teal-50 text-teal-600" />
+          <QuickActionCard href="/admin/badges" title="Badges" description="Create achievement badges" icon={Award} color="bg-purple-50 text-purple-600" />
         </AdminSection>
 
         <AdminSection title="Security & Tools">
-          <QuickActionCard href="/admin/security" title="Security" description="Monitor security" icon={Settings} color="from-pink-500 to-rose-500" />
-          <QuickActionCard href="/admin/tools" title="Tools" description="Manage learning tools" icon={Settings} color="from-primary to-secondary" />
-          <QuickActionCard href="/admin/settings" title="Settings" description="Platform settings" icon={Settings} color="from-green-500 to-emerald-500" />
-          <QuickActionCard href="/admin/live" title="Live Classes" description="Schedule & manage live sessions" icon={Activity} color="from-orange-500 to-red-500" />
+          <QuickActionCard href="/admin/security" title="Security" description="Monitor security" icon={Shield} color="bg-rose-50 text-rose-600" />
+          <QuickActionCard href="/admin/tools" title="Tools" description="Manage learning tools" icon={Settings} color="bg-blue-50 text-blue-600" />
+          <QuickActionCard href="/admin/settings" title="Settings" description="Platform settings" icon={Settings} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/live" title="Live Classes" description="Schedule & manage live sessions" icon={Activity} color="bg-red-50 text-red-600" />
         </AdminSection>
 
         {!statsLoading && stats?.recentUsers?.length > 0 && (
@@ -169,8 +171,8 @@ function QuickActionCard({ href, title, description, icon: Icon, color }) {
       href={href}
       className="block bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer relative z-10"
     >
-      <div className={`p-3 rounded-xl bg-gradient-to-r ${color} w-fit mb-4`}>
-        <Icon className="h-6 w-6 text-white" />
+      <div className={`p-3 rounded-xl ${color} w-fit mb-4`}>
+        <Icon className="h-6 w-6" />
       </div>
       <h3 className="text-lg font-bold text-slate-800 mb-2">{title}</h3>
       <p className="text-slate-500 text-sm">{description}</p>

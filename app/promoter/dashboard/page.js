@@ -26,6 +26,7 @@ export default function PromoterDashboardPage() {
   const [notification, setNotification] = useState('')
   const [loading, setLoading] = useState(true)
   const [showTour, setShowTour] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
 
   const qrUrl = useMemo(() => {
     if (!promoter?.referralLink) return ''
@@ -104,8 +105,24 @@ export default function PromoterDashboardPage() {
 
   if (loading && !promoter) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+      <div className="min-h-screen bg-slate-50 p-8 animate-pulse">
+        <div className="h-16 bg-white border border-slate-200 rounded-xl mb-8 w-full max-w-7xl mx-auto"></div>
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex gap-4">
+            <div className="h-10 w-32 bg-slate-200 rounded-xl"></div>
+            <div className="h-10 w-48 bg-slate-200 rounded-xl"></div>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="h-32 bg-white border border-slate-200 rounded-2xl"></div>
+            <div className="h-32 bg-white border border-slate-200 rounded-2xl"></div>
+            <div className="h-32 bg-white border border-slate-200 rounded-2xl"></div>
+            <div className="h-32 bg-white border border-slate-200 rounded-2xl"></div>
+          </div>
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="h-64 lg:col-span-2 bg-white border border-slate-200 rounded-2xl"></div>
+            <div className="h-64 bg-white border border-slate-200 rounded-2xl"></div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -136,9 +153,32 @@ export default function PromoterDashboardPage() {
             <span className="hidden sm:flex items-center gap-1 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm font-semibold">
               <Trophy className="h-4 w-4" /> {promoter.rank || 'Bronze'}
             </span>
-            <button type="button" className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-lg" aria-label="Notifications">
-              <Bell className="h-5 w-5" />
-            </button>
+            <div className="relative">
+              <button 
+                type="button" 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`relative p-2 rounded-lg transition-colors ${showNotifications ? 'bg-slate-100 text-primary' : 'text-slate-500 hover:bg-slate-100'}`}
+                aria-label="Notifications"
+              >
+                <Bell className="h-5 w-5" />
+                {/* Optional badge can go here later */}
+              </button>
+              
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden z-50 origin-top-right animate-in fade-in zoom-in duration-200">
+                  <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                    <h3 className="font-bold text-slate-800">Notifications</h3>
+                  </div>
+                  <div className="p-6 text-center">
+                    <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Bell className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <p className="text-sm font-medium text-slate-600">No new notifications</p>
+                    <p className="text-xs text-slate-400 mt-1">We'll notify you when you get referrals or payouts</p>
+                  </div>
+                </div>
+              )}
+            </div>
             <button type="button" onClick={handleLogout} className="p-2 text-red-500 hover:bg-red-50 rounded-lg" aria-label="Logout">
               <LogOut className="h-5 w-5" />
             </button>

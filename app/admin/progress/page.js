@@ -67,26 +67,36 @@ export default function AdminProgress() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Progress Tracking
                 </h1>
-                <p className="text-gray-400 mt-1">{filteredProgress.length} records</p>
+                <p className="text-muted mt-1">{filteredProgress.length} records</p>
               </div>
             </div>
             <button
@@ -103,19 +113,19 @@ export default function AdminProgress() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-4 mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by student or course..."
-              className="w-full pl-10 pr-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
             />
           </div>
           <select
             value={courseFilter}
             onChange={(e) => setCourseFilter(e.target.value)}
-            className="px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary min-w-[200px]"
+            className="px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary min-w-[200px]"
           >
             <option value="all">All Courses</option>
             {courses.map(c => (
@@ -135,14 +145,14 @@ export default function AdminProgress() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">{item.user?.name}</h3>
-                  <p className="text-gray-400 text-sm">{item.user?.email}</p>
+                  <h3 className="text-xl font-bold text-navy mb-1">{item.user?.name}</h3>
+                  <p className="text-muted text-sm">{item.user?.email}</p>
                   <p className="text-primary text-sm mt-1">{item.course?.title}</p>
                 </div>
                 <span className="text-2xl font-bold text-primary">{item.completionPercentage || 0}%</span>
               </div>
 
-              <div className="w-full bg-dark-200 rounded-full h-3 mb-4">
+              <div className="w-full bg-academic rounded-full h-3 mb-4">
                 <div
                   className="bg-gradient-to-r from-primary to-secondary h-3 rounded-full transition-all"
                   style={{ width: `${item.completionPercentage || 0}%` }}
@@ -151,16 +161,16 @@ export default function AdminProgress() {
 
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-400">Lessons Completed</p>
-                  <p className="text-white font-bold">{item.lessonsCompleted?.length || 0}</p>
+                  <p className="text-muted">Lessons Completed</p>
+                  <p className="text-navy font-bold">{item.lessonsCompleted?.length || 0}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Quizzes Passed</p>
-                  <p className="text-white font-bold">{item.quizzesCompleted?.length || 0}</p>
+                  <p className="text-muted">Quizzes Passed</p>
+                  <p className="text-navy font-bold">{item.quizzesCompleted?.length || 0}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Avg. Score</p>
-                  <p className="text-white font-bold">
+                  <p className="text-muted">Avg. Score</p>
+                  <p className="text-navy font-bold">
                     {item.quizScores?.length > 0
                       ? Math.round(item.quizScores.reduce((sum, s) => sum + (s.score || 0), 0) / item.quizScores.length)
                       : 0}%
@@ -174,7 +184,7 @@ export default function AdminProgress() {
         {filteredProgress.length === 0 && (
           <div className="text-center py-20">
             <TrendingUp className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No progress data found</p>
+            <p className="text-muted text-xl">No progress data found</p>
           </div>
         )}
       </div>

@@ -106,7 +106,7 @@ export default function QuizPage() {
       <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
         <Navbar />
         <div className="flex items-center justify-center h-screen">
-          <p className="text-white text-xl">Quiz not found</p>
+          <p className="text-navy text-xl">Quiz not found</p>
         </div>
       </div>
     )
@@ -122,7 +122,7 @@ export default function QuizPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <button
             onClick={() => router.push(`/learn/${params.courseId}`)}
-            className="flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8"
+            className="flex items-center gap-2 text-muted hover:text-primary transition-colors mb-8"
           >
             <ArrowLeft className="h-5 w-5" />
             Back to Course
@@ -134,37 +134,37 @@ export default function QuizPage() {
             className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center"
           >
             <div className="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Award className="h-10 w-10 text-white" />
+              <Award className="h-10 w-10 text-navy" />
             </div>
 
-            <h1 className="text-4xl font-bold text-white mb-4">{quiz.title}</h1>
-            <p className="text-gray-300 text-lg mb-8">{quiz.description}</p>
+            <h1 className="text-4xl font-bold text-navy mb-4">{quiz.title}</h1>
+            <p className="text-ink text-lg mb-8">{quiz.description}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white/5 rounded-xl p-6">
                 <Target className="h-8 w-8 text-primary mx-auto mb-3" />
-                <div className="text-3xl font-bold text-white mb-2">{quiz.questions?.length}</div>
-                <div className="text-gray-400">Questions</div>
+                <div className="text-3xl font-bold text-navy mb-2">{quiz.questions?.length}</div>
+                <div className="text-muted">Questions</div>
               </div>
 
               <div className="bg-white/5 rounded-xl p-6">
                 <Clock className="h-8 w-8 text-secondary mx-auto mb-3" />
-                <div className="text-3xl font-bold text-white mb-2">{quiz.timeLimit}</div>
-                <div className="text-gray-400">Minutes</div>
+                <div className="text-3xl font-bold text-navy mb-2">{quiz.timeLimit}</div>
+                <div className="text-muted">Minutes</div>
               </div>
 
               <div className="bg-white/5 rounded-xl p-6">
                 <Trophy className="h-8 w-8 text-yellow-400 mx-auto mb-3" />
-                <div className="text-3xl font-bold text-white mb-2">{quiz.passingScore}%</div>
-                <div className="text-gray-400">To Pass</div>
+                <div className="text-3xl font-bold text-navy mb-2">{quiz.passingScore}%</div>
+                <div className="text-muted">To Pass</div>
               </div>
             </div>
 
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6 mb-8 text-left">
-              <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+              <h3 className="text-navy font-bold mb-3 flex items-center gap-2">
                 <span>📋</span> Instructions:
               </h3>
-              <ul className="text-gray-300 space-y-2 text-sm">
+              <ul className="text-ink space-y-2 text-sm">
                 <li>• Answer all questions to the best of your ability</li>
                 <li>• You have {quiz.timeLimit} minutes to complete the quiz</li>
                 <li>• You need {quiz.passingScore}% to pass</li>
@@ -218,7 +218,7 @@ export default function QuizPage() {
               {passed ? 'Congratulations!' : 'Keep Trying!'}
             </h1>
             
-            <p className="text-gray-300 text-xl mb-8">
+            <p className="text-ink text-xl mb-8">
               {passed 
                 ? 'You have successfully passed the quiz!'
                 : 'You need more practice. Review the lessons and try again.'}
@@ -227,21 +227,21 @@ export default function QuizPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white/5 rounded-xl p-6">
                 <div className="text-5xl font-bold text-primary mb-2">{result.percentage}%</div>
-                <div className="text-gray-400">Your Score</div>
+                <div className="text-muted">Your Score</div>
               </div>
 
               <div className="bg-white/5 rounded-xl p-6">
-                <div className="text-5xl font-bold text-white mb-2">
+                <div className="text-5xl font-bold text-navy mb-2">
                   {result.score}/{result.totalPoints}
                 </div>
-                <div className="text-gray-400">Points</div>
+                <div className="text-muted">Points</div>
               </div>
 
               <div className="bg-white/5 rounded-xl p-6">
                 <div className="text-5xl font-bold text-secondary mb-2">
                   {result.results.filter(r => r.isCorrect).length}/{result.results.length}
                 </div>
-                <div className="text-gray-400">Correct</div>
+                <div className="text-muted">Correct</div>
               </div>
             </div>
 
@@ -255,7 +255,7 @@ export default function QuizPage() {
               {!passed && (
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-8 py-3 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-all"
+                  className="px-8 py-3 bg-white/10 text-navy rounded-xl font-semibold hover:bg-white/20 transition-all"
                 >
                   Retry Quiz
                 </button>
@@ -270,7 +270,7 @@ export default function QuizPage() {
             transition={{ delay: 0.3 }}
             className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-8"
           >
-            <h2 className="text-2xl font-bold text-white mb-6">Detailed Results</h2>
+            <h2 className="text-2xl font-bold text-navy mb-6">Detailed Results</h2>
             
             <div className="space-y-6">
               {result.results.map((item, index) => (
@@ -292,14 +292,14 @@ export default function QuizPage() {
                     </div>
                     
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold mb-3">Question {index + 1}</h3>
-                      <div className="text-gray-300 mb-4">
+                      <h3 className="text-navy font-semibold mb-3">Question {index + 1}</h3>
+                      <div className="text-ink mb-4">
                         <MathRenderer content={item.question} />
                       </div>
                       
                       <div className="space-y-2">
                         <div>
-                          <span className="text-gray-400">Your answer: </span>
+                          <span className="text-muted">Your answer: </span>
                           <span className={item.isCorrect ? 'text-green-400' : 'text-red-400'}>
                             {item.userAnswer || 'Not answered'}
                           </span>
@@ -307,15 +307,15 @@ export default function QuizPage() {
                         
                         {!item.isCorrect && (
                           <div>
-                            <span className="text-gray-400">Correct answer: </span>
+                            <span className="text-muted">Correct answer: </span>
                             <span className="text-green-400">{item.correctAnswer}</span>
                           </div>
                         )}
                         
                         {item.explanation && (
                           <div className="mt-3 pt-3 border-t border-white/10">
-                            <span className="text-gray-400 block mb-2">Explanation:</span>
-                            <div className="text-gray-300">
+                            <span className="text-muted block mb-2">Explanation:</span>
+                            <div className="text-ink">
                               <MathRenderer content={item.explanation} />
                             </div>
                           </div>
@@ -345,8 +345,8 @@ export default function QuizPage() {
         <div className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-2xl font-bold text-white">{quiz.title}</h2>
-              <p className="text-gray-400">Question {currentQuestion + 1} of {quiz.questions.length}</p>
+              <h2 className="text-2xl font-bold text-navy">{quiz.title}</h2>
+              <p className="text-muted">Question {currentQuestion + 1} of {quiz.questions.length}</p>
             </div>
             
             <div className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xl ${
@@ -358,7 +358,7 @@ export default function QuizPage() {
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-dark-200 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-academic rounded-full h-2 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -377,8 +377,8 @@ export default function QuizPage() {
             className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-8"
           >
             <div className="mb-8">
-              <h3 className="text-xl font-semibold text-white mb-4">Question:</h3>
-              <div className="text-gray-300 text-lg">
+              <h3 className="text-xl font-semibold text-navy mb-4">Question:</h3>
+              <div className="text-ink text-lg">
                 <MathRenderer content={question.question} />
               </div>
             </div>
@@ -391,8 +391,8 @@ export default function QuizPage() {
                   onClick={() => handleAnswerSelect(currentQuestion, option)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                     answers[currentQuestion] === option
-                      ? 'bg-primary/20 border-primary text-white'
-                      : 'bg-white/5 border-white/10 text-gray-300 hover:border-primary/50'
+                      ? 'bg-primary/20 border-primary text-navy'
+                      : 'bg-white/5 border-white/10 text-ink hover:border-primary/50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -416,7 +416,7 @@ export default function QuizPage() {
               <button
                 onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
                 disabled={currentQuestion === 0}
-                className="px-6 py-3 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-white/10 text-navy rounded-xl font-semibold hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -450,7 +450,7 @@ export default function QuizPage() {
 
         {/* Answer Summary */}
         <div className="mt-6 bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <h3 className="text-white font-semibold mb-4">Answer Summary</h3>
+          <h3 className="text-navy font-semibold mb-4">Answer Summary</h3>
           <div className="flex flex-wrap gap-2">
             {quiz.questions.map((_, index) => (
               <button
@@ -458,17 +458,17 @@ export default function QuizPage() {
                 onClick={() => setCurrentQuestion(index)}
                 className={`w-10 h-10 rounded-lg font-semibold transition-all ${
                   currentQuestion === index
-                    ? 'bg-primary text-white'
+                    ? 'bg-primary text-navy'
                     : answers[index]
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-white/5 text-gray-400 border border-white/10'
+                    : 'bg-white/5 text-muted border border-white/10'
                 }`}
               >
                 {index + 1}
               </button>
             ))}
           </div>
-          <p className="text-sm text-gray-400 mt-4">
+          <p className="text-sm text-muted mt-4">
             {Object.keys(answers).length} of {quiz.questions.length} questions answered
           </p>
         </div>

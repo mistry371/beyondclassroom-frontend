@@ -64,26 +64,36 @@ export default function AdminSettings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Platform Settings
                 </h1>
-                <p className="text-gray-400 mt-1">Configure your platform</p>
+                <p className="text-muted mt-1">Configure your platform</p>
               </div>
             </div>
             <button
@@ -116,7 +126,7 @@ export default function AdminSettings() {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                       activeTab === tab.id
                         ? 'bg-gradient-to-r from-primary to-secondary text-white'
-                        : 'text-gray-400 hover:bg-dark-200/50'
+                        : 'text-muted hover:bg-dark-200/50'
                     }`}
                   >
                     <tab.icon className="h-5 w-5" />
@@ -133,10 +143,10 @@ export default function AdminSettings() {
               <div className="space-y-6">
                 {getSettingsByCategory(activeTab).map((setting) => (
                   <div key={setting.key} className="border-b border-white/5 pb-6 last:border-0">
-                    <label className="block text-white font-medium mb-2">
+                    <label className="block text-navy font-medium mb-2">
                       {setting.displayName}
                     </label>
-                    <p className="text-gray-400 text-sm mb-3">{setting.description}</p>
+                    <p className="text-muted text-sm mb-3">{setting.description}</p>
                     
                     {setting.type === 'boolean' ? (
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -146,14 +156,14 @@ export default function AdminSettings() {
                           onChange={(e) => updateSetting(setting.key, e.target.checked ? 'true' : 'false')}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-dark-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div className="w-11 h-6 bg-academic peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     ) : setting.type === 'number' ? (
                       <input
                         type="number"
                         value={setting.value}
                         onChange={(e) => updateSetting(setting.key, e.target.value)}
-                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                        className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       />
                     ) : setting.type === 'color' || setting.key.includes('color') ? (
                       <div className="flex gap-3">
@@ -161,13 +171,13 @@ export default function AdminSettings() {
                           type="color"
                           value={setting.value}
                           onChange={(e) => updateSetting(setting.key, e.target.value)}
-                          className="h-10 w-20 bg-dark-200 border border-white/10 rounded-lg cursor-pointer"
+                          className="h-10 w-20 bg-academic border border-white/10 rounded-lg cursor-pointer"
                         />
                         <input
                           type="text"
                           value={setting.value}
                           onChange={(e) => updateSetting(setting.key, e.target.value)}
-                          className="flex-1 px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                          className="flex-1 px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                         />
                       </div>
                     ) : (
@@ -175,7 +185,7 @@ export default function AdminSettings() {
                         type="text"
                         value={setting.value}
                         onChange={(e) => updateSetting(setting.key, e.target.value)}
-                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                        className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       />
                     )}
                   </div>

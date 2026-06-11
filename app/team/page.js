@@ -80,14 +80,20 @@ export default function TeamPage() {
                 className="flex-shrink-0 w-72 glass-card premium-card overflow-hidden group cursor-default"
               >
                 {/* Top gradient band + avatar */}
-                <div className="h-28 bg-brand-gradient relative">
-                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-2xl bg-white shadow-premium flex items-center justify-center text-2xl font-black text-primary border-4 border-white">
-                    {member.initials}
+                <div className="h-44 bg-brand-gradient relative flex items-center justify-center">
+                  <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-premium border-4 border-white">
+                    {member.photo ? (
+                      <img src={member.photo} alt={member.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <div className="w-full h-full bg-white flex items-center justify-center text-3xl font-black text-primary">
+                        {member.initials}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Card body */}
-                <div className="pt-14 pb-7 px-6 text-center">
+                <div className="pt-4 pb-7 px-6 text-center">
                   <h3 className="text-lg font-bold text-ink">{member.name}</h3>
                   <p className="text-primary font-semibold text-sm mt-1">{member.role}</p>
                   <p className="text-muted text-xs mt-2 flex items-center justify-center gap-1">

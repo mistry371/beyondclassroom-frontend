@@ -103,56 +103,68 @@ export default function LearnPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark flex items-center justify-center">
+      <div className="min-h-screen bg-academic">
         <Navbar />
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
+          <div className="h-40 bg-primary/5 rounded-2xl mb-8"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="h-24 bg-primary/5 rounded-xl"></div>
+              <div className="h-24 bg-primary/5 rounded-xl"></div>
+              <div className="h-24 bg-primary/5 rounded-xl"></div>
+            </div>
+            <div className="space-y-6">
+              <div className="h-64 bg-primary/5 rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
+      <div className="min-h-screen bg-academic">
         <Navbar />
         <div className="flex items-center justify-center h-screen">
-          <p className="text-white text-xl">Course not found</p>
+          <p className="text-navy text-xl">Course not found</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-100 to-dark">
+    <div className="min-h-screen bg-academic">
       <Navbar />
 
       {/* Course Header */}
-      <div className="bg-gradient-to-r from-dark-100/90 to-dark-200/90 backdrop-blur-xl border-b border-white/10">
+      <div className="bg-white border-b border-primary/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
+            <div className="flex items-center gap-2 text-sm text-muted mb-4">
               <span className="hover:text-primary cursor-pointer" onClick={() => router.push('/dashboard')}>Dashboard</span>
               <ChevronRight className="h-4 w-4" />
-              <span className="text-white">{course.title}</span>
+              <span className="text-navy">{course.title}</span>
             </div>
             
             <div className="flex items-start justify-between flex-wrap gap-6">
               <div className="flex-1 min-w-[300px]">
-                <h1 className="text-4xl font-bold text-white mb-3">{course.title}</h1>
-                <p className="text-gray-300 text-lg mb-4">{course.description}</p>
+                <h1 className="text-4xl font-bold text-navy mb-3">{course.title}</h1>
+                <p className="text-muted text-lg mb-4">{course.description}</p>
                 
                 <div className="flex items-center gap-6 flex-wrap">
-                  <div className="flex items-center gap-2 text-gray-300">
+                  <div className="flex items-center gap-2 text-ink">
                     <Clock className="h-5 w-5 text-primary" />
                     <span>{course.duration}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-300">
+                  <div className="flex items-center gap-2 text-ink">
                     <BookOpen className="h-5 w-5 text-secondary" />
                     <span>{modules.length} Modules</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-300">
+                  <div className="flex items-center gap-2 text-ink">
                     <Target className="h-5 w-5 text-accent" />
                     <span>{course.difficulty}</span>
                   </div>
@@ -160,15 +172,15 @@ export default function LearnPage() {
               </div>
 
               {/* Progress Card */}
-              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-xl rounded-2xl border border-primary/30 p-6 min-w-[280px]">
+              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl border border-primary/20 p-6 min-w-[280px]">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-300 font-medium">Course Progress</span>
+                  <span className="text-ink font-medium">Course Progress</span>
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
-                <div className="text-5xl font-bold text-white mb-3">
+                <div className="text-5xl font-bold text-navy mb-3">
                   {progress?.completionPercentage || 0}%
                 </div>
-                <div className="w-full bg-dark-200 rounded-full h-3 overflow-hidden mb-3">
+                <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden mb-3">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress?.completionPercentage || 0}%` }}
@@ -176,10 +188,10 @@ export default function LearnPage() {
                     className="h-full bg-gradient-to-r from-primary to-secondary"
                   />
                 </div>
-                <div className="flex items-center justify-between text-sm text-gray-400">
+                <div className="flex items-center justify-between text-sm text-muted">
                   <span>{progress?.lessonsCompleted?.length || 0} lessons</span>
                   {progress?.expiryDate && (
-                    <span className="text-yellow-400">
+                    <span className="text-yellow-600">
                       {Math.ceil((new Date(progress.expiryDate) - new Date()) / (1000 * 60 * 60 * 24))} days
                     </span>
                   )}
@@ -195,16 +207,16 @@ export default function LearnPage() {
         <div className="space-y-4">
           {!hasAccess && (
             <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-2xl p-6">
-              <h3 className="text-2xl font-bold text-white mb-2">Purchase to Unlock</h3>
-              <p className="text-gray-300 mb-4">You can preview structure, but lessons and quizzes are locked until purchase.</p>
+              <h3 className="text-2xl font-bold text-navy mb-2">Purchase to Unlock</h3>
+              <p className="text-muted mb-4">You can preview structure, but lessons and quizzes are locked until purchase.</p>
               <button onClick={() => router.push(`/courses/${params.courseId}`)} className="px-5 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold">Unlock Course</button>
             </div>
           )}
           {modules.length === 0 ? (
-            <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
-              <BookOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">No Modules Available</h3>
-              <p className="text-gray-400">Course content is being prepared</p>
+            <div className="bg-white shadow-premium rounded-2xl border border-primary/10 p-12 text-center">
+              <BookOpen className="h-16 w-16 text-muted mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-navy mb-2">No Modules Available</h3>
+              <p className="text-muted">Course content is being prepared</p>
             </div>
           ) : (
             modules.map((module, moduleIndex) => (
@@ -213,19 +225,19 @@ export default function LearnPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: moduleIndex * 0.1 }}
-                className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
+                className="bg-white shadow-premium rounded-2xl border border-primary/10 overflow-hidden"
               >
                 {/* Module Header */}
                 <button
                   onClick={() => isModuleUnlocked(moduleIndex) && toggleModule(moduleIndex)}
-                  className={`w-full p-6 flex items-center justify-between transition-all ${(isModuleUnlocked(moduleIndex) && hasAccess) ? 'hover:bg-white/5' : 'cursor-not-allowed opacity-70'}`}
+                  className={`w-full p-6 flex items-center justify-between transition-all ${(isModuleUnlocked(moduleIndex) && hasAccess) ? 'hover:bg-slate-50' : 'cursor-not-allowed opacity-70'}`}
                 >
                   <div className="flex items-center gap-4 flex-1 text-left">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg flex-shrink-0 ${
                       isModuleCompleted(module)
                         ? 'bg-green-500/20 text-green-400'
                         : !isModuleUnlocked(moduleIndex)
-                        ? 'bg-gray-500/20 text-gray-500'
+                        ? 'bg-gray-500/20 text-muted'
                         : 'bg-gradient-to-r from-primary to-secondary text-white'
                     }`}>
                       {isModuleCompleted(module) ? (
@@ -238,15 +250,15 @@ export default function LearnPage() {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-white mb-1">{module.title}</h3>
-                      <p className="text-gray-400 text-sm line-clamp-2">{module.description}</p>
+                      <h3 className="text-xl font-bold text-navy mb-1">{module.title}</h3>
+                      <p className="text-muted text-sm line-clamp-2">{module.description}</p>
                       
                       <div className="flex items-center gap-4 mt-3 flex-wrap">
-                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <div className="flex items-center gap-2 text-sm text-muted">
                           <BookOpen className="h-4 w-4" />
                           <span>{module.lessons?.length || 0} Lessons</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                        <div className="flex items-center gap-2 text-sm text-muted">
                           <Clock className="h-4 w-4" />
                           <span>{module.duration}</span>
                         </div>
@@ -263,7 +275,7 @@ export default function LearnPage() {
                       <div className="text-2xl font-bold text-primary mb-1">
                         {getModuleProgress(module)}%
                       </div>
-                      <div className="w-32 bg-dark-200 rounded-full h-2 overflow-hidden">
+                      <div className="w-32 bg-slate-200 rounded-full h-2 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
                           style={{ width: `${getModuleProgress(module)}%` }}
@@ -272,7 +284,7 @@ export default function LearnPage() {
                     </div>
 
                     <ChevronDown
-                      className={`h-6 w-6 text-gray-400 transition-transform flex-shrink-0 ${
+                      className={`h-6 w-6 text-muted transition-transform flex-shrink-0 ${
                         expandedModules.includes(moduleIndex) ? 'rotate-180' : ''
                       }`}
                     />
@@ -296,7 +308,7 @@ export default function LearnPage() {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="border-t border-white/10"
+                      className="border-t border-primary/10"
                     >
                       <div className="p-6 space-y-3">
                         {/* Lessons */}
@@ -309,7 +321,7 @@ export default function LearnPage() {
                             className={`flex items-center justify-between p-4 rounded-xl transition-all relative ${
                               isLessonCompleted(lesson._id)
                                 ? 'bg-green-500/10 border border-green-500/30'
-                                : 'bg-white/5 border border-white/10 hover:border-primary/30'
+                                : 'bg-academic border border-primary/10 hover:border-primary/30'
                             }`}
                           >
                             {!hasAccess && <div className="absolute inset-0 backdrop-blur-[2px] bg-black/30 rounded-xl" />}
@@ -321,9 +333,9 @@ export default function LearnPage() {
                               )}
                               
                               <div className="min-w-0 flex-1">
-                                <h4 className="text-white font-semibold truncate">{lesson.title}</h4>
+                                <h4 className="text-navy font-semibold truncate">{lesson.title}</h4>
                                 <div className="flex items-center gap-3 mt-1 flex-wrap">
-                                  <span className="text-sm text-gray-400">{lesson.duration}</span>
+                                  <span className="text-sm text-muted">{lesson.duration}</span>
                                   <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded">
                                     {lesson.type || 'Lesson'}
                                   </span>
@@ -336,9 +348,9 @@ export default function LearnPage() {
                               disabled={!isModuleUnlocked(moduleIndex)}
                               className={`px-6 py-2 rounded-lg font-medium transition-all flex-shrink-0 ml-4 ${
                                 !isModuleUnlocked(moduleIndex)
-                                  ? 'bg-gray-500/20 text-gray-500 cursor-not-allowed'
+                                  ? 'bg-gray-500/20 text-muted cursor-not-allowed'
                                   : isLessonCompleted(lesson._id)
-                                  ? 'bg-white/10 text-white hover:bg-white/20'
+                                  ? 'bg-slate-100 text-navy hover:bg-slate-200'
                                   : 'bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90'
                               }`}
                             >
@@ -361,8 +373,8 @@ export default function LearnPage() {
                               <Award className="h-6 w-6 text-yellow-400 flex-shrink-0" />
                               
                               <div className="min-w-0 flex-1">
-                                <h4 className="text-white font-semibold">Module Quiz</h4>
-                                <p className="text-sm text-gray-400">
+                                <h4 className="text-navy font-semibold">Module Quiz</h4>
+                                <p className="text-sm text-muted">
                                   Test your knowledge • {module.quiz.questions?.length || 0} questions
                                 </p>
                               </div>

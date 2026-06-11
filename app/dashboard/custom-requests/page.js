@@ -48,7 +48,12 @@ export default function CustomRequestsPage() {
       const modResults = await Promise.all(allCourses.map(c => api.get('/modules/course/' + c._id).catch(() => ({ data: { modules: [] } }))))
       const allMods = modResults.flatMap((r, i) => (r.data.modules || []).map(m => ({ ...m, courseTitle: allCourses[i].title })))
       setModules(allMods)
-    } catch (e) { console.error(e) } finally { setLoading(false) }
+    } catch (e) { 
+      console.error(e)
+      showError('Failed to load custom requests. Please try again.')
+    } finally { 
+      setLoading(false) 
+    }
   }
 
   const toggleTopic = (mod, course) => {
@@ -83,16 +88,16 @@ export default function CustomRequestsPage() {
     }
   }
 
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><Navbar/><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
+  if (loading) return <div className="min-h-screen bg-academic flex items-center justify-center"><Navbar/><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <Navbar/>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-black text-white">Custom Study Requests</h1>
-            <p className="text-gray-400 mt-1">Select topics from any course and request a custom question paper or study notes</p>
+            <h1 className="text-3xl font-black text-navy">Custom Study Requests</h1>
+            <p className="text-muted mt-1">Select topics from any course and request a custom question paper or study notes</p>
           </div>
           <button onClick={() => setShowForm(true)} className="px-5 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold hover:opacity-90 flex items-center gap-2">
             <Plus className="h-4 w-4"/> New Request
@@ -103,8 +108,8 @@ export default function CustomRequestsPage() {
         {requests.length === 0 ? (
           <div className="text-center py-16 bg-dark-100/50 rounded-2xl border border-white/10">
             <BookOpen className="h-14 w-14 text-gray-600 mx-auto mb-4"/>
-            <p className="text-gray-400 text-lg">No requests yet</p>
-            <p className="text-gray-500 text-sm mt-1">Create a custom request to get a personalised question paper</p>
+            <p className="text-muted text-lg">No requests yet</p>
+            <p className="text-muted text-sm mt-1">Create a custom request to get a personalised question paper</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -113,10 +118,10 @@ export default function CustomRequestsPage() {
                 className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-white font-bold text-lg">{req.title}</h3>
-                    <p className="text-gray-400 text-sm mt-1">{req.description}</p>
+                    <h3 className="text-navy font-bold text-lg">{req.title}</h3>
+                    <p className="text-muted text-sm mt-1">{req.description}</p>
                   </div>
-                  <span className={"px-3 py-1 rounded-full text-xs font-bold " + (STATUS_COLORS[req.status] || 'bg-gray-500/20 text-gray-400')}>
+                  <span className={"px-3 py-1 rounded-full text-xs font-bold " + (STATUS_COLORS[req.status] || 'bg-gray-500/20 text-muted')}>
                     {req.status.toUpperCase()}
                   </span>
                 </div>
@@ -134,19 +139,19 @@ export default function CustomRequestsPage() {
                     <span key={`${t.subtopicId}-${t.name}`} className="px-2 py-1 bg-orange-500/10 text-orange-300 rounded text-xs">{t.name}</span>
                   ))}
                 </div>
-                <div className="flex gap-4 text-sm text-gray-400">
-                  <span>Type: <span className="text-white">{req.deliverable.replace('_',' ')}</span></span>
-                  <span>Difficulty: <span className="text-white">{req.difficulty}</span></span>
-                  {req.budget && <span>Budget: <span className="text-white">Rs.{req.budget}</span></span>}
+                <div className="flex gap-4 text-sm text-muted">
+                  <span>Type: <span className="text-navy">{req.deliverable.replace('_',' ')}</span></span>
+                  <span>Difficulty: <span className="text-navy">{req.difficulty}</span></span>
+                  {req.budget && <span>Budget: <span className="text-navy">Rs.{req.budget}</span></span>}
                   {req.quotedPrice && <span className="text-purple-400 font-bold">Quoted: Rs.{req.quotedPrice}</span>}
                   {req.finalPrice && <span className="text-purple-400 font-bold">Final: Rs.{req.finalPrice}</span>}
-                  {req.estimatedDuration && <span>Duration: <span className="text-white">{req.estimatedDuration}</span></span>}
-                  {req.paymentStatus && <span>Payment: <span className="text-white">{req.paymentStatus}</span></span>}
+                  {req.estimatedDuration && <span>Duration: <span className="text-navy">{req.estimatedDuration}</span></span>}
+                  {req.paymentStatus && <span>Payment: <span className="text-navy">{req.paymentStatus}</span></span>}
                 </div>
                 {(req.roadmap || []).length > 0 && (
                   <div className="mt-3 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
                     <p className="text-blue-300 text-sm font-semibold mb-2">Personalized Roadmap</p>
-                    <ul className="space-y-1 text-sm text-gray-300">
+                    <ul className="space-y-1 text-sm text-ink">
                       {req.roadmap.map((item, idx) => <li key={`${item}-${idx}`}>- {item}</li>)}
                     </ul>
                   </div>
@@ -176,14 +181,14 @@ export default function CustomRequestsPage() {
                       value={messageByRequest[req._id] || ''}
                       onChange={(e) => setMessageByRequest(prev => ({ ...prev, [req._id]: e.target.value }))}
                       rows={2}
-                      className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm mb-3"
+                      className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy text-sm mb-3"
                       placeholder="Modification note for admin (optional)"
                     />
                     <div className="flex flex-wrap gap-2">
                       {req.status === 'quoted' && (
                         <>
                           <button onClick={() => handleRequestAction(req._id, 'accept')} className="px-3 py-2 bg-green-500/20 text-green-300 rounded-lg text-sm font-semibold inline-flex items-center gap-2"><CheckCircle className="h-4 w-4"/>Accept Package</button>
-                          <button onClick={() => handleRequestAction(req._id, 'purchase')} className="px-3 py-2 bg-primary text-white rounded-lg text-sm font-semibold inline-flex items-center gap-2"><CreditCard className="h-4 w-4"/>Purchase Package</button>
+                          <button onClick={() => handleRequestAction(req._id, 'purchase')} className="px-3 py-2 bg-primary text-navy rounded-lg text-sm font-semibold inline-flex items-center gap-2"><CreditCard className="h-4 w-4"/>Purchase Package</button>
                         </>
                       )}
                       <button onClick={() => handleRequestAction(req._id, 'request_modification')} className="px-3 py-2 bg-yellow-500/20 text-yellow-300 rounded-lg text-sm font-semibold inline-flex items-center gap-2"><RefreshCw className="h-4 w-4"/>Request Changes</button>
@@ -195,7 +200,7 @@ export default function CustomRequestsPage() {
                     <PackageCheck className="h-4 w-4"/> Personalized package unlocked
                   </div>
                 )}
-                <p className="text-gray-500 text-xs mt-3">{new Date(req.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</p>
+                <p className="text-muted text-xs mt-3">{new Date(req.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</p>
               </motion.div>
             ))}
           </div>
@@ -210,23 +215,23 @@ export default function CustomRequestsPage() {
             onClick={() => setShowForm(false)}>
             <motion.div initial={{ scale:0.95, opacity:0 }} animate={{ scale:1, opacity:1 }} exit={{ scale:0.95, opacity:0 }}
               onClick={e => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl my-8">
-              <h2 className="text-2xl font-bold text-white mb-6">New Custom Request</h2>
+              className="bg-white rounded-2xl border border-white/10 p-6 w-full max-w-2xl my-8">
+              <h2 className="text-2xl font-bold text-navy mb-6">New Custom Request</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Request Title *</label>
-                  <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"
+                  <label className="block text-ink text-sm font-medium mb-1">Request Title *</label>
+                  <input className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
                     value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} placeholder="e.g. Mathematics + French Question Paper" required/>
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-1">Description</label>
-                  <textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm" rows={3}
+                  <label className="block text-ink text-sm font-medium mb-1">Description</label>
+                  <textarea className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm" rows={3}
                     value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} placeholder="Any specific requirements, number of questions, marks distribution..."/>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Deliverable *</label>
-                    <select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"
+                    <label className="block text-ink text-sm font-medium mb-1">Deliverable *</label>
+                    <select className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
                       value={form.deliverable} onChange={e => setForm(f => ({...f, deliverable: e.target.value}))}>
                       <option value="question_paper">Question Paper</option>
                       <option value="study_notes">Study Notes</option>
@@ -234,8 +239,8 @@ export default function CustomRequestsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Difficulty</label>
-                    <select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"
+                    <label className="block text-ink text-sm font-medium mb-1">Difficulty</label>
+                    <select className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
                       value={form.difficulty} onChange={e => setForm(f => ({...f, difficulty: e.target.value}))}>
                       <option value="easy">Easy</option>
                       <option value="medium">Medium</option>
@@ -244,20 +249,20 @@ export default function CustomRequestsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Deadline (optional)</label>
-                    <input type="date" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"
+                    <label className="block text-ink text-sm font-medium mb-1">Deadline (optional)</label>
+                    <input type="date" className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
                       value={form.deadline} onChange={e => setForm(f => ({...f, deadline: e.target.value}))}/>
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-1">Your Budget (Rs.)</label>
-                    <input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-sm"
+                    <label className="block text-ink text-sm font-medium mb-1">Your Budget (Rs.)</label>
+                    <input type="number" className="w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
                       value={form.budget} onChange={e => setForm(f => ({...f, budget: e.target.value}))} placeholder="e.g. 500"/>
                   </div>
                 </div>
 
                 {/* Topic selector */}
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Select Topics/Modules * <span className="text-gray-500">({selectedTopics.length} selected)</span></label>
+                  <label className="block text-ink text-sm font-medium mb-2">Select Topics/Modules * <span className="text-muted">({selectedTopics.length} selected)</span></label>
                   <div className="max-h-64 overflow-y-auto space-y-2 border border-white/10 rounded-xl p-3 bg-dark-200/30">
                     {courses.map(course => {
                       const courseMods = modules.filter(m => m.courseId === course._id)
@@ -265,9 +270,9 @@ export default function CustomRequestsPage() {
                       return (
                         <div key={course._id}>
                           <button type="button" onClick={() => setExpandedCourse(expandedCourse === course._id ? null : course._id)}
-                            className="w-full text-left px-3 py-2 bg-dark-200/60 rounded-lg text-white text-sm font-medium hover:bg-dark-200 transition-all flex items-center justify-between">
+                            className="w-full text-left px-3 py-2 bg-dark-200/60 rounded-lg text-navy text-sm font-medium hover:bg-dark-200 transition-all flex items-center justify-between">
                             <span>{course.title}</span>
-                            <span className="text-gray-400 text-xs">{courseMods.length} modules</span>
+                            <span className="text-muted text-xs">{courseMods.length} modules</span>
                           </button>
                           {expandedCourse === course._id && (
                             <div className="mt-1 ml-3 space-y-1">
@@ -276,7 +281,7 @@ export default function CustomRequestsPage() {
                                 return (
                                   <label key={mod._id} className={"flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all " + (selected ? "bg-primary/20 border border-primary/30" : "hover:bg-dark-200/50")}>
                                     <input type="checkbox" checked={!!selected} onChange={() => toggleTopic(mod, course)} className="accent-primary"/>
-                                    <span className="text-gray-300 text-sm">{mod.title}</span>
+                                    <span className="text-ink text-sm">{mod.title}</span>
                                   </label>
                                 )
                               })}
@@ -300,7 +305,7 @@ export default function CustomRequestsPage() {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-dark-200 text-white rounded-xl hover:bg-gray-600 text-sm">Cancel</button>
+                  <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 bg-academic text-navy rounded-xl hover:bg-gray-600 text-sm">Cancel</button>
                   <button type="submit" className="flex-1 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold hover:opacity-90 text-sm">Submit Request</button>
                 </div>
               </form>

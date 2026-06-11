@@ -5,7 +5,7 @@ import { X, CreditCard, Lock, CheckCircle, ShoppingBag, Tag, ChevronRight } from
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/utils/api'
 
-export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
+export default function PaymentModal({ isOpen, onClose, course, item, isPackage, onSuccess }) {
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [promoCode, setPromoCode] = useState('')
@@ -13,7 +13,9 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
   const [promoError, setPromoError] = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
 
-  const originalAmount = course?.price || 0
+  // Use item if provided, otherwise fallback to course for backwards compatibility
+  const currentItem = item || course
+  const originalAmount = isPackage ? (currentItem?.priceINR || 0) : (currentItem?.price || 0)
   const finalAmount = promoApplied ? promoApplied.finalAmount : originalAmount
 
   const handleApplyPromo = async () => {
@@ -53,7 +55,7 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
     })
 
   const handlePayment = async () => {
-    if (!course?._id) return
+    if (!currentItem?._id) return
     setLoading(true)
 
     try {
@@ -67,11 +69,17 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
       // Create Razorpay order with final (discounted) amount
       let orderData
       try {
-        const res = await api.post('/payment/create-order', {
-          courseId: course._id,
+        const payload = {
           amount: finalAmount,
           promoCode: promoApplied ? promoCode.trim() : undefined,
-        })
+        }
+        if (isPackage) {
+          payload.packageId = currentItem._id
+        } else {
+          payload.courseId = currentItem._id
+        }
+
+        const res = await api.post('/payment/create-order', payload)
         orderData = res.data
       } catch (err) {
         alert(err.response?.data?.message || 'Failed to initiate payment. Please try again.')
@@ -93,16 +101,22 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
         amount: order.amount,
         currency: order.currency || 'INR',
         name: 'Beyond Classroom',
-        description: course.title,
+        description: currentItem.title || currentItem.name,
         order_id: order.id,
         handler: async (response) => {
           try {
-            const verifyRes = await api.post('/payment/verify', {
+            const verifyPayload = {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              courseId: course._id,
-            })
+            }
+            if (isPackage) {
+              verifyPayload.packageId = currentItem._id
+            } else {
+              verifyPayload.courseId = currentItem._id
+            }
+
+            const verifyRes = await api.post('/payment/verify', verifyPayload)
             if (verifyRes.data.success) {
               // Record promo code usage
               if (promoApplied && promoCode) {
@@ -149,8 +163,8 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
               {done ? (
                 <div className="text-center py-6">
                   <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-white mb-2">Enrolled Successfully!</h2>
-                  <p className="text-gray-400">You now have full access to this course.</p>
+                  <h2 className="text-2xl font-bold text-white mb-2">Purchase Successful!</h2>
+                  <p className="text-gray-400">You now have full access.</p>
                 </div>
               ) : (
                 <>
@@ -162,8 +176,8 @@ export default function PaymentModal({ isOpen, onClose, course, onSuccess }) {
                   </div>
 
                   <div className="bg-white/5 rounded-xl p-6 mb-4">
-                    <h3 className="text-lg font-semibold text-white mb-1">{course?.title}</h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">{course?.description}</p>
+                    <h3 className="text-lg font-semibold text-white mb-1">{currentItem?.title || currentItem?.name}</h3>
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">{currentItem?.description}</p>
                     <div className="space-y-2 pt-4 border-t border-white/10">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400 text-sm">Original Price</span>

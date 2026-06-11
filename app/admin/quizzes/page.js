@@ -152,26 +152,36 @@ export default function AdminQuizzes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Quiz Management
                 </h1>
-                <p className="text-gray-400 mt-1">{quizzes.length} quizzes in selected module</p>
+                <p className="text-muted mt-1">{quizzes.length} quizzes in selected module</p>
               </div>
             </div>
             <button
@@ -188,11 +198,11 @@ export default function AdminQuizzes() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <label className="block text-gray-300 text-sm font-medium mb-2">Select Module</label>
+          <label className="block text-ink text-sm font-medium mb-2">Select Module</label>
           <select
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
-            className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+            className="w-full px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
           >
             {modules.map(module => (
               <option key={module._id} value={module._id}>{module.title}</option>
@@ -204,8 +214,8 @@ export default function AdminQuizzes() {
           {quizzes.length === 0 ? (
             <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
               <ClipboardList className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-xl">No quizzes found</p>
-              <p className="text-gray-500 mt-2">Create your first quiz to get started</p>
+              <p className="text-muted text-xl">No quizzes found</p>
+              <p className="text-muted mt-2">Create your first quiz to get started</p>
             </div>
           ) : (
             quizzes.map((quiz, index) => (
@@ -218,19 +228,19 @@ export default function AdminQuizzes() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2">{quiz.title}</h3>
-                    <p className="text-gray-400 text-sm">{quiz.description}</p>
+                    <h3 className="text-xl font-bold text-navy mb-2">{quiz.title}</h3>
+                    <p className="text-muted text-sm">{quiz.description}</p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     quiz.isPublished !== false
                       ? 'bg-green-500/20 text-green-400'
-                      : 'bg-gray-500/20 text-gray-400'
+                      : 'bg-gray-500/20 text-muted'
                   }`}>
                     {quiz.isPublished !== false ? 'Published' : 'Draft'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                <div className="flex items-center gap-4 text-sm text-muted mb-4">
                   <span className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
                     {quiz.timeLimit} min
@@ -280,62 +290,62 @@ export default function AdminQuizzes() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">
+              <h2 className="text-2xl font-bold text-navy mb-6">
                 {selectedQuiz ? 'Edit Quiz' : 'Create Quiz'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Quiz Title</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Quiz Title</label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Description</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     rows="3"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Time Limit (minutes)</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Time Limit (minutes)</label>
                     <input
                       type="number"
                       value={formData.timeLimit}
                       onChange={(e) => setFormData({ ...formData, timeLimit: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">Passing Score (%)</label>
+                    <label className="block text-ink text-sm font-medium mb-2">Passing Score (%)</label>
                     <input
                       type="number"
                       value={formData.passingScore}
                       onChange={(e) => setFormData({ ...formData, passingScore: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="border-t border-white/10 pt-6">
-                  <h3 className="text-lg font-bold text-white mb-4">Questions ({formData.questions.length})</h3>
+                  <h3 className="text-lg font-bold text-navy mb-4">Questions ({formData.questions.length})</h3>
                   
                   <div className="space-y-4 mb-4">
                     {formData.questions.map((q, index) => (
                       <div key={index} className="bg-dark-200/50 p-4 rounded-lg">
                         <div className="flex justify-between items-start mb-2">
-                          <p className="text-white font-medium">{index + 1}. {q.question}</p>
+                          <p className="text-navy font-medium">{index + 1}. {q.question}</p>
                           <button
                             type="button"
                             onClick={() => removeQuestion(index)}
@@ -344,7 +354,7 @@ export default function AdminQuizzes() {
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-muted">
                           Correct: {typeof q.correctAnswer === 'number' && q.options?.[q.correctAnswer]
                             ? `Option ${q.correctAnswer + 1}: ${q.options[q.correctAnswer]}`
                             : q.correctAnswer}
@@ -359,12 +369,12 @@ export default function AdminQuizzes() {
                       value={currentQuestion.question}
                       onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
                       placeholder="Question text"
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     />
                     <select
                       value={currentQuestion.type}
                       onChange={(e) => setCurrentQuestion({ ...currentQuestion, type: e.target.value })}
-                      className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     >
                       <option value="mcq">Multiple Choice</option>
                       <option value="numeric">Numeric Answer</option>
@@ -383,7 +393,7 @@ export default function AdminQuizzes() {
                               setCurrentQuestion({ ...currentQuestion, options: newOpts })
                             }}
                             placeholder={`Option ${i + 1}`}
-                            className="px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                            className="px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                           />
                         ))}
                       </div>
@@ -392,7 +402,7 @@ export default function AdminQuizzes() {
                       <select
                         value={currentQuestion.correctAnswer}
                         onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: parseInt(e.target.value) })}
-                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                        className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       >
                         <option value="">Select correct answer</option>
                         {currentQuestion.options.map((opt, i) => opt && (
@@ -405,7 +415,7 @@ export default function AdminQuizzes() {
                         value={currentQuestion.correctAnswer}
                         onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
                         placeholder="Correct answer"
-                        className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                        className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                       />
                     )}
                     <button
@@ -425,13 +435,13 @@ export default function AdminQuizzes() {
                     onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
                     className="w-5 h-5"
                   />
-                  <label className="text-gray-300">Publish quiz</label>
+                  <label className="text-ink">Publish quiz</label>
                 </div>
                 <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>

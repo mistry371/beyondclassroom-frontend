@@ -2,15 +2,18 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowLeft, Clock, CheckCircle, XCircle, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Clock, CheckCircle, XCircle, MessageSquare, Briefcase, Calendar, DollarSign, Edit } from 'lucide-react'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 
 const STATUS_COLORS = {
-  pending:'bg-yellow-500/20 text-yellow-400', reviewing:'bg-blue-500/20 text-blue-400',
-  quoted:'bg-purple-500/20 text-purple-400', accepted:'bg-green-500/20 text-green-400',
-  completed:'bg-green-600/20 text-green-300', rejected:'bg-red-500/20 text-red-400'
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  reviewing: 'bg-blue-100 text-blue-800 border-blue-200',
+  quoted: 'bg-purple-100 text-purple-800 border-purple-200',
+  accepted: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  completed: 'bg-green-100 text-green-800 border-green-200',
+  rejected: 'bg-red-100 text-red-800 border-red-200'
 }
 
 export default function AdminCustomRequests() {
@@ -22,7 +25,7 @@ export default function AdminCustomRequests() {
   const [form, setForm] = useState({ status:'', adminNote:'', quotedPrice:'', finalPrice:'', finalDuration:'', finalRoadmap:'', assignedToUserId:'', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' })
 
   useEffect(() => {
-    api.get('/custom-requests/admin').then(r => setRequests(r.data.requests || [])).catch(console.error).finally(() => setLoading(false))
+    api.get('/custom-requests/admin').then(r => setRequests(r.data.requests || [])).catch(e => { console.error(e); showError('Failed to load requests'); }).finally(() => setLoading(false))
   }, [user])
 
   const openEdit = (req) => { setSelected(req); setForm({ status: req.status, adminNote: req.adminNote || '', quotedPrice: req.quotedPrice || '', finalPrice: req.finalPrice || '', finalDuration: req.finalDuration || req.estimatedDuration || '', finalRoadmap: req.finalRoadmap || '', assignedToUserId: req.assignedToUserId || req.userId || '', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' }) }
@@ -39,6 +42,7 @@ export default function AdminCustomRequests() {
       }
       await api.put('/custom-requests/admin/' + selected._id, payload)
       setSelected(null)
+      showSuccess('Request updated')
       const r = await api.get('/custom-requests/admin')
       setRequests(r.data.requests || [])
     } catch (err) { showError('Update failed') }
@@ -46,153 +50,218 @@ export default function AdminCustomRequests() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this request?')) return
-    await api.delete('/custom-requests/admin/' + id)
-    setRequests(prev => prev.filter(r => r._id !== id))
+    try {
+      await api.delete('/custom-requests/admin/' + id)
+      setRequests(prev => prev.filter(r => r._id !== id))
+      showSuccess('Deleted')
+    } catch (e) {
+      showError('Failed to delete')
+    }
   }
 
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
+  if (loading) return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="w-full max-w-5xl p-6 space-y-6 animate-pulse">
+        <div className="h-10 bg-slate-200 rounded w-1/4"></div>
+        <div className="h-32 bg-slate-200 rounded-2xl w-full"></div>
+        <div className="space-y-3">
+          <div className="h-32 bg-slate-200 rounded-xl w-full"></div>
+          <div className="h-32 bg-slate-200 rounded-xl w-full"></div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="bg-dark-100 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center gap-4">
-          <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400"/></button>
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Custom Requests</h1>
-            <p className="text-gray-400 mt-1">{requests.length} total requests</p>
+    <div className="min-h-screen bg-slate-50 pb-12">
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.push('/admin')} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+              <ArrowLeft className="h-5 w-5 text-slate-600"/>
+            </button>
+            <div>
+              <h1 className="text-2xl font-black text-slate-800">Customized Requests</h1>
+              <p className="text-slate-500 text-sm font-medium mt-0.5">{requests.length} total request{requests.length !== 1 ? 's' : ''}</p>
+            </div>
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {requests.length === 0 ? (
-          <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
-            <MessageSquare className="h-16 w-16 text-gray-600 mx-auto mb-4"/>
-            <p className="text-gray-400 text-xl">No custom requests yet</p>
+          <div className="text-center py-24 bg-white rounded-3xl border border-slate-200 shadow-sm">
+            <MessageSquare className="h-16 w-16 text-slate-300 mx-auto mb-4"/>
+            <p className="text-slate-600 text-lg font-medium">No customized requests yet</p>
           </div>
-        ) : requests.map((req, i) => (
-          <motion.div key={req._id} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:i*0.04 }}
-            className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h3 className="text-white font-bold">{req.title}</h3>
-                  <span className={"px-2 py-0.5 rounded-full text-xs font-bold " + (STATUS_COLORS[req.status] || '')}>{req.status.toUpperCase()}</span>
-                </div>
-                <p className="text-gray-400 text-sm">{req.userName} · {req.userEmail}</p>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => openEdit(req)} className="px-3 py-1.5 bg-primary/20 text-primary rounded-lg text-sm hover:bg-primary/30">Manage</button>
-                <button onClick={() => handleDelete(req._id)} className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30">Delete</button>
-              </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-bold">
+                    <th className="px-6 py-4">Request Info</th>
+                    <th className="px-6 py-4">Student</th>
+                    <th className="px-6 py-4">Deliverable</th>
+                    <th className="px-6 py-4">Status & Price</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {requests.map((req, i) => (
+                    <motion.tr 
+                      key={req._id} 
+                      initial={{ opacity: 0, y: 10 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      transition={{ delay: i * 0.02 }}
+                      className="hover:bg-slate-50/50 transition-colors group"
+                    >
+                      {/* Request Info */}
+                      <td className="px-6 py-4 align-top">
+                        <p className="text-sm font-bold text-slate-900 mb-1 line-clamp-1">{req.title}</p>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                          <Clock className="w-3.5 h-3.5" />
+                          {new Date(req.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </div>
+                      </td>
+
+                      {/* Student Info */}
+                      <td className="px-6 py-4 align-top">
+                        <p className="text-sm font-semibold text-slate-800">{req.userName}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{req.userEmail}</p>
+                      </td>
+
+                      {/* Deliverable Info */}
+                      <td className="px-6 py-4 align-top">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold capitalize border border-slate-200">
+                          <Briefcase className="w-3.5 h-3.5" />
+                          {(req.deliverable || 'custom').replace('_', ' ')}
+                        </span>
+                        <div className="flex flex-wrap gap-1 mt-2 max-w-[200px]">
+                          {(req.selectedTopics || req.selectedModules || []).slice(0, 2).map(t => <span key={t.moduleId} className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100 truncate max-w-[100px]">{t.moduleTitle}</span>)}
+                          {(req.selectedTopics || req.selectedModules || []).length > 2 && <span className="text-[10px] text-slate-400">+{req.selectedModules.length - 2} more</span>}
+                        </div>
+                      </td>
+
+                      {/* Status & Price */}
+                      <td className="px-6 py-4 align-top">
+                        <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border mb-1.5 ${STATUS_COLORS[req.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
+                          {req.status}
+                        </span>
+                        <div className="flex items-center gap-2 text-xs font-semibold">
+                          {req.quotedPrice ? (
+                            <span className="text-purple-700 flex items-center gap-0.5"><DollarSign className="w-3 h-3" /> {req.quotedPrice} Quoted</span>
+                          ) : req.budget ? (
+                            <span className="text-slate-600 flex items-center gap-0.5"><DollarSign className="w-3 h-3" /> {req.budget} Budget</span>
+                          ) : (
+                            <span className="text-slate-400">Not quoted</span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 align-top text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => openEdit(req)} 
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-colors"
+                          >
+                            <Edit className="w-3.5 h-3.5" /> Review
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(req._id)} 
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete Request"
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {(req.selectedTopics || req.selectedModules || []).map(t => <span key={t.moduleId} className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">{t.moduleTitle}</span>)}
-              {(req.selectedLessons || []).map(t => <span key={t.lessonId} className="px-2 py-0.5 bg-blue-500/10 text-blue-300 rounded text-xs">{t.lessonTitle}</span>)}
-              {(req.selectedSubtopics || []).map(t => <span key={t.subtopicId} className="px-2 py-0.5 bg-green-500/10 text-green-300 rounded text-xs">{t.subtopicTitle}</span>)}
-              {(req.selectedPdfs || []).map(t => <span key={`${t.subtopicId}-${t.name}`} className="px-2 py-0.5 bg-orange-500/10 text-orange-300 rounded text-xs">{t.name}</span>)}
-            </div>
-            <div className="flex gap-4 text-sm text-gray-400">
-              <span>Type: <span className="text-white">{(req.deliverable || 'custom').replace('_',' ')}</span></span>
-              <span>Difficulty: <span className="text-white">{req.difficulty}</span></span>
-              {req.budget && <span>Budget: <span className="text-white">Rs.{req.budget}</span></span>}
-              {req.quotedPrice && <span className="text-purple-400 font-bold">Quoted: Rs.{req.quotedPrice}</span>}
-              {req.finalPrice && <span className="text-purple-400 font-bold">Final: Rs.{req.finalPrice}</span>}
-              {req.deadline && <span>Deadline: <span className="text-white">{req.deadline}</span></span>}
-            </div>
-            {(req.roadmap || []).length > 0 && (
-              <div className="mt-3 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                <p className="text-blue-300 text-sm font-semibold mb-2">Student Generated Roadmap</p>
-                <ul className="text-gray-300 text-sm space-y-1">{req.roadmap.map((r, idx) => <li key={`${r}-${idx}`}>- {r}</li>)}</ul>
-              </div>
-            )}
-            {req.preferences && Object.keys(req.preferences).length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {Object.entries(req.preferences).map(([key, value]) => (
-                  <span key={key} className="px-2 py-0.5 bg-white/5 text-gray-300 border border-white/10 rounded text-xs">{key}: {value}</span>
-                ))}
-              </div>
-            )}
-            {(req.studentMessages || []).length > 0 && (
-              <div className="mt-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-                <p className="text-yellow-300 text-sm font-semibold mb-2">Student Messages</p>
-                {(req.studentMessages || []).map((m, idx) => <p key={idx} className="text-gray-300 text-sm">- {m.message}</p>)}
-              </div>
-            )}
-            {req.description && <p className="text-gray-400 text-sm mt-2">{req.description}</p>}
-            <p className="text-gray-500 text-xs mt-2">{new Date(req.createdAt).toLocaleString('en-IN')}</p>
-          </motion.div>
-        ))}
+          </div>
+        )}
       </div>
 
       {selected && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="bg-dark-100 rounded-2xl border border-white/10 p-6 w-full max-w-2xl max-h-[88vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
-            <h3 className="text-xl font-bold text-white mb-4">Manage: {selected.title}</h3>
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="block text-gray-300 text-sm mb-1">Status</label>
-                <select className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-                  value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))}>
-                  <option value="pending">Pending</option>
-                  <option value="reviewing">Reviewing</option>
-                  <option value="quoted">Quoted</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="completed">Completed</option>
-                  <option value="rejected">Rejected</option>
-                </select>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6" onClick={() => setSelected(null)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl border border-slate-200 shadow-2xl p-0 w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between shrink-0">
+              <h3 className="text-xl font-bold text-slate-800">Manage Request</h3>
+              <button onClick={() => setSelected(null)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><XCircle className="w-5 h-5"/></button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
+              <div className="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
+                <p className="text-sm font-bold text-slate-800 mb-1">{selected.title}</p>
+                <p className="text-xs text-slate-500">From: {selected.userName} ({selected.userEmail})</p>
               </div>
-              <div>
-                <label className="block text-gray-300 text-sm mb-1">Quoted Price (Rs.)</label>
-                <input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-                  value={form.quotedPrice} onChange={e => setForm(f => ({...f, quotedPrice: e.target.value}))} placeholder="e.g. 499"/>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
+
+              <form id="edit-form" onSubmit={handleUpdate} className="space-y-6">
                 <div>
-                  <label className="block text-gray-300 text-sm mb-1">Final Price (Rs.)</label>
-                  <input type="number" className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-                    value={form.finalPrice} onChange={e => setForm(f => ({...f, finalPrice: e.target.value}))} placeholder="e.g. 999"/>
-                </div>
-                <div>
-                  <label className="block text-gray-300 text-sm mb-1">Final Duration</label>
-                  <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-                    value={form.finalDuration} onChange={e => setForm(f => ({...f, finalDuration: e.target.value}))} placeholder="e.g. 4 weeks"/>
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-300 text-sm mb-1">Final Roadmap / Package Plan</label>
-                <textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={4}
-                  value={form.finalRoadmap} onChange={e => setForm(f => ({...f, finalRoadmap: e.target.value}))} placeholder="Write final modules, tests, PDFs, worksheets, and delivery plan..."/>
-              </div>
-              <div>
-                <label className="block text-gray-300 text-sm mb-1">Assign To Student ID</label>
-                <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-                  value={form.assignedToUserId} onChange={e => setForm(f => ({...f, assignedToUserId: e.target.value}))} placeholder="Default requester userId"/>
-              </div>
-              <div className="border border-white/10 rounded-lg p-3">
-                <p className="text-gray-300 text-sm font-semibold mb-2">Upload/Deliver Custom Material (Link)</p>
-                <input className="w-full mb-2 px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Title e.g. Merged Paper Set 1"/>
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <select className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>
-                    <option value="question_paper">Question Paper</option>
-                    <option value="notes">Notes</option>
-                    <option value="worksheet">Worksheet</option>
-                    <option value="other">Other</option>
+                  <label className="block text-slate-700 font-bold text-sm mb-2">Current Status</label>
+                  <select className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
+                    value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))}>
+                    <option value="pending">Pending</option>
+                    <option value="reviewing">Reviewing</option>
+                    <option value="quoted">Price Quoted</option>
+                    <option value="accepted">Accepted (Awaiting Payment)</option>
+                    <option value="completed">Completed / Paid</option>
+                    <option value="rejected">Rejected / Cancelled</option>
                   </select>
-                  <input className="px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>
                 </div>
-                <input className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm" value={form.deliveryNote} onChange={e => setForm(f => ({...f, deliveryNote: e.target.value}))} placeholder="Short note for student"/>
-              </div>
-              <div>
-                <label className="block text-gray-300 text-sm mb-1">Note to Student</label>
-                <textarea className="w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary" rows={3}
-                  value={form.adminNote} onChange={e => setForm(f => ({...f, adminNote: e.target.value}))} placeholder="Any message for the student..."/>
-              </div>
-              <div className="flex gap-3">
-                <button type="button" onClick={() => setSelected(null)} className="flex-1 py-2 bg-dark-200 text-white rounded-xl text-sm hover:bg-gray-600">Cancel</button>
-                <button type="submit" className="flex-1 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold text-sm hover:opacity-90">Update</button>
-              </div>
-            </form>
-          </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-slate-700 font-bold text-sm mb-2">Quoted Price (₹)</label>
+                    <input type="number" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
+                      value={form.quotedPrice} onChange={e => setForm(f => ({...f, quotedPrice: e.target.value}))} placeholder="e.g. 499"/>
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold text-sm mb-2">Final Agreed Price (₹)</label>
+                    <input type="number" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
+                      value={form.finalPrice} onChange={e => setForm(f => ({...f, finalPrice: e.target.value}))} placeholder="e.g. 999"/>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold text-sm mb-2">Deliverable Notes / Roadmap</label>
+                  <textarea className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm" rows={3}
+                    value={form.finalRoadmap} onChange={e => setForm(f => ({...f, finalRoadmap: e.target.value}))} placeholder="List out what will be delivered..."/>
+                </div>
+
+                <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+                  <p className="text-slate-800 text-sm font-bold mb-4">Attach Delivery Link (Optional)</p>
+                  <div className="space-y-3">
+                    <input className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm shadow-sm" value={form.deliveryTitle} onChange={e => setForm(f => ({...f, deliveryTitle: e.target.value}))} placeholder="Attachment Title e.g. Merged Paper Set 1"/>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <select className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm shadow-sm sm:col-span-1" value={form.deliveryType} onChange={e => setForm(f => ({...f, deliveryType: e.target.value}))}>
+                        <option value="question_paper">Question Paper</option>
+                        <option value="notes">Notes</option>
+                        <option value="worksheet">Worksheet</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <input className="px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm shadow-sm sm:col-span-2" value={form.deliveryUrl} onChange={e => setForm(f => ({...f, deliveryUrl: e.target.value}))} placeholder="https://drive.google.com/..."/>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold text-sm mb-2">Private Note to Student</label>
+                  <textarea className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm" rows={2}
+                    value={form.adminNote} onChange={e => setForm(f => ({...f, adminNote: e.target.value}))} placeholder="Any message to send back to the student..."/>
+                </div>
+              </form>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-slate-100 flex gap-3 shrink-0 bg-slate-50 rounded-b-3xl">
+              <button type="button" onClick={() => setSelected(null)} className="flex-1 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">Cancel</button>
+              <button type="submit" form="edit-form" className="flex-1 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-md shadow-primary/20">Save Changes</button>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>

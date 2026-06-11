@@ -73,26 +73,36 @@ export default function AdminBadges() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic flex items-center justify-center">
+        
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
-                <ArrowLeft className="h-5 w-5 text-gray-400" />
+                <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Badge Management
                 </h1>
-                <p className="text-gray-400 mt-1">{badges.length} badges created</p>
+                <p className="text-muted mt-1">{badges.length} badges created</p>
               </div>
             </div>
             <button
@@ -118,9 +128,9 @@ export default function AdminBadges() {
             >
               <div className="text-center mb-4">
                 <div className="text-6xl mb-3">{badge.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2">{badge.name}</h3>
-                <p className="text-gray-400 text-sm mb-3">{badge.description}</p>
-                <p className="text-gray-500 text-xs">Criteria: {badge.criteria}</p>
+                <h3 className="text-xl font-bold text-navy mb-2">{badge.name}</h3>
+                <p className="text-muted text-sm mb-3">{badge.description}</p>
+                <p className="text-muted text-xs">Criteria: {badge.criteria}</p>
               </div>
               <div className="flex gap-2">
                 <button
@@ -145,7 +155,7 @@ export default function AdminBadges() {
         {badges.length === 0 && (
           <div className="text-center py-20">
             <Award className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No badges created yet</p>
+            <p className="text-muted text-xl">No badges created yet</p>
           </div>
         )}
       </div>
@@ -164,50 +174,50 @@ export default function AdminBadges() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-md w-full"
+              className="bg-white rounded-2xl border border-white/10 p-6 max-w-md w-full"
             >
-              <h2 className="text-2xl font-bold text-white mb-6">
+              <h2 className="text-2xl font-bold text-navy mb-6">
                 {selectedBadge ? 'Edit Badge' : 'Create Badge'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Badge Name</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Badge Name</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Description</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Description</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     rows="3"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Criteria</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Criteria</label>
                   <input
                     type="text"
                     value={formData.criteria}
                     onChange={(e) => setFormData({ ...formData, criteria: e.target.value })}
                     placeholder="e.g., Complete 5 courses"
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Icon (Emoji)</label>
+                  <label className="block text-ink text-sm font-medium mb-2">Icon (Emoji)</label>
                   <input
                     type="text"
                     value={formData.icon}
                     onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                    className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary text-4xl text-center"
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-4xl text-center"
                     maxLength="2"
                   />
                 </div>
@@ -215,7 +225,7 @@ export default function AdminBadges() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 transition-all"
+                    className="flex-1 px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 transition-all"
                   >
                     Cancel
                   </button>

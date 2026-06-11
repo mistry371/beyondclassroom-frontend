@@ -7,8 +7,8 @@ import api from '@/utils/api'
 import { motion } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 
-const INP = "w-full px-3 py-2 bg-dark-200 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary"
-const LBL = "block text-gray-300 text-xs font-medium mb-1"
+const INP = "w-full px-3 py-2 bg-academic border border-white/10 rounded-lg text-navy text-sm focus:outline-none focus:border-primary"
+const LBL = "block text-ink text-xs font-medium mb-1"
 const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7)
 
 function ExamBuilder({ isEdit }) {
@@ -69,21 +69,31 @@ function ExamBuilder({ isEdit }) {
     } catch (e) { showError(e.response?.data?.message || 'Save failed') } finally { setSaving(false) }
   }
 
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
+  if (loading) return <div className="min-h-screen bg-academic flex items-center justify-center">
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+</div>
 
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="bg-dark-100 border-b border-white/10 sticky top-0 z-40">
+    <div className="min-h-screen bg-academic">
+      <div className="bg-white border-b border-white/10 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>
+            <button onClick={() => router.push('/admin/exams')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-muted" /></button>
             <div>
-              <h1 className="text-xl font-bold text-white">{isEdit ? 'Edit Exam' : 'Create Exam'}</h1>
-              <p className="text-gray-400 text-xs">{totalQ} questions · {totalMarks} marks</p>
+              <h1 className="text-xl font-bold text-navy">{isEdit ? 'Edit Exam' : 'Create Exam'}</h1>
+              <p className="text-muted text-xs">{totalQ} questions · {totalMarks} marks</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => handleSave(false)} className="px-4 py-2 bg-dark-200 text-white rounded-lg hover:bg-gray-600 text-sm">Save Draft</button>
+            <button onClick={() => handleSave(false)} className="px-4 py-2 bg-academic text-navy rounded-lg hover:bg-gray-600 text-sm">Save Draft</button>
             <button onClick={() => handleSave(true)} disabled={saving} className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 text-sm flex items-center gap-2 disabled:opacity-50">
               <Save className="h-4 w-4" />{saving ? 'Saving...' : 'Save & Publish'}
             </button>
@@ -93,7 +103,7 @@ function ExamBuilder({ isEdit }) {
 
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         <div className="bg-dark-100/80 rounded-2xl border border-white/10 p-6">
-          <h2 className="text-lg font-bold text-white mb-4">Exam Details</h2>
+          <h2 className="text-lg font-bold text-navy mb-4">Exam Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2"><label className={LBL}>Exam Title *</label><input className={INP} value={form.title} onChange={e=>setForm(f=>({...f,title:e.target.value}))} placeholder="e.g. JEE Mains Mock Test 1" /></div>
             <div className="md:col-span-2"><label className={LBL}>Description</label><textarea className={INP} rows={2} value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))} placeholder="Brief description" /></div>
@@ -107,7 +117,7 @@ function ExamBuilder({ isEdit }) {
             {[['negativeMarking','Negative Marking'],['shuffleQuestions','Shuffle Questions'],['shuffleOptions','Shuffle Options'],['showResultImmediately','Show Result Immediately'],['allowReview','Allow Review']].map(([k,l])=>(
               <label key={k} className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={!!form[k]} onChange={e=>setForm(f=>({...f,[k]:e.target.checked}))} className="w-4 h-4 accent-primary" />
-                <span className="text-gray-300 text-sm">{l}</span>
+                <span className="text-ink text-sm">{l}</span>
               </label>
             ))}
           </div>
@@ -120,13 +130,13 @@ function ExamBuilder({ isEdit }) {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold text-sm">{si+1}</div>
                   <div>
-                    <p className="text-white font-semibold">{section.name||'Section '+(si+1)}</p>
-                    <p className="text-gray-400 text-xs">{section.questions.length} questions · {section.questions.reduce((s,q)=>s+(q.marks||section.marksPerQuestion||4),0)} marks</p>
+                    <p className="text-navy font-semibold">{section.name||'Section '+(si+1)}</p>
+                    <p className="text-muted text-xs">{section.questions.length} questions · {section.questions.reduce((s,q)=>s+(q.marks||section.marksPerQuestion||4),0)} marks</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button onClick={e=>{e.stopPropagation();removeSection(si)}} className="p-1.5 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400"><Trash2 className="h-4 w-4"/></button>
-                  {expandedSection===si?<ChevronUp className="h-5 w-5 text-gray-400"/>:<ChevronDown className="h-5 w-5 text-gray-400"/>}
+                  <button onClick={e=>{e.stopPropagation();removeSection(si)}} className="p-1.5 hover:bg-red-500/20 rounded text-muted hover:text-red-400"><Trash2 className="h-4 w-4"/></button>
+                  {expandedSection===si?<ChevronUp className="h-5 w-5 text-muted"/>:<ChevronDown className="h-5 w-5 text-muted"/>}
                 </div>
               </div>
               {expandedSection===si&&(
@@ -142,7 +152,7 @@ function ExamBuilder({ isEdit }) {
                       <div key={q._id||qi} className="bg-dark-200/50 rounded-xl p-4 border border-white/5">
                         <div className="flex items-start justify-between mb-3">
                           <span className="text-primary text-sm font-bold">Q{qi+1}</span>
-                          <button onClick={()=>removeQuestion(si,qi)} className="text-gray-500 hover:text-red-400"><Trash2 className="h-4 w-4"/></button>
+                          <button onClick={()=>removeQuestion(si,qi)} className="text-muted hover:text-red-400"><Trash2 className="h-4 w-4"/></button>
                         </div>
                         <div className="space-y-2">
                           <textarea className={INP} rows={2} value={q.question} onChange={e=>updateQuestion(si,qi,'question',e.target.value)} placeholder="Question text (supports LaTeX: $x^2 + y^2 = r^2$)" />
@@ -177,7 +187,7 @@ function ExamBuilder({ isEdit }) {
                               {['True','False'].map(v=>(
                                 <label key={v} className="flex items-center gap-2 cursor-pointer">
                                   <input type="radio" checked={q.correctAnswer===v} onChange={()=>updateQuestion(si,qi,'correctAnswer',v)} className="accent-green-400" />
-                                  <span className="text-gray-300 text-sm">{v}</span>
+                                  <span className="text-ink text-sm">{v}</span>
                                 </label>
                               ))}
                             </div>
@@ -195,19 +205,19 @@ function ExamBuilder({ isEdit }) {
               )}
             </div>
           ))}
-          <button onClick={addSection} className="w-full py-3 border border-dashed border-white/20 text-gray-400 rounded-2xl hover:border-primary/40 hover:text-primary transition-all flex items-center justify-center gap-2">
+          <button onClick={addSection} className="w-full py-3 border border-dashed border-white/20 text-muted rounded-2xl hover:border-primary/40 hover:text-primary transition-all flex items-center justify-center gap-2">
             <Plus className="h-5 w-5" /> Add Section
           </button>
         </div>
 
         {form.sections.length>0&&(
           <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-2xl p-5">
-            <h3 className="text-white font-bold mb-3">Exam Summary</h3>
+            <h3 className="text-navy font-bold mb-3">Exam Summary</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div><p className="text-3xl font-black text-primary">{totalQ}</p><p className="text-gray-400 text-xs">Questions</p></div>
-              <div><p className="text-3xl font-black text-secondary">{totalMarks}</p><p className="text-gray-400 text-xs">Total Marks</p></div>
-              <div><p className="text-3xl font-black text-white">{form.duration}</p><p className="text-gray-400 text-xs">Minutes</p></div>
-              <div><p className="text-3xl font-black text-green-400">{form.passingMarks}</p><p className="text-gray-400 text-xs">Passing Marks</p></div>
+              <div><p className="text-3xl font-black text-primary">{totalQ}</p><p className="text-muted text-xs">Questions</p></div>
+              <div><p className="text-3xl font-black text-secondary">{totalMarks}</p><p className="text-muted text-xs">Total Marks</p></div>
+              <div><p className="text-3xl font-black text-navy">{form.duration}</p><p className="text-muted text-xs">Minutes</p></div>
+              <div><p className="text-3xl font-black text-green-400">{form.passingMarks}</p><p className="text-muted text-xs">Passing Marks</p></div>
             </div>
           </div>
         )}

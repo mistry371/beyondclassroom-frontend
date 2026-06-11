@@ -23,6 +23,7 @@ function AdminSubtopicsContent() {
   const [showModal, setShowModal] = useState(false)
   const [selectedSubtopic, setSelectedSubtopic] = useState(null)
   const [docError, setDocError] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState({ title: '', content: '', lessonId: '', moduleId: '', courseId: '', order: 1, isPublished: true, documents: [] })
 
   useEffect(() => { fetchModulesAndLessons() }, [user])
@@ -76,12 +77,22 @@ function AdminSubtopicsContent() {
     const tooLarge = files.find(f => f.size > MAX_DOC_BYTES)
     if (tooLarge) { setDocError('Each file must be 5 MB or smaller'); return }
 
-    const encoded = await Promise.all(files.map(file => new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.onload = (ev) => resolve({ name: file.name, size: file.size, type: file.type, data: ev.target.result.split(',')[1] })
-      reader.readAsDataURL(file)
-    })))
-    setFormData(prev => ({ ...prev, documents: [...prev.documents, ...encoded] }))
+    setUploading(true)
+    try {
+      const encoded = await Promise.all(files.map(file => new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (ev) => resolve({ name: file.name, size: file.size, type: file.type, data: ev.target.result.split(',')[1] })
+        reader.readAsDataURL(file)
+      })))
+      setFormData(prev => {
+        const existingNames = new Set(prev.documents.map(d => d.name))
+        const newDocs = encoded.filter(d => !existingNames.has(d.name))
+        return { ...prev, documents: [...prev.documents, ...newDocs] }
+      })
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
   }
 
   const removeDocument = (idx) => setFormData(prev => ({ ...prev, documents: prev.documents.filter((_, i) => i !== idx) }))
@@ -102,9 +113,29 @@ function AdminSubtopicsContent() {
     fetchSubtopics()
   }
 
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" /></div>
+  if (loading) return <div className="min-h-screen bg-academic flex items-center justify-center">
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+</div>
 
-  return <div className="min-h-screen bg-dark"><div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"><div className="flex items-center justify-between"><div className="flex items-center gap-4"><button onClick={() => router.push('/admin/lessons')} className="p-2 hover:bg-dark-200 rounded-lg transition-all"><ArrowLeft className="h-5 w-5 text-gray-400" /></button><div><h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Subtopic Management</h1><p className="text-gray-400 mt-1">{subtopics.length} subtopics</p></div></div><button onClick={handleCreate} disabled={!selectedLesson} className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg">Add Subtopic</button></div></div></div><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div className="mb-6"><select value={selectedLesson} onChange={(e) => setSelectedLesson(e.target.value)} className="w-full px-4 py-3 bg-dark-100 border border-white/10 rounded-lg text-white">{lessons.map(l => <option key={l._id} value={l._id}>{l.title}</option>)}</select></div><div className="space-y-4">{subtopics.map((s, i) => <motion.div key={s._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="bg-gradient-to-br from-dark-100/80 to-dark/80 rounded-2xl border border-white/10 p-6"><div className="flex items-center justify-between"><h3 className="text-xl font-bold text-white">{s.title}</h3><div className="flex gap-2"><button onClick={() => handleEdit(s)} className="px-3 py-2 bg-primary/20 text-primary rounded-lg">Edit</button><button onClick={() => handleDelete(s._id)} className="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg">Delete</button></div></div></motion.div>)}</div></div><AnimatePresence>{showModal && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}><motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} onClick={(e) => e.stopPropagation()} className="bg-dark-100 rounded-2xl border border-white/10 p-6 max-w-2xl w-full"><h2 className="text-2xl text-white font-bold mb-5">{selectedSubtopic ? 'Edit Subtopic' : 'Create Subtopic'}</h2><form onSubmit={handleSubmit} className="space-y-4"><input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white" placeholder="Title" required /><textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-4 py-2 bg-dark-200 border border-white/10 rounded-lg text-white" rows="5" placeholder="Content" /><label className="flex items-center gap-3 px-4 py-3 bg-dark-200 border border-dashed border-white/20 rounded-lg cursor-pointer"><Paperclip className="h-5 w-5 text-gray-400" /><span className="text-gray-300">Add files ({formData.documents.length}/{MAX_DOC_COUNT})</span><input type="file" multiple accept=".pdf,.doc,.docx,.txt" onChange={handleDocumentUpload} className="hidden" /></label>{docError && <p className="text-red-400 text-sm">{docError}</p>}<div className="space-y-2">{formData.documents.map((doc, idx) => <div key={`${doc.name}-${idx}`} className="flex items-center justify-between px-3 py-2 bg-blue-500/10 border border-blue-500/20 rounded-lg"><div className="flex items-center gap-2"><FileText className="h-4 w-4 text-blue-400" /><span className="text-blue-300 text-sm">{doc.name} ({formatFileSize(doc.size)})</span></div><button type="button" onClick={() => removeDocument(idx)} className="text-red-400"><X className="h-4 w-4" /></button></div>)}</div><div className="flex gap-3"><button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-dark-200 text-white rounded-lg">Cancel</button><button type="submit" className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg">{selectedSubtopic ? 'Update' : 'Create'}</button></div></form></motion.div></motion.div>}</AnimatePresence></div>
+  return <div className="min-h-screen bg-academic"><div className="bg-white border-b border-primary/10 shadow-sm"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"><div className="flex items-center justify-between"><div className="flex items-center gap-4"><button onClick={() => router.push('/admin/lessons')} className="p-2 hover:bg-slate-100 rounded-lg transition-all"><ArrowLeft className="h-5 w-5 text-muted" /></button><div><h1 className="text-3xl font-bold text-navy">Subtopic Management</h1><p className="text-muted mt-1">{subtopics.length} subtopics</p></div></div><button onClick={handleCreate} disabled={!selectedLesson} className="px-4 py-2 bg-brand-gradient text-white font-bold shadow-premium rounded-lg disabled:opacity-50">Add Subtopic</button></div></div></div><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div className="mb-6"><select value={selectedLesson} onChange={(e) => setSelectedLesson(e.target.value)} className="w-full px-4 py-3 bg-white border border-primary/10 shadow-sm rounded-lg text-ink font-semibold">{lessons.map(l => <option key={l._id} value={l._id}>{l.title}</option>)}</select></div><div className="space-y-4">{subtopics.map((s, i) => <motion.div key={s._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="bg-white shadow-premium rounded-2xl border border-primary/10 p-6"><div className="flex items-center justify-between"><h3 className="text-xl font-bold text-navy">{s.title}</h3><div className="flex gap-2"><button onClick={() => handleEdit(s)} className="px-3 py-2 bg-primary/10 font-bold text-primary rounded-lg">Edit</button><button onClick={() => handleDelete(s._id)} className="px-3 py-2 bg-red-500/10 font-bold text-red-500 rounded-lg">Delete</button></div></div></motion.div>)}</div></div><AnimatePresence>{showModal && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}><motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} onClick={(e) => e.stopPropagation()} className="bg-academic rounded-2xl border border-primary/10 shadow-premium p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"><h2 className="text-2xl text-navy font-bold mb-5">{selectedSubtopic ? 'Edit Subtopic' : 'Create Subtopic'}</h2><form onSubmit={handleSubmit} className="space-y-4"><input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-3 bg-white border border-primary/10 shadow-sm rounded-lg text-ink" placeholder="Title" required /><textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-4 py-3 bg-white border border-primary/10 shadow-sm rounded-lg text-ink" rows="5" placeholder="Content" /><label className="flex items-center gap-3 px-4 py-4 bg-white border-2 border-dashed border-primary/20 hover:border-primary/50 transition-colors rounded-xl cursor-pointer"><Paperclip className="h-5 w-5 text-primary" /><span className="text-ink font-semibold">Add files ({formData.documents.length}/{MAX_DOC_COUNT})</span><input type="file" multiple accept=".pdf,.doc,.docx,.txt" onChange={handleDocumentUpload} className="hidden" disabled={uploading} /></label>{uploading && <div className="flex items-center gap-2 text-primary font-bold"><div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" /> Encoding & Uploading...</div>}{docError && <p className="text-red-500 font-bold text-sm">{docError}</p>}<div className="space-y-2">{formData.documents.map((doc, idx) => <div key={`${doc.name}-${idx}`} className="flex items-center justify-between px-3 py-2 bg-white shadow-sm border border-primary/10 rounded-lg"><div className="flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /><span className="text-ink font-semibold text-sm">{doc.name} ({formatFileSize(doc.size)})</span></div><button type="button" onClick={() => removeDocument(idx)} className="text-red-500 hover:bg-red-500/10 p-1 rounded"><X className="h-4 w-4" /></button></div>)}</div><div className="flex gap-3"><button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl">Cancel</button><button type="submit" disabled={uploading} className="flex-1 px-4 py-3 bg-brand-gradient text-white font-bold rounded-xl disabled:opacity-50">{selectedSubtopic ? 'Update' : 'Create'}</button></div></form></motion.div></motion.div>}</AnimatePresence></div>
 }
 
-export default function AdminSubtopics() { return <Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" /></div>}><AdminSubtopicsContent /></Suspense> }
+export default function AdminSubtopics() { return <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center">
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+</div>}><AdminSubtopicsContent /></Suspense> }

@@ -79,22 +79,34 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-academic">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4 mb-8"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="h-24 bg-primary/5 rounded-2xl"></div>
+              <div className="h-24 bg-primary/5 rounded-2xl"></div>
+            </div>
+            <div className="lg:col-span-1">
+              <div className="h-64 bg-primary/5 rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-academic">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-navy mb-8 flex items-center gap-3">
           <ShoppingBag className="h-8 w-8 text-primary" />
           Shopping Cart
           {cart.items.length > 0 && (
-            <span className="text-lg font-normal text-gray-400">({cart.items.length} item{cart.items.length !== 1 ? 's' : ''})</span>
+            <span className="text-lg font-normal text-muted">({cart.items.length} item{cart.items.length !== 1 ? 's' : ''})</span>
           )}
         </h1>
 
@@ -107,8 +119,8 @@ export default function CartPage() {
         {cart.items.length === 0 ? (
           <div className="text-center py-20 bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10">
             <ShoppingBag className="h-24 w-24 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg mb-2">Your cart is empty</p>
-            <p className="text-gray-500 text-sm mb-6">Add courses to get started on your learning journey</p>
+            <p className="text-muted text-lg mb-2">Your cart is empty</p>
+            <p className="text-muted text-sm mb-6">Add courses to get started on your learning journey</p>
             <button
               onClick={() => router.push('/courses')}
               className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all inline-flex items-center gap-2"
@@ -128,13 +140,13 @@ export default function CartPage() {
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-2xl font-bold">
+                      <span className="text-navy text-2xl font-bold">
                         {item.course?.title?.charAt(0)}
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-lg font-bold text-white truncate">{item.course?.title}</h3>
-                      <p className="text-gray-400 text-sm">{item.course?.instructor}</p>
+                      <h3 className="text-lg font-bold text-navy truncate">{item.course?.title}</h3>
+                      <p className="text-muted text-sm">{item.course?.instructor}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded">
                           {item.course?.difficulty}
@@ -146,7 +158,7 @@ export default function CartPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4 flex-shrink-0">
-                    <span className="text-xl font-bold text-white">
+                    <span className="text-xl font-bold text-navy">
                       {item.course?.isFree || item.course?.isDemo ? (
                         <span className="text-green-400">FREE</span>
                       ) : (
@@ -167,17 +179,17 @@ export default function CartPage() {
 
             <div className="lg:col-span-1">
               <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6 sticky top-24">
-                <h2 className="text-xl font-bold text-white mb-4">Order Summary</h2>
+                <h2 className="text-xl font-bold text-navy mb-4">Order Summary</h2>
                 <div className="space-y-3 mb-6">
                   {cart.items.map((item) => (
-                    <div key={item._id} className="flex justify-between text-sm text-gray-400">
+                    <div key={item._id} className="flex justify-between text-sm text-muted">
                       <span className="truncate mr-2">{item.course?.title}</span>
                       <span className="flex-shrink-0">
                         {item.course?.isFree || item.course?.isDemo ? 'Free' : `₹${item.course?.price}`}
                       </span>
                     </div>
                   ))}
-                  <div className="border-t border-white/10 pt-3 flex justify-between text-lg font-bold text-white">
+                  <div className="border-t border-white/10 pt-3 flex justify-between text-lg font-bold text-navy">
                     <span>Total</span>
                     <span className="text-primary">₹{total}</span>
                   </div>
@@ -202,7 +214,7 @@ export default function CartPage() {
                 </button>
 
                 {hasPaidItems && (
-                  <p className="text-gray-500 text-xs text-center mt-3">
+                  <p className="text-muted text-xs text-center mt-3">
                     Secure payment via Razorpay
                   </p>
                 )}

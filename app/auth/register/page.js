@@ -76,16 +76,19 @@ function RegisterContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark via-dark-100 to-dark p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 relative overflow-hidden">
+      {/* Decorative background blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-dark-100/90 to-dark/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 w-full max-w-md"
+        className="relative bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 w-full max-w-md z-10"
       >
         <div className="mb-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
@@ -98,12 +101,12 @@ function RegisterContent() {
             animate={{ scale: 1 }}
             className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4"
           >
-            <User className="h-8 w-8 text-white" />
+            <User className="h-8 w-8 text-navy" />
           </motion.div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
             Create Account
           </h1>
-          <p className="text-gray-400">Start your learning journey</p>
+          <p className="text-gray-500">Start your learning journey</p>
         </div>
 
         {error && (
@@ -119,40 +122,38 @@ function RegisterContent() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+            <label className="block text-sm font-medium text-ink mb-2">Full Name</label>
             <div className="relative">
-              <User className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+              <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
                 {...register('name', { required: 'Name is required' })}
                 type="text"
-                className="w-full pl-10 pr-4 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                placeholder="John Doe"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 text-navy rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400 transition-all"
               />
             </div>
             {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Mobile Number</label>
+            <label className="block text-sm font-medium text-ink mb-2">Mobile Number</label>
             <div className="relative">
-              <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+              <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
                 {...register('phone', {
                   required: 'Mobile number is required',
                   minLength: { value: 10, message: 'Minimum 10 digits' }
                 })}
                 type="tel"
-                className="w-full pl-10 pr-4 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                placeholder="9876543210"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 text-navy rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400 transition-all"
               />
             </div>
             {errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Email (Optional)</label>
+            <label className="block text-sm font-medium text-ink mb-2">Email (Optional)</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+              <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
                 {...register('email', {
                   pattern: {
@@ -161,28 +162,26 @@ function RegisterContent() {
                   }
                 })}
                 type="email"
-                className="w-full pl-10 pr-4 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                placeholder="your@email.com"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 text-navy rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400 transition-all"
               />
             </div>
             {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <label className="block text-sm font-medium text-ink mb-2">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+              <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <input
                 {...register('password', {
                   required: 'Password is required',
                   minLength: { value: 6, message: 'Min 6 characters' }
                 })}
                 type={showPassword ? 'text' : 'password'}
-                className="w-full pl-10 pr-12 py-3 bg-dark-200/50 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                placeholder="••••••••"
+                className="w-full pl-10 pr-12 py-3 bg-white border border-gray-200 text-navy rounded-xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400 transition-all"
               />
               <button type="button" onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -206,7 +205,7 @@ function RegisterContent() {
           </button>
         </form>
 
-        <p className="text-center text-gray-400 text-sm mt-6">
+        <p className="text-center text-gray-500 text-sm mt-6">
           Already have an account?{' '}
           <Link href="/auth/login" className="text-primary hover:text-primary font-semibold">
             Sign In
@@ -219,7 +218,7 @@ function RegisterContent() {
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" /></div>}>
       <RegisterContent />
     </Suspense>
   )

@@ -30,7 +30,7 @@ export default function LiveStatsBar() {
         }
       `}</style>
       <p className="marquee-text text-white text-sm font-medium">
-        Welcome to Beyond Classroom — Personalized Math Worksheets for Grades 1 to 8!
+        Where mathematics meets personalization!
       </p>
     </div>
   )

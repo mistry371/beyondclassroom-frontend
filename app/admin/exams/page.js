@@ -21,7 +21,7 @@ export default function AdminExams() {
     try {
       const res = await api.get('/exams/admin/all')
       setExams(res.data.exams || [])
-    } catch (e) { console.error(e) } finally { setLoading(false) }
+    } catch (e) { console.error(e); showError('Failed to load exams'); } finally { setLoading(false) }
   }
 
   const handleDelete = async (id) => {
@@ -34,17 +34,27 @@ export default function AdminExams() {
     catch (e) { showError('Update failed') }
   }
 
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>
+  if (loading) return <div className="min-h-screen bg-academic flex items-center justify-center">
+        <div className="w-full max-w-4xl p-6 space-y-6 animate-pulse">
+          <div className="h-10 bg-primary/10 rounded w-1/4"></div>
+          <div className="h-32 bg-primary/5 rounded-2xl w-full"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+            <div className="h-12 bg-primary/5 rounded-xl w-full"></div>
+          </div>
+        </div>
+</div>
 
   return (
-    <div className="min-h-screen bg-dark">
-      <div className="bg-dark-100 border-b border-white/10">
+    <div className="min-h-screen bg-academic">
+      <div className="bg-white border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-gray-400" /></button>
+            <button onClick={() => router.push('/admin')} className="p-2 hover:bg-dark-200 rounded-lg"><ArrowLeft className="h-5 w-5 text-muted" /></button>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Examination Management</h1>
-              <p className="text-gray-400 mt-1">{exams.length} exams total</p>
+              <p className="text-muted mt-1">{exams.length} exams total</p>
             </div>
           </div>
           <button onClick={() => router.push('/admin/exams/create')} className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 flex items-center gap-2">
@@ -56,8 +66,8 @@ export default function AdminExams() {
         {exams.length === 0 ? (
           <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
             <ClipboardList className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No exams yet</p>
-            <p className="text-gray-500 mt-2">Create your first examination to get started</p>
+            <p className="text-muted text-xl">No exams yet</p>
+            <p className="text-muted mt-2">Create your first examination to get started</p>
           </div>
         ) : exams.map((exam, i) => (
           <motion.div key={exam._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -65,15 +75,15 @@ export default function AdminExams() {
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-1">
-                  <h3 className="text-xl font-bold text-white">{exam.title}</h3>
-                  <span className={"px-2 py-0.5 rounded-full text-xs font-medium " + (exam.isPublished ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400")}>
+                  <h3 className="text-xl font-bold text-navy">{exam.title}</h3>
+                  <span className={"px-2 py-0.5 rounded-full text-xs font-medium " + (exam.isPublished ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-muted")}>
                     {exam.isPublished ? 'Published' : 'Draft'}
                   </span>
                 </div>
-                <p className="text-gray-400 text-sm">{exam.description}</p>
+                <p className="text-muted text-sm">{exam.description}</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
+            <div className="flex flex-wrap gap-4 text-sm text-muted mb-4">
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{exam.duration} min</span>
               <span className="flex items-center gap-1"><Target className="h-4 w-4" />{exam.totalMarks} marks</span>
               <span className="flex items-center gap-1"><ClipboardList className="h-4 w-4" />{(exam.sections||[]).length} sections</span>

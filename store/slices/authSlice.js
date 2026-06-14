@@ -1,35 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { invalidateCache } from '@/lib/apiCache'
 
-// Load initial state from localStorage
-const loadFromLocalStorage = () => {
-  if (typeof window !== 'undefined') {
-    try {
-      const token = localStorage.getItem('token')
-      const user = localStorage.getItem('user')
-      if (token && user) {
-        return {
-          user: JSON.parse(user),
-          token: token,
-          isAuthenticated: true,
-          loading: false,
-        }
-      }
-    } catch {
-      // corrupt storage — clear
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-    }
-  }
-  return {
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    loading: false,
-  }
+const initialState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  loading: false,
 }
-
-const initialState = loadFromLocalStorage()
 
 const authSlice = createSlice({
   name: 'auth',

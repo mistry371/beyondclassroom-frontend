@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,8 @@ function LoginContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [showForceLoginPrompt, setShowForceLoginPrompt] = useState(false)
+  const [pendingLoginData, setPendingLoginData] = useState(null)
 
   const onSubmit = async (data) => {
     try {
@@ -31,6 +33,7 @@ function LoginContent() {
         phone: isEmail ? '' : loginId,
         email: isEmail ? loginId.toLowerCase() : '',
         password: data.password,
+        force: false,
       }, { timeout: 45000 })
       const payload = response.data
       dispatch(setCredentials({
@@ -54,11 +57,50 @@ function LoginContent() {
         router.push('/dashboard')
       }
     } catch (err) {
+      if (err.response?.status === 409 && err.response?.data?.message === 'already_logged_in') {
+        setPendingLoginData(data)
+        setShowForceLoginPrompt(true)
+        return
+      }
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         setError('Server is busy or waking up. Please wait 30-60 seconds and try again.')
       } else {
         setError(err.response?.data?.message || 'Login failed. Please check your credentials.')
       }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleForceLogin = async () => {
+    try {
+      setShowForceLoginPrompt(false)
+      setLoading(true)
+      setError('')
+      const loginId = (pendingLoginData.loginId || '').trim()
+      const isEmail = loginId.includes('@')
+      const response = await api.post('/auth/login', {
+        phone: isEmail ? '' : loginId,
+        email: isEmail ? loginId.toLowerCase() : '',
+        password: pendingLoginData.password,
+        force: true,
+      }, { timeout: 45000 })
+      const payload = response.data
+      dispatch(setCredentials({
+        token: payload.token,
+        user: { ...payload.user, _id: payload.user?.id || payload.user?._id },
+      }))
+
+      const redirect = searchParams.get('redirect')
+      if (redirect) return router.push(redirect)
+      
+      if (payload.user?.role === 'admin' || payload.user?.role === 'super_admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Force login failed.')
     } finally {
       setLoading(false)
     }
@@ -149,11 +191,48 @@ function LoginContent() {
           </p>
         </form>
       </motion.div>
+
+      {/* Force Login Prompt Modal */}
+      {showForceLoginPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 max-w-md w-full shadow-premium relative">
+            <div className="flex items-center gap-3 mb-4 text-orange-500">
+              <AlertCircle className="h-8 w-8" />
+              <h2 className="text-xl font-black text-navy">Already Logged In</h2>
+            </div>
+            <p className="text-gray-600 mb-6 font-medium">
+              You are already logged in on another device. Do you want to logout from there and login here?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowForceLoginPrompt(false)} className="px-5 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleForceLogin} className="px-5 py-2.5 rounded-xl font-bold text-white bg-orange-500 hover:bg-orange-600 transition-colors shadow-sm">
+                Yes, Login Here
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }
 
 export default function LoginPage() {
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
   return (
     <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
       <LoginContent />

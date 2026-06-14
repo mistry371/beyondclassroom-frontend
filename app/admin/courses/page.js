@@ -23,7 +23,9 @@ export default function AdminCourses() {
     difficulty: 'Beginner',
     price: '',
     duration: '',
-    status: 'draft'
+    status: 'draft',
+    isFree: false,
+    isDemo: false
   })
 
   useEffect(() => {
@@ -54,7 +56,9 @@ export default function AdminCourses() {
       difficulty: 'Beginner',
       price: 0,
       duration: '',
-      status: 'draft'
+      status: 'draft',
+      isFree: false,
+      isDemo: false
     })
     setShowModal(true)
   }
@@ -69,7 +73,9 @@ export default function AdminCourses() {
       difficulty: course.difficulty,
       price: course.price,
       duration: course.duration,
-      status: course.status || 'draft'
+      status: course.status || 'draft',
+      isFree: course.isFree || false,
+      isDemo: course.isDemo || false
     })
     setShowModal(true)
   }
@@ -364,6 +370,26 @@ export default function AdminCourses() {
                     <option value="published">Published</option>
                   </select>
                   <p className="text-muted text-xs mt-1">Published courses are visible to students.</p>
+                </div>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isFree}
+                      onChange={(e) => setFormData({ ...formData, isFree: e.target.checked })}
+                      className="w-4 h-4 accent-primary"
+                    />
+                    <span className="text-ink text-sm font-medium">Free Course</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isDemo}
+                      onChange={(e) => setFormData({ ...formData, isDemo: e.target.checked })}
+                      className="w-4 h-4 accent-primary"
+                    />
+                    <span className="text-ink text-sm font-medium">Demo Course</span>
+                  </label>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button

@@ -1,20 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { BookOpen, Plus, Edit, Trash2, ArrowLeft, Search, GripVertical } from 'lucide-react'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 
-export default function AdminModules() {
+function AdminModules() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user } = useSelector(state => state.auth)
   const [modules, setModules] = useState([])
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedCourse, setSelectedCourse] = useState('')
+  const [selectedCourse, setSelectedCourse] = useState(searchParams.get('courseId') || 'all')
   const [showModal, setShowModal] = useState(false)
   const [selectedModule, setSelectedModule] = useState(null)
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ export default function AdminModules() {
     try {
       const res = await api.get('/courses')
       setCourses(res.data.courses || [])
-      // Don't auto-select — allow "No Course" option
+      // Don't auto-select — allow "No Course" option if not specified in searchParams
       if (res.data.courses?.length > 0 && !selectedCourse) {
         setSelectedCourse('all')
       }
@@ -73,7 +74,7 @@ export default function AdminModules() {
     setFormData({
       title: '',
       description: '',
-      courseId: selectedCourse,
+      courseId: selectedCourse === 'all' ? '' : selectedCourse,
       order: modules.length + 1,
       duration: '',
       isPublished: true
@@ -355,5 +356,15 @@ export default function AdminModules() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+export default function AdminModulesWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>}>
+      <AdminModules />
+    </Suspense>
   )
 }

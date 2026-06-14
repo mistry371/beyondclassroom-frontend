@@ -10,8 +10,6 @@ import { showSuccess, showError } from '@/components/ui/Toast'
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   reviewing: 'bg-blue-100 text-blue-800 border-blue-200',
-  quoted: 'bg-purple-100 text-purple-800 border-purple-200',
-  accepted: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   completed: 'bg-green-100 text-green-800 border-green-200',
   rejected: 'bg-red-100 text-red-800 border-red-200'
 }
@@ -22,18 +20,20 @@ export default function AdminCustomRequests() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
-  const [form, setForm] = useState({ status:'', adminNote:'', quotedPrice:'', finalPrice:'', finalDuration:'', finalRoadmap:'', assignedToUserId:'', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' })
+  const [form, setForm] = useState({ status:'', adminNote:'', finalDuration:'', finalRoadmap:'', assignedToUserId:'', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' })
+  const [pdfFile, setPdfFile] = useState(null)
+  const [uploadingPdf, setUploadingPdf] = useState(false)
 
   useEffect(() => {
     api.get('/custom-requests/admin').then(r => setRequests(r.data.requests || [])).catch(e => { console.error(e); showError('Failed to load requests'); }).finally(() => setLoading(false))
   }, [user])
 
-  const openEdit = (req) => { setSelected(req); setForm({ status: req.status, adminNote: req.adminNote || '', quotedPrice: req.quotedPrice || '', finalPrice: req.finalPrice || '', finalDuration: req.finalDuration || req.estimatedDuration || '', finalRoadmap: req.finalRoadmap || '', assignedToUserId: req.assignedToUserId || req.userId || '', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' }) }
+  const openEdit = (req) => { setSelected(req); setPdfFile(null); setForm({ status: req.status, adminNote: req.adminNote || '', finalDuration: req.finalDuration || req.estimatedDuration || '', finalRoadmap: req.finalRoadmap || '', assignedToUserId: req.assignedToUserId || req.userId || '', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' }) }
 
   const handleUpdate = async (e) => {
     e.preventDefault()
     try {
-      const payload = { status: form.status, adminNote: form.adminNote, quotedPrice: form.quotedPrice, finalPrice: form.finalPrice, finalDuration: form.finalDuration, finalRoadmap: form.finalRoadmap, assignedToUserId: form.assignedToUserId }
+      const payload = { status: form.status, adminNote: form.adminNote, finalDuration: form.finalDuration, finalRoadmap: form.finalRoadmap, assignedToUserId: form.assignedToUserId }
       if (form.deliveryUrl && form.deliveryTitle) {
         payload.deliveryItems = [
           ...(selected.deliveryItems || []),
@@ -56,6 +56,42 @@ export default function AdminCustomRequests() {
       showSuccess('Deleted')
     } catch (e) {
       showError('Failed to delete')
+    }
+  }
+
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const formData = new FormData()
+    formData.append('file', file)
+    setUploadingPdf(true)
+    try {
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      setPdfFile(res.data.fileUrl)
+      showSuccess('PDF uploaded successfully')
+    } catch (err) {
+      showError('PDF upload failed')
+    } finally {
+      setUploadingPdf(false)
+    }
+  }
+
+  const handleAssignPdf = async () => {
+    if (!pdfFile) {
+      showError('Please upload a PDF first')
+      return
+    }
+    try {
+      await api.put('/custom-requests/admin/' + selected._id + '/assign-pdf', { assignedPdf: pdfFile })
+      setSelected(null)
+      setPdfFile(null)
+      showSuccess('PDF Assigned and Request Completed')
+      const r = await api.get('/custom-requests/admin')
+      setRequests(r.data.requests || [])
+    } catch (err) {
+      showError('Failed to assign PDF')
     }
   }
 
@@ -103,7 +139,7 @@ export default function AdminCustomRequests() {
                     <th className="px-6 py-4">Request Info</th>
                     <th className="px-6 py-4">Student</th>
                     <th className="px-6 py-4">Deliverable</th>
-                    <th className="px-6 py-4">Status & Price</th>
+                    <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -128,7 +164,15 @@ export default function AdminCustomRequests() {
                       {/* Student Info */}
                       <td className="px-6 py-4 align-top">
                         <p className="text-sm font-semibold text-slate-800">{req.userName}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{req.userEmail}</p>
+                        <p className="text-xs text-slate-500 mt-0.5 mb-1.5">{req.userEmail}</p>
+                        {req.userUsage && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-600 border border-slate-200">
+                            {req.userUsage.hasUnlimited 
+                              ? 'Unlimited Requests'
+                              : `Used: ${req.userUsage.used}/${req.userUsage.limit}`
+                            }
+                          </span>
+                        )}
                       </td>
 
                       {/* Deliverable Info */}
@@ -143,20 +187,11 @@ export default function AdminCustomRequests() {
                         </div>
                       </td>
 
-                      {/* Status & Price */}
+                      {/* Status */}
                       <td className="px-6 py-4 align-top">
                         <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border mb-1.5 ${STATUS_COLORS[req.status] || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                           {req.status}
                         </span>
-                        <div className="flex items-center gap-2 text-xs font-semibold">
-                          {req.quotedPrice ? (
-                            <span className="text-purple-700 flex items-center gap-0.5"><DollarSign className="w-3 h-3" /> {req.quotedPrice} Quoted</span>
-                          ) : req.budget ? (
-                            <span className="text-slate-600 flex items-center gap-0.5"><DollarSign className="w-3 h-3" /> {req.budget} Budget</span>
-                          ) : (
-                            <span className="text-slate-400">Not quoted</span>
-                          )}
-                        </div>
                       </td>
 
                       {/* Actions */}
@@ -198,6 +233,15 @@ export default function AdminCustomRequests() {
               <div className="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
                 <p className="text-sm font-bold text-slate-800 mb-1">{selected.title}</p>
                 <p className="text-xs text-slate-500">From: {selected.userName} ({selected.userEmail})</p>
+                {selected.marks && <p className="text-xs text-slate-500 mt-1">Marks Requested: <span className="font-bold text-slate-800">{selected.marks}</span></p>}
+                {selected.studentAttachedFile && (
+                  <a href={selected.studentAttachedFile} target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-bold mt-2 inline-flex items-center gap-1 hover:underline">
+                    Download Reference Material
+                  </a>
+                )}
+                {selected.assignedPdf && (
+                  <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <a href={selected.assignedPdf} target="_blank" rel="noopener noreferrer" className="hover:underline">View File</a></p>
+                )}
               </div>
 
               <form id="edit-form" onSubmit={handleUpdate} className="space-y-6">
@@ -207,24 +251,9 @@ export default function AdminCustomRequests() {
                     value={form.status} onChange={e => setForm(f => ({...f, status: e.target.value}))}>
                     <option value="pending">Pending</option>
                     <option value="reviewing">Reviewing</option>
-                    <option value="quoted">Price Quoted</option>
-                    <option value="accepted">Accepted (Awaiting Payment)</option>
-                    <option value="completed">Completed / Paid</option>
+                    <option value="completed">Completed / Assigned</option>
                     <option value="rejected">Rejected / Cancelled</option>
                   </select>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-slate-700 font-bold text-sm mb-2">Quoted Price (₹)</label>
-                    <input type="number" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
-                      value={form.quotedPrice} onChange={e => setForm(f => ({...f, quotedPrice: e.target.value}))} placeholder="e.g. 499"/>
-                  </div>
-                  <div>
-                    <label className="block text-slate-700 font-bold text-sm mb-2">Final Agreed Price (₹)</label>
-                    <input type="number" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm"
-                      value={form.finalPrice} onChange={e => setForm(f => ({...f, finalPrice: e.target.value}))} placeholder="e.g. 999"/>
-                  </div>
                 </div>
 
                 <div>
@@ -249,6 +278,16 @@ export default function AdminCustomRequests() {
                   </div>
                 </div>
 
+                <div className="border border-slate-200 rounded-2xl p-5 bg-slate-50">
+                  <p className="text-slate-800 text-sm font-bold mb-4">Assign Generated PDF (Completes Request)</p>
+                  <div className="space-y-3">
+                    <input type="file" onChange={handlePdfUpload} disabled={uploadingPdf} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm shadow-sm" accept=".pdf" />
+                    {uploadingPdf && <span className="text-sm text-slate-500">Uploading PDF...</span>}
+                    {pdfFile && <span className="text-sm text-green-600 block">PDF uploaded successfully</span>}
+                    <button type="button" onClick={handleAssignPdf} disabled={!pdfFile || uploadingPdf} className="w-full py-3 bg-primary !text-white rounded-xl font-bold text-sm hover:opacity-90 disabled:opacity-50">Assign PDF & Complete</button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-slate-700 font-bold text-sm mb-2">Private Note to Student</label>
                   <textarea className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm" rows={2}
@@ -259,7 +298,7 @@ export default function AdminCustomRequests() {
             
             <div className="px-6 py-4 border-t border-slate-100 flex gap-3 shrink-0 bg-slate-50 rounded-b-3xl">
               <button type="button" onClick={() => setSelected(null)} className="flex-1 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">Cancel</button>
-              <button type="submit" form="edit-form" className="flex-1 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-md shadow-primary/20">Save Changes</button>
+              <button type="submit" form="edit-form" className="flex-1 py-3 bg-primary !text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-md shadow-primary/20">Save Changes</button>
             </div>
           </motion.div>
         </div>

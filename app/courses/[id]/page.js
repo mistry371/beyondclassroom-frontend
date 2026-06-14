@@ -44,19 +44,22 @@ function CourseDetailsContent() {
   const [notes, setNotes] = useState('')
   const [step, setStep] = useState(0)
   const [requestLoading, setRequestLoading] = useState(false)
+  const [usageLimit, setUsageLimit] = useState(null)
   const [previewDoc, setPreviewDoc] = useState(null)
+  const [marks, setMarks] = useState('')
+  const [studentAttachedFile, setStudentAttachedFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     fetchCourse()
   }, [params.id, user?._id])
 
   useEffect(() => {
-    if (!previewDoc) return
     const block = (e) => {
       if (e.type === 'contextmenu') e.preventDefault()
       const key = e.key?.toLowerCase()
       const ctrl = e.ctrlKey || e.metaKey
-      if (ctrl && ['s', 'p', 'u', 'c', 'v', 'a'].includes(key)) {
+      if (ctrl && ['s', 'p', 'u', 'c', 'v', 'a', 'x'].includes(key)) {
         e.preventDefault()
         e.stopPropagation()
       }
@@ -67,7 +70,7 @@ function CourseDetailsContent() {
       document.removeEventListener('contextmenu', block, true)
       document.removeEventListener('keydown', block, true)
     }
-  }, [previewDoc])
+  }, [])
 
   const fetchCourse = async () => {
     try {
@@ -76,20 +79,33 @@ function CourseDetailsContent() {
       const loadedCourse = response.data.course
       setCourse(loadedCourse)
 
-      if (user) {
-        const moduleRes = await api.get(`/modules/course/${params.id}`).catch(() => ({ data: { modules: [] } }))
-        const moduleList = moduleRes.data.modules || []
-        const populated = await Promise.all(moduleList.map(async (moduleItem) => {
-          const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
-          const lessonList = lessonRes.data.lessons || []
-          const lessons = await Promise.all(lessonList.map(async (lesson) => {
-            const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-            return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
-          }))
-          return { ...moduleItem, lessons }
-        }))
-        setModules(populated)
-      } else {
+      try {
+        let courseIdsToFetch = [params.id]
+        if (user && user.purchasedCourses && user.purchasedCourses.length > 0) {
+          courseIdsToFetch = user.purchasedCourses
+        }
+        
+        let allModules = []
+        for (const cid of courseIdsToFetch) {
+          try {
+            const cRes = await api.get(`/courses/${cid}`)
+            const cTitle = cRes.data.course.title
+            const moduleRes = await api.get(`/modules/course/${cid}`).catch(() => ({ data: { modules: [] } }))
+            const moduleList = moduleRes.data.modules || []
+            const populated = await Promise.all(moduleList.map(async (moduleItem) => {
+              const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
+              const lessonList = lessonRes.data.lessons || []
+              const lessons = await Promise.all(lessonList.map(async (lesson) => {
+                const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
+                return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
+              }))
+              return { ...moduleItem, title: `[${cTitle}] ${moduleItem.title}`, lessons }
+            }))
+            allModules = [...allModules, ...populated]
+          } catch (e) {}
+        }
+        setModules(allModules)
+      } catch (err) {
         setModules([])
       }
     } catch (error) {
@@ -98,6 +114,14 @@ function CourseDetailsContent() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      api.get('/custom-requests/my/limits')
+        .then(res => setUsageLimit(res.data.usage))
+        .catch(err => console.error('Failed to fetch usage limits', err))
+    }
+  }, [user])
 
   const selection = useMemo(() => {
     const selectedModules = []
@@ -123,19 +147,14 @@ function CourseDetailsContent() {
   }, [modules, selected])
 
   const roadmap = useMemo(() => {
-    const itemCount = selection.selectedModules.length + selection.selectedLessons.length + selection.selectedSubtopics.length
-    const weeks = Math.max(2, Math.ceil(itemCount / 3))
     return {
-      duration: `${weeks} weeks`,
-      price: Math.max(299, Math.round((Number(course?.price || 599) * Math.max(1, itemCount)) / 6)),
+      duration: `48 hours`,
       lines: [
         `Start with ${selection.selectedModules.length || 'selected'} module foundation review`,
-        `${preferences.worksheetFrequency} worksheets with ${preferences.level.toLowerCase()} difficulty`,
-        `${preferences.testFrequency} tests and ${preferences.revisionMode.toLowerCase()}`,
-        `${preferences.learningSpeed} learning speed in ${preferences.languagePreference}`,
+        `Customized content in ${preferences.languagePreference}`,
       ],
     }
-  }, [course?.price, preferences, selection])
+  }, [preferences, selection])
 
   const toggle = (id) => setSelected((prev) => ({ ...prev, [id]: !prev[id] }))
 
@@ -149,6 +168,10 @@ function CourseDetailsContent() {
       showError('Please select at least one module, lesson, topic, subtopic, or PDF.')
       return
     }
+    if (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit) {
+      showError(`You have used all ${usageLimit.limit} of your custom requests. Please upgrade your package to request more.`)
+      return
+    }
 
     try {
       setRequestLoading(true)
@@ -156,7 +179,6 @@ function CourseDetailsContent() {
         title: `Custom Package - ${course.title}`,
         description: notes || `Personalized package request for ${course.title}`,
         deliverable: 'custom_course_package',
-        difficulty: preferences.level.toLowerCase(),
         budget: roadmap.price,
         selectedTopics: selection.selectedModules,
         selectedModules: selection.selectedModules,
@@ -169,6 +191,8 @@ function CourseDetailsContent() {
         packageSummary: `${selection.selectedModules.length} modules, ${selection.selectedLessons.length} lessons, ${selection.selectedSubtopics.length} subtopics, ${selection.selectedPdfs.length} PDFs`,
         status: 'pending',
         packageId,
+        marks: marks ? Number(marks) : undefined,
+        studentAttachedFile,
       })
       showSuccess('Customization request sent to admin. You can track it from your dashboard.')
       router.push('/dashboard/custom-requests')
@@ -176,6 +200,25 @@ function CourseDetailsContent() {
       showError(err.response?.data?.message || 'Failed to submit customization request')
     } finally {
       setRequestLoading(false)
+    }
+  }
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const formData = new FormData()
+    formData.append('file', file)
+    setUploading(true)
+    try {
+      const res = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      setStudentAttachedFile(res.data.fileUrl)
+      showSuccess('File uploaded successfully')
+    } catch (err) {
+      showError('Upload failed')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -225,7 +268,7 @@ function CourseDetailsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-academic pb-16">
+    <div className="min-h-screen bg-academic pb-16 select-none">
       <Navbar />
 
       <section className="relative overflow-hidden premium-section">
@@ -238,19 +281,7 @@ function CourseDetailsContent() {
             </div>
             <h1 className="text-4xl font-black leading-tight text-navy sm:text-6xl">{course.title}</h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">{course.description}</p>
-            <div className="mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
-              {[
-                { icon: Star, label: `${course.rating || 4.8} rating` },
-                { icon: Clock, label: course.duration || 'Self-paced' },
-                { icon: BookOpen, label: `${course.topics?.length || modules.length || 0} topics` },
-                { icon: Award, label: 'Certificate' },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-primary/10 bg-white p-4 text-sm font-semibold text-ink shadow-sm">
-                  <item.icon className="mb-2 h-5 w-5 text-primary" />
-                  {item.label}
-                </div>
-              ))}
-            </div>
+
           </motion.div>
 
           <motion.aside initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="rounded-3xl border border-primary/10 bg-white p-6 shadow-premium">
@@ -265,32 +296,25 @@ function CourseDetailsContent() {
               ))}
             </div>
             <div className="mt-6 space-y-3">
-              <button onClick={handleEnroll} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-4 font-bold text-white">
-                {user ? (course.isFree || course.isDemo ? 'Start Free Course' : 'Enroll Now') : <><Lock className="h-5 w-5" /> Login to Enroll</>}
+              <button onClick={() => router.push('/packages')} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-4 font-bold text-white">
+                View Packages
               </button>
-              {user && course.price > 0 && !course.isFree && !course.isDemo && (
-                <button onClick={handleAddToCart} className="flex w-full items-center justify-center gap-2 rounded-2xl border border-primary/10 bg-academic px-5 py-4 font-bold text-primary">
-                  <ShoppingCart className="h-5 w-5" /> Add to Cart
-                </button>
-              )}
             </div>
           </motion.aside>
         </div>
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <section className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <section className={`grid gap-8 ${user ? 'lg:grid-cols-[0.9fr_1.1fr]' : 'max-w-4xl mx-auto'}`}>
           <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium">
             <div className="mb-5 flex items-center gap-3">
               <ShieldCheck className="h-8 w-8 text-primary" />
               <div>
                 <h2 className="text-2xl font-black text-navy">Protected Course Preview</h2>
-                <p className="text-sm text-muted">Logged-in students can view structure. Content stays protected until purchase.</p>
+                <p className="text-sm text-muted">Everyone can view the course structure. Documents are strictly preview-only.</p>
               </div>
             </div>
-            {!user ? (
-              <button onClick={requireLogin} className="w-full rounded-2xl bg-brand-gradient px-5 py-4 font-bold text-white">Login to View Course Structure</button>
-            ) : modules.length === 0 ? (
+            {modules.length === 0 ? (
               <p className="rounded-2xl bg-academic p-5 text-muted">No modules are published for this course yet.</p>
             ) : (
               <div className="max-h-[640px] space-y-4 overflow-y-auto pr-2 custom-scrollbar">
@@ -323,14 +347,16 @@ function CourseDetailsContent() {
             )}
           </div>
 
-          <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium">
-            <div className="mb-6 flex items-center justify-between gap-4">
+          {user && (
+            <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden">
               <div>
-                <h2 className="text-2xl font-black text-navy">Customize My Course</h2>
-                <p className="text-sm text-muted">Select only what you want. Admin will review, finalize, and assign your package.</p>
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-black text-navy">Customize My Course</h2>
+                  <p className="text-sm text-muted">Select only what you want. Admin will review, finalize, and assign your package.</p>
+                </div>
+                <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{steps[step]}</span>
               </div>
-              <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{steps[step]}</span>
-            </div>
 
             <div className="mb-6 grid grid-cols-6 gap-2">
               {steps.map((label, index) => (
@@ -353,22 +379,29 @@ function CourseDetailsContent() {
             )}
             {step === 4 && (
               <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  ['level', ['Basic', 'Standard', 'Advanced']],
-                  ['learningSpeed', ['Relaxed', 'Balanced', 'Fast track']],
-                  ['worksheetFrequency', ['Daily', 'Weekly', 'Topic-wise']],
-                  ['testFrequency', ['Weekly', 'Bi-weekly', 'Monthly']],
-                  ['languagePreference', ['English', 'Hindi', 'English + Hindi']],
-                  ['revisionMode', ['Smart revision', 'Exam revision', 'Formula revision']],
-                ].map(([key, options]) => (
-                  <label key={key} className="block">
-                    <span className="mb-2 block text-sm font-bold capitalize text-ink">{key.replace(/([A-Z])/g, ' $1')}</span>
-                    <select value={preferences[key]} onChange={(e) => setPreferences((prev) => ({ ...prev, [key]: e.target.value }))} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none">
-                      {options.map((option) => <option key={option}>{option}</option>)}
-                    </select>
-                  </label>
-                ))}
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
+                  <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-ink">Language Preference</span>
+                  <select value={preferences.languagePreference} onChange={(e) => setPreferences((prev) => ({ ...prev, languagePreference: e.target.value }))} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none">
+                    {['English', 'Hindi', 'English + Hindi'].map((option) => <option key={option}>{option}</option>)}
+                  </select>
+                </label>
                 <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
+                
+                <label className="block sm:col-span-2">
+                  <span className="mb-2 block text-sm font-bold text-ink">Requested Marks (Optional)</span>
+                  <input type="number" value={marks} onChange={(e) => setMarks(e.target.value)} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" placeholder="e.g. 50" />
+                </label>
+                
+                <label className="block sm:col-span-2">
+                  <span className="mb-2 block text-sm font-bold text-ink">Upload Reference Material (Optional)</span>
+                  <input type="file" onChange={handleFileUpload} disabled={uploading} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" />
+                  {uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
+                  {studentAttachedFile && !uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
+                </label>
               </div>
             )}
             {step === 5 && (
@@ -385,8 +418,7 @@ function CourseDetailsContent() {
                     {roadmap.lines.map((line) => <li key={line} className="flex gap-2"><Sparkles className="h-4 w-4 flex-shrink-0 text-accent" />{line}</li>)}
                   </ul>
                   <div className="mt-4 flex flex-wrap gap-3 text-sm font-bold">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">Estimated: {roadmap.duration}</span>
-                    <span className="rounded-full bg-secondary/10 px-3 py-1 text-secondary">Estimated price: Rs.{roadmap.price}</span>
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">Estimated Delivery: {roadmap.duration}</span>
                   </div>
                 </div>
               </div>
@@ -401,12 +433,24 @@ function CourseDetailsContent() {
                   Next <ChevronRight className="h-5 w-5" />
                 </button>
               ) : (
-                <button onClick={submitCustomization} disabled={requestLoading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white disabled:opacity-60">
-                  {requestLoading ? 'Submitting...' : 'Send Request to Admin'} <ArrowRight className="h-5 w-5" />
-                </button>
+                <div className="flex flex-col items-center sm:items-end">
+                  <button 
+                    onClick={submitCustomization} 
+                    disabled={requestLoading || (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit)} 
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed">
+                    {requestLoading ? 'Submitting...' : 
+                     (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit) ? 'Package Limit Reached' : 
+                     'Send Request to Admin'} <ArrowRight className="h-5 w-5" />
+                  </button>
+                  {usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit && (
+                    <p className="text-red-500 text-xs font-bold mt-2">You have exhausted the {usageLimit.limit} requests in your package.</p>
+                  )}
+                </div>
               )}
             </div>
           </div>
+        </div>
+      )}
         </section>
       </main>
 

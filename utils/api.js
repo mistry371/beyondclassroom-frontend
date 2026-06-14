@@ -40,12 +40,8 @@ api.interceptors.response.use(
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         invalidateCache('')
-        // Dynamically import to avoid circular deps
-        import('@/components/SessionGuard').then(({ notifySessionExpired }) => {
-          notifySessionExpired()
-        }).catch(() => {
-          window.location.href = '/auth/login'
-        })
+        // Force redirect immediately so the user doesn't stay on a dead page
+        window.location.href = '/auth/login?expired=true'
         return Promise.reject(error)
       }
 

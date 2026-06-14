@@ -397,6 +397,33 @@ export default function AdminPackages() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-ink text-sm font-medium mb-2">Courses Included</label>
+                  <div className="max-h-48 overflow-y-auto border border-white/10 rounded-lg p-2 bg-academic space-y-2">
+                    {courses.map(course => (
+                      <label key={course._id} className="flex items-center gap-3 cursor-pointer p-2 hover:bg-primary/5 rounded-lg transition-colors border border-transparent hover:border-primary/10">
+                        <input
+                          type="checkbox"
+                          checked={formData.courseIds.includes(course._id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({ ...formData, courseIds: [...formData.courseIds, course._id] })
+                            } else {
+                              setFormData({ ...formData, courseIds: formData.courseIds.filter(id => id !== course._id) })
+                            }
+                          }}
+                          className="w-4 h-4 accent-primary rounded"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-navy font-semibold text-sm">{course.title}</span>
+                          {course.category && <span className="text-muted text-xs">{course.category}</span>}
+                        </div>
+                      </label>
+                    ))}
+                    {courses.length === 0 && <p className="text-muted text-sm p-2 text-center">No courses available.</p>}
+                  </div>
+                </div>
+
                 <div className="flex gap-6">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input

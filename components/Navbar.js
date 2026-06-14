@@ -48,12 +48,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link href={user ? dashboardLink : '/'} className="flex items-center space-x-3">
-            <div className="relative w-64 h-16 lg:w-[300px] lg:h-[75px]">
+            <div className="relative w-64 h-16 lg:w-[320px] lg:h-[80px]">
               <Image 
                 src="/full-logo.png" 
                 alt="Beyond Classroom" 
                 fill
-                className="object-contain"
+                className="object-contain scale-110"
                 priority
               />
             </div>

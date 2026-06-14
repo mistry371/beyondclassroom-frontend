@@ -48,7 +48,7 @@ export default function PromoterLoginPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-premium">
           <div className="text-center mb-8">
-            <Image src="/logo.jpeg" alt="" width={56} height={56} className="rounded-xl mx-auto mb-4 interactive shadow-sm" />
+            <Image src="/full-logo.png" alt="Beyond Classroom" width={180} height={45} className="mx-auto mb-6 interactive drop-shadow-sm object-contain" />
             <div className="w-14 h-14 bg-brand-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
               <TrendingUp className="h-7 w-7 text-white" />
             </div>

@@ -7,7 +7,7 @@ import {
   Users, BookOpen, DollarSign, TrendingUp, Activity,
   ShoppingCart, Award, Bell, Settings, BarChart3,
   Package, Tag, Layers, FileText, ListTree, HelpCircle,
-  MessageSquare, CheckSquare, Image, Shield
+  MessageSquare, CheckSquare, Image, Shield, Star
 } from 'lucide-react'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
@@ -98,6 +98,7 @@ export default function AdminDashboard() {
           <QuickActionCard href="/admin/lessons" title="Lessons" description="Create and edit lessons" icon={FileText} color="bg-blue-50 text-blue-600" />
           <QuickActionCard href="/admin/subtopics" title="Subtopics" description="Manage lesson subtopics" icon={ListTree} color="bg-cyan-50 text-cyan-600" />
           <QuickActionCard href="/admin/quizzes" title="Quizzes" description="Manage quizzes and questions" icon={HelpCircle} color="bg-purple-50 text-purple-600" />
+          <QuickActionCard href="/admin/testimonials" title="Testimonials" description="Manage student success stories" icon={Star} color="bg-yellow-50 text-yellow-600" />
           <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={MessageSquare} color="bg-rose-50 text-rose-600" />
           <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="bg-emerald-50 text-emerald-600" />
           <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" />

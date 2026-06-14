@@ -21,7 +21,7 @@ export default function PartnersPage() {
         <div className="absolute inset-0 hero-grid opacity-70" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Image src="/logo.jpeg" alt="Beyond Classroom Logo" width={80} height={80} className="rounded-2xl mx-auto mb-6 interactive shadow-premium" />
+            <Image src="/full-logo.png" alt="Beyond Classroom Logo" width={160} height={40} className="mx-auto mb-6 interactive drop-shadow-md object-contain" />
             <p className="text-secondary font-bold uppercase tracking-widest text-sm mb-4">Our Partners</p>
             <h1 className="text-4xl md:text-6xl font-black text-navy mb-6">Trusted Collaborations</h1>
             <p className="text-xl text-muted max-w-3xl mx-auto leading-relaxed">

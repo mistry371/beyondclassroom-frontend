@@ -58,7 +58,7 @@ export default function AboutPage() {
       <section className="relative py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/60 backdrop-blur-3xl border border-white p-10 md:p-16 rounded-[3rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <Image src="/logo.jpeg" alt="Beyond Classroom" width={120} height={120} className="mx-auto mb-8 drop-shadow-xl hover:scale-105 transition-transform duration-300" />
+            <Image src="/full-logo.png" alt="Beyond Classroom" width={240} height={60} className="mx-auto mb-8 drop-shadow-xl hover:scale-105 transition-transform duration-300 object-contain" />
             <p className="text-primary font-black uppercase tracking-[0.2em] text-sm mb-4">The Platform</p>
             <h1 className="text-5xl md:text-7xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary mb-8 leading-tight">About Beyond Classroom</h1>
             <p className="text-xl md:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">

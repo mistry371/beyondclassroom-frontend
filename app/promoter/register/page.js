@@ -37,7 +37,7 @@ export default function PromoterRegisterPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="bg-white rounded-3xl p-8 border border-primary/10 shadow-premium">
           <div className="text-center mb-8">
-            <Image src="/logo.jpeg" alt="" width={48} height={48} className="rounded-xl mx-auto mb-4 interactive shadow-sm" />
+            <Image src="/full-logo.png" alt="Beyond Classroom" width={180} height={45} className="mx-auto mb-6 interactive drop-shadow-sm object-contain" />
             <h1 className="text-2xl font-black text-navy">Become a Promoter</h1>
             <p className="text-muted text-sm mt-2">Start earning with referrals</p>
           </div>

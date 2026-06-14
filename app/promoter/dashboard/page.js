@@ -143,7 +143,7 @@ export default function PromoterDashboardPage() {
       <header className="border-b border-slate-200 bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/promoter/dashboard" className="flex items-center gap-3">
-            <Image src="/logo.jpeg" alt="" width={36} height={36} className="rounded-lg interactive" priority />
+            <Image src="/full-logo.png" alt="" width={100} height={25} className="interactive object-contain" priority />
             <div>
               <p className="font-bold text-sm text-slate-800">Promoter Hub</p>
               <p className="text-slate-500 text-xs">{promoter.name}</p>

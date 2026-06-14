@@ -54,9 +54,7 @@ function CoursesContent() {
             <h1 className="mt-6 text-4xl font-black leading-tight text-navy sm:text-6xl">
               Structured Mathematics content for Class 1 to Class 8.
             </h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">
-              Browse curriculum-aligned Mathematics courses organized by class. Preview content freely — login required only for purchases, downloads, and progress tracking.
-            </p>
+
           </motion.div>
 
           {/* Class Grade Filter Tabs */}
@@ -96,20 +94,7 @@ function CoursesContent() {
       </div>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <SlidersHorizontal className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-xl font-black text-navy">Course Library</p>
-              <p className="text-sm text-muted">Showing {loading ? '...' : filteredCourses.length} courses</p>
-            </div>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-2 text-sm font-semibold text-muted shadow-sm">
-            <Filter className="h-4 w-4 text-secondary" /> Live filters applied instantly
-          </div>
-        </div>
+
 
         {loading ? (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

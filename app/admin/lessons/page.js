@@ -138,27 +138,27 @@ function AdminLessonsContent() {
 
   return (
     <div className="min-h-screen bg-academic">
-      <div className="bg-gradient-to-r from-dark-100 via-dark-100 to-dark-100 border-b border-white/10">
+      <div className="bg-white border-b border-primary/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-dark-200 rounded-lg transition-all">
+              <button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-slate-100 rounded-lg transition-all">
                 <ArrowLeft className="h-5 w-5 text-muted" />
               </button>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Lesson Management
+                <h1 className="text-3xl font-bold text-navy">
+                  Chapter Management
                 </h1>
-                <p className="text-muted mt-1">{lessons.length} lessons in selected module</p>
+                <p className="text-muted mt-1">{lessons.length} chapters in selected module</p>
               </div>
             </div>
             <button
               onClick={handleCreate}
               disabled={!selectedModule}
-              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-brand-gradient text-white font-bold shadow-premium rounded-lg hover:opacity-90 transition-all flex items-center gap-2 disabled:opacity-50"
             >
               <Plus className="h-4 w-4" />
-              Add Lesson
+              Add Chapter
             </button>
           </div>
         </div>
@@ -166,11 +166,11 @@ function AdminLessonsContent() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <label className="block text-ink text-sm font-medium mb-2">Select Module</label>
+          <label className="block text-sm font-bold text-navy mb-2">Select Module</label>
           <select
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
-            className="w-full px-4 py-3 bg-white border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
+            className="w-full px-4 py-3 bg-white border border-primary/10 shadow-sm rounded-lg text-ink font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20"
           >
             {modules.map(module => (
               <option key={module._id} value={module._id}>{module.title}</option>
@@ -180,10 +180,10 @@ function AdminLessonsContent() {
 
         <div className="space-y-4">
           {lessons.length === 0 ? (
-            <div className="text-center py-20 bg-dark-100/50 rounded-2xl border border-white/10">
-              <FileText className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-muted text-xl">No lessons found</p>
-              <p className="text-muted mt-2">Create your first lesson to get started</p>
+            <div className="text-center p-12 bg-white rounded-2xl border border-primary/10 shadow-sm">
+              <FileText className="h-16 w-16 text-muted mx-auto mb-4 opacity-50" />
+              <p className="text-navy font-bold text-xl">No chapters found</p>
+              <p className="text-muted mt-2">Create your first chapter to get started</p>
             </div>
           ) : (
             lessons.map((lesson, index) => (
@@ -192,12 +192,12 @@ function AdminLessonsContent() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-6"
+                className="bg-white shadow-premium rounded-2xl border border-primary/10 p-6"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-navy mb-2">
-                      Lesson {lesson.order}: {lesson.title}
+                      Chapter {lesson.order}: {lesson.title}
                     </h3>
                     <p className="text-muted text-sm line-clamp-2">
                       {typeof lesson.content === 'object'
@@ -270,10 +270,10 @@ function AdminLessonsContent() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl border border-white/10 p-6 max-w-4xl w-full my-8"
+              className="bg-academic rounded-2xl border border-primary/10 shadow-premium p-6 max-w-4xl w-full my-8"
             >
               <h2 className="text-2xl font-bold text-navy mb-6">
-                {selectedLesson ? 'Edit Lesson' : 'Create Lesson'}
+                {selectedLesson ? 'Edit Chapter' : 'Create Chapter'}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

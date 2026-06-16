@@ -19,6 +19,7 @@ const emptyForm = {
 export default function AdminPromoCodes() {
   const router = useRouter()
   const [promoCodes, setPromoCodes] = useState([])
+  const [promoters, setPromoters] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [selectedCode, setSelectedCode] = useState(null)
@@ -28,7 +29,17 @@ export default function AdminPromoCodes() {
 
   useEffect(() => {
     fetchPromoCodes()
+    fetchPromoters()
   }, [])
+
+  const fetchPromoters = async () => {
+    try {
+      const res = await api.get('/promoters/admin/list')
+      setPromoters(res.data.promoters || [])
+    } catch {
+      console.error('Failed to fetch promoters')
+    }
+  }
 
   const fetchPromoCodes = async () => {
     setLoading(true)
@@ -202,7 +213,13 @@ export default function AdminPromoCodes() {
                       </span>
                     </td>
                     <td className="py-4 px-2">
-                      <span className="text-muted text-sm">{code.assignedTo || '—'}</span>
+                      <span className="text-muted text-sm">
+                        {(() => {
+                          if (!code.assignedTo) return '—'
+                          const p = promoters.find(p => p.id === code.assignedTo)
+                          return p ? p.name : code.assignedTo
+                        })()}
+                      </span>
                     </td>
                     <td className="py-4 px-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -347,12 +364,18 @@ export default function AdminPromoCodes() {
 
                 <div>
                   <label className="block text-ink text-sm font-medium mb-1">Assigned To (Promoter, optional)</label>
-                  <input
+                  <select
                     value={formData.assignedTo}
                     onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
                     className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
-                    placeholder="Promoter name or ID"
-                  />
+                  >
+                    <option value="">None</option>
+                    {promoters.filter(p => p.status === 'active').map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} ({p.referralCode})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <label className="flex items-center gap-2 cursor-pointer">

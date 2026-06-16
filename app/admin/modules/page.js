@@ -295,13 +295,12 @@ function AdminModules() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 text-sm font-bold mb-2">Description</label>
+                  <label className="block text-slate-700 text-sm font-bold mb-2">Description <span className="text-slate-400 font-normal">(optional)</span></label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     rows="3"
-                    required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">

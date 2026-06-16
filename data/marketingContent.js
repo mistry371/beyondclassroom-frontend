@@ -150,13 +150,15 @@ export const reviews = [
 ]
 
 export const team = [
-  { name: 'Dr. Ananya Verma', role: 'Founder & Chief Educator', degree: 'PhD Mathematics, IIT Delhi', experience: '15+ years', expertise: ['Mathematics', 'Curriculum Design', 'Olympiad foundations'], initials: 'AV' },
-  { name: 'Prof. Rohit Malhotra', role: 'Head of Academics', degree: 'MSc Mathematics, IISc', experience: '12+ years', expertise: ['Mathematics', 'School Algebra', 'Assessments'], initials: 'RM' },
-  { name: 'Dr. Meera Iyer', role: 'Senior Math Educator', degree: 'PhD Applied Math, Stanford', experience: '10+ years', expertise: ['Geometry', 'Arithmetic foundations', 'Class 1-8 Math'], initials: 'MI' },
-  { name: 'Prof. Karan Desai', role: 'Middle School Specialist', degree: 'IIT Bombay, Mathematics', experience: '14+ years', expertise: ['Algebra', 'Olympiad foundations', 'Problem Solving'], initials: 'KD' },
-  { name: 'Dr. Sunita Rao', role: 'Middle School Lead', degree: 'MEd Mathematics, NCERT', experience: '18+ years', expertise: ['Class 1-8 Math', 'Foundations', 'Student Engagement'], initials: 'SR' },
-  { name: 'Prof. Amit Khanna', role: 'Live Learning Director', degree: 'MSc, BHU Mathematics', experience: '11+ years', expertise: ['Interactive Classes', 'Doubt Solving', 'Mentorship'], initials: 'AK' },
-  { name: 'Team Member', role: 'Team Member', photo: '/team/teammate.jpeg', degree: 'B.sc.(cs), MCA, B.Ed', experience: '12 years', expertise: ['Computer Science', 'Mathematics'], initials: 'TM' },
+  { 
+    name: 'Vishal H. Shah', 
+    role: 'Founder & Academic Director', 
+    photo: '/team/vishal.jpeg',
+    degree: 'MSc Management with International Business, University of Huddersfield, United Kingdom', 
+    experience: '10+ years', 
+    expertise: ['Education Management', 'Mathematics Foundations', 'Curriculum Design'], 
+    initials: 'VS' 
+  },
 ]
 
 export const timeline = [

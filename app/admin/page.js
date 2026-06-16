@@ -121,6 +121,7 @@ export default function AdminDashboard() {
 
         <AdminSection title="Platform Management">
           <QuickActionCard href="/admin/users" title="Users" description="Manage all users" icon={Users} color="bg-blue-50 text-blue-600" />
+          <QuickActionCard href="/admin/team" title="Team & Faculty" description="Manage team members" icon={Users} color="bg-indigo-50 text-indigo-600" />
           <QuickActionCard href="/admin/courses" title="Courses" description="Manage courses" icon={BookOpen} color="bg-emerald-50 text-emerald-600" />
           <QuickActionCard href="/admin/content" title="Content" description="Edit website content" icon={FileText} color="bg-teal-50 text-teal-600" />
           <QuickActionCard href="/admin/badges" title="Badges" description="Create achievement badges" icon={Award} color="bg-purple-50 text-purple-600" />

@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
 import api from '@/utils/api'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 import dynamic from 'next/dynamic'
 
@@ -49,6 +49,11 @@ function CourseDetailsContent() {
   const [marks, setMarks] = useState('')
   const [studentAttachedFile, setStudentAttachedFile] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [expandedModules, setExpandedModules] = useState({})
+  const [expandedChapters, setExpandedChapters] = useState({})
+
+  const toggleModule = (id) => setExpandedModules((prev) => ({ ...prev, [id]: !prev[id] }))
+  const toggleChapter = (id) => setExpandedChapters((prev) => ({ ...prev, [id]: !prev[id] }))
 
   useEffect(() => {
     fetchCourse()
@@ -99,7 +104,7 @@ function CourseDetailsContent() {
                 const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
                 return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
               }))
-              return { ...moduleItem, title: `[${cTitle}] ${moduleItem.title}`, lessons }
+              return { ...moduleItem, title: moduleItem.title, lessons }
             }))
             allModules = [...allModules, ...populated]
           } catch (e) {}
@@ -131,6 +136,13 @@ function CourseDetailsContent() {
 
     modules.forEach((moduleItem) => {
       if (selected[moduleItem._id]) selectedModules.push({ moduleId: moduleItem._id, moduleTitle: moduleItem.title })
+      ;(moduleItem.directSubtopics || []).forEach((subtopic) => {
+        if (selected[subtopic._id]) selectedSubtopics.push({ moduleId: moduleItem._id, lessonId: null, subtopicId: subtopic._id, subtopicTitle: subtopic.title })
+        getDocs(subtopic).forEach((doc, index) => {
+          const id = `${subtopic._id}:pdf:${index}`
+          if (selected[id]) selectedPdfs.push({ subtopicId: subtopic._id, subtopicTitle: subtopic.title, name: doc?.name || `PDF ${index + 1}`, type: doc?.type || 'application/pdf' })
+        })
+      })
       ;(moduleItem.lessons || []).forEach((lesson) => {
         if (selected[lesson._id]) selectedLessons.push({ moduleId: moduleItem._id, moduleTitle: moduleItem.title, lessonId: lesson._id, lessonTitle: lesson.title })
         ;(lesson.subtopics || []).forEach((subtopic) => {
@@ -271,76 +283,137 @@ function CourseDetailsContent() {
     <div className="min-h-screen bg-academic pb-16 select-none">
       <Navbar />
 
-      <section className="relative overflow-hidden premium-section">
+      <section className="relative overflow-hidden premium-section border-b border-primary/10 bg-gradient-to-b from-white/40 to-transparent">
         <div className="absolute inset-0 hero-grid opacity-70" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_420px] lg:px-8 lg:py-20">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-5 flex flex-wrap gap-3">
-              <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">{course.category}</span>
-              <span className="rounded-full bg-secondary/10 px-4 py-2 text-sm font-bold text-secondary">{course.difficulty}</span>
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center">
+            <div className="mb-8 flex flex-wrap justify-center gap-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-5 py-2 text-sm font-bold text-primary border border-primary/20 backdrop-blur-md shadow-sm">
+                <BookOpen className="h-4 w-4" /> {course.category}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/10 px-5 py-2 text-sm font-bold text-secondary border border-secondary/20 backdrop-blur-md shadow-sm">
+                <Target className="h-4 w-4" /> {course.difficulty}
+              </span>
             </div>
-            <h1 className="text-4xl font-black leading-tight text-navy sm:text-6xl">{course.title}</h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">{course.description}</p>
-
+            <h1 className="text-5xl font-black leading-tight sm:text-7xl bg-clip-text text-transparent bg-gradient-to-br from-navy via-primary to-secondary drop-shadow-sm pb-2">
+              {course.grade || (course.title.match(/Class\s*\d+/i) ? course.title.match(/Class\s*\d+/i)[0] : course.title)}
+            </h1>
+            <p className="mt-8 max-w-3xl text-xl leading-relaxed text-muted font-medium">
+              {course.description}
+            </p>
           </motion.div>
-
-          <motion.aside initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="rounded-3xl border border-primary/10 bg-white p-6 shadow-premium">
-            <div className="mb-6 flex aspect-video items-center justify-center rounded-2xl bg-brand-gradient text-white">
-              <PlayCircle className="h-16 w-16" />
-            </div>
-            <p className="text-sm font-bold uppercase tracking-wide text-muted">Course package</p>
-            <div className="mt-2 text-4xl font-black text-primary">{course.isFree || course.isDemo ? 'FREE' : `Rs.${course.price}`}</div>
-            <div className="mt-5 space-y-3 text-sm font-semibold text-ink">
-              {['Lifetime access', 'Protected PDF previews', 'Custom course request option', 'Progress-ready structure'].map((item) => (
-                <p key={item} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-secondary" />{item}</p>
-              ))}
-            </div>
-            <div className="mt-6 space-y-3">
-              <button onClick={() => router.push('/packages')} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-4 font-bold text-white">
-                View Packages
-              </button>
-            </div>
-          </motion.aside>
         </div>
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <section className={`grid gap-8 ${user ? 'lg:grid-cols-[0.9fr_1.1fr]' : 'max-w-4xl mx-auto'}`}>
-          <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium">
-            <div className="mb-5 flex items-center gap-3">
-              <ShieldCheck className="h-8 w-8 text-primary" />
+        <section className={`grid gap-10 ${user ? 'lg:grid-cols-[1fr_1fr]' : 'max-w-6xl mx-auto w-full'}`}>
+          <div className="rounded-3xl border border-primary/10 bg-white p-8 shadow-premium">
+            <div className="mb-8 flex items-center gap-4">
+              <ShieldCheck className="h-10 w-10 text-primary" />
               <div>
-                <h2 className="text-2xl font-black text-navy">Protected Course Preview</h2>
-                <p className="text-sm text-muted">Everyone can view the course structure. Documents are strictly preview-only.</p>
+                <h2 className="text-3xl font-black text-navy">Protected Course Preview</h2>
+                <p className="text-md text-muted mt-1">Everyone can view the course structure. Documents are strictly preview-only.</p>
               </div>
             </div>
             {modules.length === 0 ? (
-              <p className="rounded-2xl bg-academic p-5 text-muted">No modules are published for this course yet.</p>
+              <p className="rounded-2xl bg-academic p-6 text-muted font-medium text-lg text-center">No modules are published for this course yet.</p>
             ) : (
-              <div className="max-h-[640px] space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-5">
                 {modules.map((moduleItem) => (
-                  <div key={moduleItem._id} className="rounded-2xl border border-primary/10 bg-academic p-4">
-                    <p className="font-black text-navy">{moduleItem.title}</p>
-                    <p className="mt-1 text-sm text-muted">{moduleItem.description}</p>
-                    {(moduleItem.lessons || []).map((lesson) => (
-                      <div key={lesson._id} className="mt-3 rounded-xl bg-white p-3">
-                        <p className="font-bold text-ink">{lesson.title}</p>
-                        {(lesson.subtopics || []).map((subtopic) => (
-                          <div key={subtopic._id} className="mt-2 rounded-lg border border-primary/10 p-3 text-sm text-muted">
-                            <p className="font-semibold text-ink">{subtopic.title}</p>
-                            {getDocs(subtopic).length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-2">
-                                {getDocs(subtopic).map((doc, index) => (
-                                  <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                                    <FileText className="h-3.5 w-3.5" /> Secure View
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
+                  <div key={moduleItem._id} className="rounded-2xl border border-primary/10 bg-academic overflow-hidden shadow-sm transition-all duration-300">
+                    <button 
+                      onClick={() => toggleModule(moduleItem._id)}
+                      className="w-full flex items-center justify-between p-5 text-left bg-white hover:bg-slate-50 transition-colors"
+                    >
+                      <div>
+                        <p className="font-black text-navy text-lg">{moduleItem.title}</p>
+                        {moduleItem.description && <p className="mt-1 text-sm text-muted">{moduleItem.description}</p>}
                       </div>
-                    ))}
+                      <ChevronDown className={`h-5 w-5 text-muted transition-transform duration-300 ${expandedModules[moduleItem._id] ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {expandedModules[moduleItem._id] && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="px-5 pb-5 pt-2"
+                        >
+                          {(moduleItem.lessons || []).length === 0 && (moduleItem.directSubtopics || []).length === 0 ? (
+                            <p className="text-sm text-muted italic">No chapters or topics available.</p>
+                          ) : (
+                            <div className="space-y-3">
+                              {(moduleItem.directSubtopics || []).map((subtopic) => (
+                                <div key={subtopic._id} className="rounded-lg border border-primary/10 bg-white p-3 text-sm text-muted shadow-sm">
+                                  <p className="font-semibold text-ink text-sm mb-2 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                    {subtopic.title}
+                                  </p>
+                                  {getDocs(subtopic).length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-2 pl-3 border-l-2 border-primary/10">
+                                      {getDocs(subtopic).map((doc, index) => (
+                                        <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors">
+                                          <FileText className="h-3.5 w-3.5" /> Secure View: {doc?.name || `Document ${index + 1}`}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+
+                              {(moduleItem.lessons || []).map((lesson) => (
+                                <div key={lesson._id} className="rounded-xl bg-white border border-primary/10 overflow-hidden shadow-sm">
+                                  <button
+                                    onClick={() => toggleChapter(lesson._id)}
+                                    className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+                                  >
+                                    <p className="font-bold text-ink text-md">Chapter: {lesson.title}</p>
+                                    <ChevronDown className={`h-4 w-4 text-muted transition-transform duration-300 ${expandedChapters[lesson._id] ? 'rotate-180' : ''}`} />
+                                  </button>
+
+                                  <AnimatePresence>
+                                    {expandedChapters[lesson._id] && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        className="px-4 pb-4 bg-slate-50/50"
+                                      >
+                                        {(lesson.subtopics || []).length === 0 ? (
+                                          <p className="text-sm text-muted italic">No topics available.</p>
+                                        ) : (
+                                          <div className="space-y-3 pt-2">
+                                            {(lesson.subtopics || []).map((subtopic) => (
+                                              <div key={subtopic._id} className="rounded-lg border border-primary/10 bg-white p-3 text-sm text-muted shadow-sm">
+                                                <p className="font-semibold text-ink text-sm mb-2 flex items-center gap-2">
+                                                  <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                                  {subtopic.title}
+                                                </p>
+                                                {getDocs(subtopic).length > 0 && (
+                                                  <div className="flex flex-wrap gap-2 mt-2 pl-3 border-l-2 border-primary/10">
+                                                    {getDocs(subtopic).map((doc, index) => (
+                                                      <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors">
+                                                        <FileText className="h-3.5 w-3.5" /> Secure View: {doc?.name || `Document ${index + 1}`}
+                                                      </button>
+                                                    ))}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
@@ -366,11 +439,17 @@ function CourseDetailsContent() {
 
             {step === 0 && <SelectList title="Select modules" items={modules} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
             {step === 1 && <SelectList title="Select lessons" items={modules.flatMap((m) => (m.lessons || []).map((l) => ({ ...l, helper: m.title })))} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
-            {step === 2 && <SelectList title="Select topics and subtopics" items={modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).map((s) => ({ ...s, helper: `${m.title} / ${l.title}` }))))} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
+            {step === 2 && <SelectList title="Select topics and subtopics" items={[
+              ...modules.flatMap((m) => (m.directSubtopics || []).map((s) => ({ ...s, helper: `${m.title}` }))),
+              ...modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).map((s) => ({ ...s, helper: `${m.title} / ${l.title}` }))))
+            ]} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
             {step === 3 && (
               <SelectList
                 title="Select PDFs"
-                items={modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).flatMap((s) => getDocs(s).map((doc, index) => ({ _id: `${s._id}:pdf:${index}`, title: doc?.name || `PDF ${index + 1}`, helper: s.title })))))}
+                items={[
+                  ...modules.flatMap((m) => (m.directSubtopics || []).flatMap((s) => getDocs(s).map((doc, index) => ({ _id: `${s._id}:pdf:${index}`, title: doc?.name || `PDF ${index + 1}`, helper: s.title })))),
+                  ...modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).flatMap((s) => getDocs(s).map((doc, index) => ({ _id: `${s._id}:pdf:${index}`, title: doc?.name || `PDF ${index + 1}`, helper: s.title })))))
+                ]}
                 selected={selected}
                 onToggle={toggle}
                 idKey="_id"

@@ -1,6 +1,7 @@
 import './globals.css'
 import { Providers } from './providers'
 import ClientWrappers from '@/components/ClientWrappers'
+import SecurityWrapper from '@/components/SecurityWrapper'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -60,6 +61,7 @@ export default function RootLayout({ children }) {
         <Providers>
           {children}
           <ClientWrappers />
+          <SecurityWrapper />
         </Providers>
       </body>
     </html>

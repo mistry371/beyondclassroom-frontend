@@ -95,6 +95,12 @@ export default function LearnPage() {
     router.push(`/learn/${params.courseId}/lesson/${lessonId}`)
   }
 
+  const handleStartSubtopic = (subtopicId, moduleIndex) => {
+    if (!hasAccess) return
+    if (!isModuleUnlocked(moduleIndex)) return
+    router.push(`/learn/${params.courseId}/subtopic/${subtopicId}`)
+  }
+
   const handleStartQuiz = (quizId, moduleIndex) => {
     if (!hasAccess) return
     if (!isModuleUnlocked(moduleIndex)) return
@@ -311,6 +317,44 @@ export default function LearnPage() {
                       className="border-t border-primary/10"
                     >
                       <div className="p-6 space-y-3">
+                        {/* Direct Subtopics */}
+                        {module.directSubtopics?.map((subtopic, subtopicIndex) => (
+                          <motion.div
+                            key={subtopic._id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: subtopicIndex * 0.05 }}
+                            className={`flex items-center justify-between p-4 rounded-xl transition-all relative bg-academic border border-primary/10 hover:border-primary/30`}
+                          >
+                            {!hasAccess && <div className="absolute inset-0 backdrop-blur-[2px] bg-black/30 rounded-xl" />}
+                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <PlayCircle className="h-5 w-5 text-secondary flex-shrink-0" />
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-navy font-semibold truncate">{subtopic.title}</h4>
+                                <div className="flex items-center gap-3 mt-1 flex-wrap">
+                                  <span className="text-xs px-2 py-1 bg-secondary/20 text-secondary rounded">
+                                    Topic
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => handleStartSubtopic(subtopic._id, moduleIndex)}
+                              disabled={!isModuleUnlocked(moduleIndex)}
+                              className={`px-6 py-2 rounded-lg font-medium transition-all flex-shrink-0 ml-4 ${
+                                !isModuleUnlocked(moduleIndex)
+                                  ? 'bg-gray-500/20 text-muted cursor-not-allowed'
+                                  : 'bg-gradient-to-r from-secondary to-primary text-white hover:opacity-90'
+                              }`}
+                            >
+                              {!isModuleUnlocked(moduleIndex) ? (
+                                <span className="flex items-center gap-2"><Lock className="h-4 w-4" />Locked</span>
+                              ) : 'View Topic'}
+                            </button>
+                          </motion.div>
+                        ))}
+
                         {/* Lessons */}
                         {module.lessons?.map((lesson, lessonIndex) => (
                           <motion.div

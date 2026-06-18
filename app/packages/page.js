@@ -17,7 +17,21 @@ export default function PackagesPage() {
 
   useEffect(() => {
     cachedGet('/packages', 60000)
-      .then((res) => { if (res.data?.packages?.length) setPackages(res.data.packages) })
+      .then((res) => { 
+        if (res.data?.packages?.length) {
+          const mergedPackages = res.data.packages.map(backendPkg => {
+            // Match by name or ID
+            const staticPkg = staticPackages.find(sp => sp.name === backendPkg.name || sp.id === backendPkg.id || sp.id === backendPkg._id) || {}
+            return {
+              ...staticPkg,
+              ...backendPkg,
+              oldInr: backendPkg.oldInr || staticPkg.oldInr,
+              oldUsd: backendPkg.oldUsd || staticPkg.oldUsd
+            }
+          })
+          setPackages(mergedPackages)
+        } 
+      })
       .catch(() => {})
   }, [])
 
@@ -114,8 +128,15 @@ function PackageCard({ pkg, index }) {
       </div>
 
       {/* ── Price ── */}
-      <div className="mx-6 mt-6 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/30 p-5 text-center border border-indigo-100/50 shadow-inner">
-        <p className="text-5xl font-black leading-none text-slate-800 tracking-tight">
+      <div className="mx-6 mt-6 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/30 p-5 text-center border border-indigo-100/50 shadow-inner flex flex-col items-center">
+        {pkg.oldInr && (
+          <p className="text-xl font-bold text-slate-400 line-through mb-1 flex items-center justify-center gap-2">
+            ₹{pkg.oldInr?.toLocaleString('en-IN')} 
+            <span className="text-slate-300">/</span> 
+            ${pkg.oldUsd}
+          </p>
+        )}
+        <p className="text-5xl font-black leading-none text-slate-800 tracking-tight flex items-baseline justify-center">
           ₹{pkg.priceINR?.toLocaleString('en-IN') || pkg.inr?.toLocaleString('en-IN')}
           <span className="text-slate-400 text-3xl font-black mx-2">/</span>
           <span className="text-4xl">${pkg.priceUSD || pkg.usd}</span>

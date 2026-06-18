@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar'
 import MarketingShell from '@/components/marketing/MarketingShell'
 import PaymentModal from '@/components/PaymentModal'
 import api from '@/utils/api'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 import Link from 'next/link'
 
@@ -20,6 +20,15 @@ export default function PackageDetailsPage() {
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [selectedCourses, setSelectedCourses] = useState([])
+
+  const toggleCourseSelection = (courseId) => {
+    setSelectedCourses(prev => 
+      prev.includes(courseId) 
+        ? prev.filter(id => id !== courseId)
+        : [...prev, courseId]
+    )
+  }
 
   useEffect(() => {
     fetchPackageData()
@@ -105,70 +114,40 @@ export default function PackageDetailsPage() {
 
       <section className="relative overflow-hidden premium-section">
         <div className="absolute inset-0 hero-grid opacity-70" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_420px] lg:px-8 lg:py-20">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-5 flex flex-wrap gap-3">
-              <Link href="/packages" className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-sm font-bold text-muted border border-primary/10 hover:border-primary/30 transition">
+        <div className="relative mx-auto max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center text-center">
+            <div className="mb-6 flex flex-wrap justify-center gap-3">
+              <Link href="/packages" className="inline-flex items-center gap-1 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-muted border border-primary/10 hover:border-primary/30 transition">
                 <ChevronLeft className="h-4 w-4" /> All Packages
               </Link>
-              <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary uppercase tracking-wider">PACKAGE</span>
+              <span className="rounded-full bg-primary/10 px-5 py-1.5 text-sm font-bold text-primary uppercase tracking-wider">PACKAGE</span>
               {pkg.popular && (
-                <span className="rounded-full bg-accent/10 px-4 py-2 text-sm font-bold text-accent flex items-center gap-1">
+                <span className="rounded-full bg-accent/10 px-5 py-1.5 text-sm font-bold text-accent flex items-center gap-1">
                   <Star className="w-4 h-4 fill-accent" /> Most Popular
                 </span>
               )}
             </div>
             
-            <h1 className="text-4xl font-black leading-tight text-navy sm:text-6xl uppercase">{pkg.name}</h1>
-            <p className="mt-3 text-xl font-semibold text-secondary">{pkg.description}</p>
+            <h1 className="text-5xl font-black leading-tight text-navy sm:text-7xl uppercase">{pkg.name}</h1>
+            <p className="mt-4 text-2xl font-semibold text-secondary max-w-3xl">{pkg.description}</p>
             
             {/* Features List */}
-            <div className="mt-8 grid sm:grid-cols-2 gap-4">
+            <div className="mt-12 grid w-full sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               {(pkg.features || []).map((f, i) => {
                 const label = typeof f === 'object' ? f.label : f
                 const detail = typeof f === 'object' ? f.detail : null
                 return (
-                  <div key={i} className="flex items-start gap-3 rounded-2xl border border-primary/10 bg-white p-4 shadow-sm">
-                    <CheckCircle className="h-5 w-5 text-[#22c55e] flex-shrink-0 mt-0.5" />
+                  <div key={i} className="flex items-start gap-4 rounded-3xl border border-primary/10 bg-white p-6 shadow-sm hover:shadow-md transition">
+                    <CheckCircle className="h-6 w-6 text-[#22c55e] flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-ink leading-snug">{label}</p>
-                      {detail && <p className="text-sm text-muted mt-1 leading-snug">{detail}</p>}
+                      <p className="text-lg font-bold text-ink leading-snug">{label}</p>
+                      {detail && <p className="text-base text-muted mt-2 leading-snug">{detail}</p>}
                     </div>
                   </div>
                 )
               })}
             </div>
           </motion.div>
-
-          {/* Pricing Aside */}
-          <motion.aside initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="rounded-3xl border border-primary/20 bg-white p-7 shadow-premium self-start">
-            <div className="mb-6 flex aspect-video items-center justify-center rounded-2xl bg-gray-50 border border-primary/10 text-primary overflow-hidden relative">
-              {pkg.image ? (
-                <img src={pkg.image} alt={pkg.name} className="w-full h-full object-cover" />
-              ) : (
-                <Award className="h-16 w-16 text-[#c9a84c]" />
-              )}
-            </div>
-            
-            <div className="rounded-2xl border border-primary/10 bg-gray-50 p-5 text-center">
-              <p className="text-primary text-xs font-black uppercase tracking-widest mb-2">Package Price</p>
-              <p className="text-4xl font-black leading-none text-ink">
-                <span className="text-ink">₹{pkg.priceINR?.toLocaleString('en-IN') || 0}</span>
-                <span className="text-muted mx-2 text-2xl">/</span>
-                <span className="text-ink">${pkg.priceUSD || 0}</span>
-              </p>
-              <p className="text-muted text-xs mt-2 font-medium">Valid for {pkg.validity}</p>
-            </div>
-            
-            <div className="mt-6 space-y-3">
-              <button onClick={() => {
-                if (!user) router.push(`/auth/login?redirect=${encodeURIComponent(`/packages/${pkg._id}`)}`)
-                else setShowPaymentModal(true)
-              }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-4 font-black text-white uppercase tracking-wide hover:opacity-90 transition shadow-md">
-                {user ? 'Buy Package Now' : <><Lock className="h-5 w-5" /> Login to Purchase</>}
-              </button>
-            </div>
-          </motion.aside>
         </div>
       </section>
 
@@ -200,12 +179,16 @@ export default function PackageDetailsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.04, 0.3) }}
-                className="overflow-hidden rounded-3xl border border-primary/10 bg-white shadow-premium"
+                className={`overflow-hidden rounded-3xl border ${selectedCourses.includes(course._id) ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-primary/10 bg-white'} shadow-premium cursor-pointer transition-all`}
+                onClick={() => toggleCourseSelection(course._id)}
               >
                 <div className="h-2 bg-brand-gradient" />
                 <div className="p-6 sm:p-8">
                   <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
-                    <div className="flex gap-2">
+                    <div className="flex gap-3 items-center">
+                      <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${selectedCourses.includes(course._id) ? 'border-primary bg-primary' : 'border-gray-300 bg-white'}`}>
+                        {selectedCourses.includes(course._id) && <CheckCircle className="h-4 w-4 text-white" />}
+                      </div>
                       <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{course.category || 'Mathematics'}</span>
                       {course.grade && (
                         <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{course.grade}</span>
@@ -253,8 +236,12 @@ export default function PackageDetailsPage() {
                   </div>
 
                   <div className="mt-6 flex items-center justify-end border-t border-primary/10 pt-6">
-                    <Link href={`/courses/${course._id}?packageId=${pkg._id}`} className="inline-flex items-center gap-2 rounded-xl bg-brand-gradient px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-95">
-                      Open Course & Customization <ArrowRight className="h-4 w-4" />
+                    <Link 
+                      href={`/courses/${course._id}?packageId=${pkg._id}`} 
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-2 rounded-xl bg-white border border-primary/20 px-6 py-3 text-sm font-bold text-primary shadow-sm transition hover:bg-primary/5"
+                    >
+                      Preview Class Details <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>
@@ -264,11 +251,44 @@ export default function PackageDetailsPage() {
         )}
       </main>
 
+      <AnimatePresence>
+        {selectedCourses.length > 0 && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none"
+          >
+            <div className="mx-auto max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-auto border border-primary/10">
+              <div className="flex flex-col">
+                <p className="text-sm text-muted font-bold tracking-wide uppercase">{selectedCourses.length} Class{selectedCourses.length > 1 ? 'es' : ''} Selected</p>
+                <div className="flex items-end gap-2 mt-1">
+                  <p className="text-3xl sm:text-4xl font-black text-ink">₹{((pkg.priceINR || 0) * selectedCourses.length).toLocaleString('en-IN')}</p>
+                  <p className="text-sm font-medium text-muted mb-1.5">Total Payable</p>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => {
+                  if (!user) router.push(`/auth/login?redirect=${encodeURIComponent(`/packages/${pkg._id}`)}`)
+                  else setShowPaymentModal(true)
+                }}
+                className="w-full sm:w-auto px-8 py-3.5 bg-brand-gradient text-white font-bold rounded-xl shadow-lg hover:opacity-95 transition-opacity flex items-center justify-center gap-2"
+              >
+                Buy Selected Classes <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <PaymentModal 
         isOpen={showPaymentModal} 
         onClose={() => setShowPaymentModal(false)} 
         item={pkg} 
         isPackage={true}
+        customAmount={(pkg.priceINR || 0) * selectedCourses.length}
+        selectedCourseIds={selectedCourses}
         onSuccess={() => router.push('/dashboard')} 
       />
 

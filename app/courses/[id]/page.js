@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X, Download } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
 import api from '@/utils/api'
@@ -13,7 +13,7 @@ import dynamic from 'next/dynamic'
 
 const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { ssr: false })
 
-const steps = ['Modules', 'Lessons', 'Topics', 'PDFs', 'Preferences', 'Summary']
+const steps = ['Modules', 'Preferences', 'Summary']
 
 const defaultPreferences = {
   level: 'Standard',
@@ -163,7 +163,6 @@ function CourseDetailsContent() {
       duration: `48 hours`,
       lines: [
         `Start with ${selection.selectedModules.length || 'selected'} module foundation review`,
-        `Customized content in ${preferences.languagePreference}`,
       ],
     }
   }, [preferences, selection])
@@ -302,6 +301,22 @@ function CourseDetailsContent() {
             <p className="mt-8 max-w-3xl text-xl leading-relaxed text-muted font-medium">
               {course.description}
             </p>
+            
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
+              <button
+                onClick={() => {
+                  if (!user) {
+                    showError("Please login or register to download materials and continue.");
+                    router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
+                  } else {
+                    showSuccess("Please scroll down and select the materials you want to download from the curriculum.");
+                  }
+                }}
+                className="inline-flex items-center gap-2 rounded-2xl bg-brand-gradient px-8 py-4 text-lg font-bold text-white shadow-premium hover:shadow-primary/30 transition-all hover:-translate-y-1"
+              >
+                <Download className="h-5 w-5" /> Download Material
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -309,13 +324,7 @@ function CourseDetailsContent() {
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <section className={`grid gap-10 ${user ? 'lg:grid-cols-[1fr_1fr]' : 'max-w-6xl mx-auto w-full'}`}>
           <div className="rounded-3xl border border-primary/10 bg-white p-8 shadow-premium">
-            <div className="mb-8 flex items-center gap-4">
-              <ShieldCheck className="h-10 w-10 text-primary" />
-              <div>
-                <h2 className="text-3xl font-black text-navy">Protected Course Preview</h2>
-                <p className="text-md text-muted mt-1">Everyone can view the course structure. Documents are strictly preview-only.</p>
-              </div>
-            </div>
+
             {modules.length === 0 ? (
               <p className="rounded-2xl bg-academic p-6 text-muted font-medium text-lg text-center">No modules are published for this course yet.</p>
             ) : (
@@ -339,78 +348,118 @@ function CourseDetailsContent() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="px-5 pb-5 pt-2"
+                          className="border-t border-primary/10 bg-slate-50/50"
                         >
-                          {(moduleItem.lessons || []).length === 0 && (moduleItem.directSubtopics || []).length === 0 ? (
-                            <p className="text-sm text-muted italic">No chapters or topics available.</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {(moduleItem.directSubtopics || []).map((subtopic) => (
-                                <div key={subtopic._id} className="rounded-lg border border-primary/10 bg-white p-3 text-sm text-muted shadow-sm">
-                                  <p className="font-semibold text-ink text-sm mb-2 flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                    {subtopic.title}
-                                  </p>
-                                  {getDocs(subtopic).length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-2 pl-3 border-l-2 border-primary/10">
-                                      {getDocs(subtopic).map((doc, index) => (
-                                        <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors">
-                                          <FileText className="h-3.5 w-3.5" /> Secure View: {doc?.name || `Document ${index + 1}`}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
+                          <div className="p-5">
+                            {(moduleItem.lessons || []).length === 0 && (moduleItem.directSubtopics || []).length === 0 ? (
+                              <div className="flex items-center gap-3 text-muted bg-white p-4 rounded-xl border border-primary/10 border-dashed shadow-sm">
+                                <BookOpen className="h-5 w-5 opacity-50" />
+                                <p className="text-sm font-medium">Content is being prepared for this module.</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-6">
+                                
+                                {/* Direct Subtopics */}
+                                {(moduleItem.directSubtopics || []).length > 0 && (
+                                  <div className="relative pl-6 before:absolute before:inset-y-0 before:left-[11px] before:w-[2px] before:bg-primary/20 space-y-4">
+                                    {(moduleItem.directSubtopics || []).map((subtopic) => (
+                                      <div key={subtopic._id} className="relative">
+                                        <div className="absolute top-4 -left-6 w-3 h-3 rounded-full border-2 border-white bg-primary ring-4 ring-primary/10 z-10" />
+                                        <div className="bg-white rounded-xl border border-primary/10 p-4 shadow-sm hover:shadow-md transition-shadow">
+                                          <p className="font-bold text-navy text-base">{subtopic.title}</p>
+                                          {getDocs(subtopic).length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
+                                              {getDocs(subtopic).map((doc, index) => (
+                                                <button key={`${subtopic._id}-${index}`} onClick={() => {
+                                                  if (!user) {
+                                                    showError("Please login or register to download materials and continue.");
+                                                    router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
+                                                  } else {
+                                                    setPreviewDoc(doc);
+                                                  }
+                                                }} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                                  <Download className="h-4 w-4" /> 
+                                                  <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
+                                                </button>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
 
-                              {(moduleItem.lessons || []).map((lesson) => (
-                                <div key={lesson._id} className="rounded-xl bg-white border border-primary/10 overflow-hidden shadow-sm">
-                                  <button
-                                    onClick={() => toggleChapter(lesson._id)}
-                                    className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
-                                  >
-                                    <p className="font-bold text-ink text-md">Chapter: {lesson.title}</p>
-                                    <ChevronDown className={`h-4 w-4 text-muted transition-transform duration-300 ${expandedChapters[lesson._id] ? 'rotate-180' : ''}`} />
-                                  </button>
-
-                                  <AnimatePresence>
-                                    {expandedChapters[lesson._id] && (
-                                      <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: 'auto', opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="px-4 pb-4 bg-slate-50/50"
-                                      >
-                                        {(lesson.subtopics || []).length === 0 ? (
-                                          <p className="text-sm text-muted italic">No topics available.</p>
-                                        ) : (
-                                          <div className="space-y-3 pt-2">
-                                            {(lesson.subtopics || []).map((subtopic) => (
-                                              <div key={subtopic._id} className="rounded-lg border border-primary/10 bg-white p-3 text-sm text-muted shadow-sm">
-                                                <p className="font-semibold text-ink text-sm mb-2 flex items-center gap-2">
-                                                  <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                                  {subtopic.title}
-                                                </p>
-                                                {getDocs(subtopic).length > 0 && (
-                                                  <div className="flex flex-wrap gap-2 mt-2 pl-3 border-l-2 border-primary/10">
-                                                    {getDocs(subtopic).map((doc, index) => (
-                                                      <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors">
-                                                        <FileText className="h-3.5 w-3.5" /> Secure View: {doc?.name || `Document ${index + 1}`}
-                                                      </button>
-                                                    ))}
-                                                  </div>
-                                                )}
-                                              </div>
-                                            ))}
+                                {/* Chapters / Lessons */}
+                                {(moduleItem.lessons || []).length > 0 && (
+                                  <div className="space-y-4">
+                                    {(moduleItem.lessons || []).map((lesson, lIdx) => (
+                                      <div key={lesson._id} className="bg-white rounded-2xl border border-primary/10 overflow-hidden shadow-sm">
+                                        <button
+                                          onClick={() => toggleChapter(lesson._id)}
+                                          className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors group"
+                                        >
+                                          <div className="flex items-center gap-3">
+                                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-bold text-sm">
+                                              {lIdx + 1}
+                                            </div>
+                                            <p className="font-bold text-navy text-md group-hover:text-primary transition-colors">{lesson.title}</p>
                                           </div>
-                                        )}
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                                          <ChevronDown className={`h-5 w-5 text-muted transition-transform duration-300 ${expandedChapters[lesson._id] ? 'rotate-180' : ''}`} />
+                                        </button>
+
+                                        <AnimatePresence>
+                                          {expandedChapters[lesson._id] && (
+                                            <motion.div
+                                              initial={{ height: 0, opacity: 0 }}
+                                              animate={{ height: 'auto', opacity: 1 }}
+                                              exit={{ height: 0, opacity: 0 }}
+                                              className="px-4 pb-4 bg-slate-50"
+                                            >
+                                              {(lesson.subtopics || []).length === 0 ? (
+                                                <div className="mt-2 flex items-center gap-2 text-muted text-sm italic px-4 py-3 bg-white rounded-xl border border-slate-100 border-dashed shadow-sm">
+                                                  <p>No topics available yet.</p>
+                                                </div>
+                                              ) : (
+                                                <div className="relative pl-6 mt-4 before:absolute before:inset-y-0 before:left-[11px] before:w-[2px] before:bg-secondary/30 space-y-4">
+                                                  {(lesson.subtopics || []).map((subtopic) => (
+                                                    <div key={subtopic._id} className="relative">
+                                                      <div className="absolute top-4 -left-6 w-3 h-3 rounded-full border-2 border-white bg-secondary ring-4 ring-secondary/20 z-10" />
+                                                      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-secondary/30 transition-colors">
+                                                        <p className="font-bold text-slate-800 text-sm">{subtopic.title}</p>
+                                                        {getDocs(subtopic).length > 0 && (
+                                                          <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
+                                                            {getDocs(subtopic).map((doc, index) => (
+                                                              <button key={`${subtopic._id}-${index}`} onClick={() => {
+                                                                if (!user) {
+                                                                  showError("Please login or register to download materials and continue.");
+                                                                  router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
+                                                                } else {
+                                                                  setPreviewDoc(doc);
+                                                                }
+                                                              }} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+                                                                <Download className="h-4 w-4" /> 
+                                                                <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
+                                                              </button>
+                                                            ))}
+                                                          </div>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              )}
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                              </div>
+                            )}
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -438,35 +487,11 @@ function CourseDetailsContent() {
             </div>
 
             {step === 0 && <SelectList title="Select modules" items={modules} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
-            {step === 1 && <SelectList title="Select lessons" items={modules.flatMap((m) => (m.lessons || []).map((l) => ({ ...l, helper: m.title })))} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
-            {step === 2 && <SelectList title="Select topics and subtopics" items={[
-              ...modules.flatMap((m) => (m.directSubtopics || []).map((s) => ({ ...s, helper: `${m.title}` }))),
-              ...modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).map((s) => ({ ...s, helper: `${m.title} / ${l.title}` }))))
-            ]} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
-            {step === 3 && (
-              <SelectList
-                title="Select PDFs"
-                items={[
-                  ...modules.flatMap((m) => (m.directSubtopics || []).flatMap((s) => getDocs(s).map((doc, index) => ({ _id: `${s._id}:pdf:${index}`, title: doc?.name || `PDF ${index + 1}`, helper: s.title })))),
-                  ...modules.flatMap((m) => (m.lessons || []).flatMap((l) => (l.subtopics || []).flatMap((s) => getDocs(s).map((doc, index) => ({ _id: `${s._id}:pdf:${index}`, title: doc?.name || `PDF ${index + 1}`, helper: s.title })))))
-                ]}
-                selected={selected}
-                onToggle={toggle}
-                idKey="_id"
-                titleKey="title"
-              />
-            )}
-            {step === 4 && (
+            {step === 1 && (
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
+                <label className="block sm:col-span-2">
                   <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
                   <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
-                </label>
-                <label className="block">
-                  <span className="mb-2 block text-sm font-bold text-ink">Language Preference</span>
-                  <select value={preferences.languagePreference} onChange={(e) => setPreferences((prev) => ({ ...prev, languagePreference: e.target.value }))} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none">
-                    {['English', 'Hindi', 'English + Hindi'].map((option) => <option key={option}>{option}</option>)}
-                  </select>
                 </label>
                 <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
                 
@@ -483,13 +508,10 @@ function CourseDetailsContent() {
                 </label>
               </div>
             )}
-            {step === 5 && (
+            {step === 2 && (
               <div className="space-y-5">
-                <div className="grid gap-3 sm:grid-cols-4">
-                  <SummaryCard label="Modules" value={selection.selectedModules.length} />
-                  <SummaryCard label="Lessons" value={selection.selectedLessons.length} />
-                  <SummaryCard label="Subtopics" value={selection.selectedSubtopics.length} />
-                  <SummaryCard label="PDFs" value={selection.selectedPdfs.length} />
+                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                  <SummaryCard label="Modules Selected" value={selection.selectedModules.length} />
                 </div>
                 <div className="rounded-2xl bg-academic p-5">
                   <p className="font-black text-navy">Personalized roadmap</p>

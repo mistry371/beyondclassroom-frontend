@@ -59,26 +59,26 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden lg:flex items-center space-x-1 rounded-full border border-primary/10 bg-white/70 px-2 py-2 shadow-sm">
+          <div className="hidden xl:flex items-center space-x-1 rounded-full border border-primary/10 bg-white/70 px-1.5 py-1.5 shadow-sm">
             {!isAdmin && publicLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`${linkClass} rounded-full px-4 py-2 text-sm font-semibold transition-colors ${pathname === link.href ? 'bg-primary/10 text-primary' : ''}`}
+                className={`${linkClass} rounded-full px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-colors ${pathname === link.href ? 'bg-primary/10 text-primary' : ''}`}
               >
-                {link.live && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />}
+                {link.live && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse inline-block mr-1" />}
                 {link.label}
               </Link>
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden xl:flex items-center space-x-3">
             {user && (
               <>
-                <Link href={dashboardLink} className="font-bold text-primary">{dashboardText}</Link>
+                <Link href={dashboardLink} className="font-bold text-primary text-[13px] whitespace-nowrap">{dashboardText}</Link>
                 {!isAdmin && (
                   <>
-                    <Link href="/profile" className={linkClass}>My Learning</Link>
+                    <Link href="/profile" className={`${linkClass} text-[13px] whitespace-nowrap`}>My Learning</Link>
                     <Link href="/notifications" className="relative">
                       <Bell className="h-5 w-5" />
                       {unreadCount > 0 && (
@@ -98,7 +98,7 @@ export default function Navbar() {
                   </>
                 )}
                 <Link href="/profile">
-                  <div className="w-9 h-9 bg-brand-gradient rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  <div className="w-8 h-8 bg-brand-gradient rounded-full flex items-center justify-center text-white font-semibold text-sm">
                     {user?.name?.charAt(0).toUpperCase()}
                   </div>
                 </Link>
@@ -109,7 +109,7 @@ export default function Navbar() {
             )}
             {!user && (
               <div className="flex items-center space-x-3">
-                <Link href="/auth/login" className={`${linkClass} font-semibold`}>Sign In</Link>
+                <Link href="/auth/login" className={`${linkClass} font-semibold text-[13px] whitespace-nowrap`}>Sign In</Link>
               </div>
             )}
           </div>

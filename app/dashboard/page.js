@@ -121,58 +121,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Trial Banner */}
-        {trialStatus && !trialStatus.hasPurchasedCourses && (
-          trialStatus.trialExpired ? (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 rounded-xl"><Lock className="h-5 w-5 text-red-600" /></div>
-                <div>
-                  <p className="text-red-700 font-bold">Your free trial has expired</p>
-                  <p className="text-slate-500 text-sm">Purchase a course to continue learning and unlock all content.</p>
-                </div>
-              </div>
-              <button onClick={() => router.push('/courses')}
-                className="px-5 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:opacity-90 transition-all flex items-center gap-2 flex-shrink-0"
-              >
-                <ShoppingCart className="h-4 w-4" /> Browse Courses
-              </button>
-            </motion.div>
-          ) : trialStatus.trialActive ? (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              className={`mb-6 border rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap ${
-                trialStatus.daysLeft === 0
-                  ? 'bg-red-50 border-red-200'
-                  : 'bg-amber-50 border-amber-200'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${trialStatus.daysLeft === 0 ? 'bg-red-100' : 'bg-amber-100'}`}>
-                  <AlertTriangle className={`h-5 w-5 ${trialStatus.daysLeft === 0 ? 'text-red-600' : 'text-amber-600'}`} />
-                </div>
-                <div>
-                  <p className={`font-bold ${trialStatus.daysLeft === 0 ? 'text-red-700' : 'text-amber-800'}`}>
-                    {trialStatus.daysLeft === 0
-                      ? `Free trial expires in ${trialStatus.hoursLeft} hour${trialStatus.hoursLeft !== 1 ? 's' : ''}`
-                      : `Free trial: ${trialStatus.daysLeft} day${trialStatus.daysLeft !== 1 ? 's' : ''} remaining`}
-                  </p>
-                  <p className="text-slate-500 text-sm">You have limited access. Purchase a course for full access.</p>
-                </div>
-              </div>
-              <button onClick={() => router.push('/courses')}
-                className={`px-5 py-2.5 rounded-xl font-semibold transition-all flex items-center gap-2 flex-shrink-0 ${
-                  trialStatus.daysLeft === 0
-                    ? 'bg-red-600 text-navy hover:bg-red-700'
-                    : 'bg-amber-500 text-navy hover:bg-amber-600'
-                }`}
-              >
-                <ShoppingCart className="h-4 w-4" /> Upgrade Now
-              </button>
-            </motion.div>
-          ) : null
-        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

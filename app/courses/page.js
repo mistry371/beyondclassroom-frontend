@@ -30,14 +30,24 @@ function CoursesContent() {
       .finally(() => setLoading(false))
   }, [])
 
-  const filteredCourses = useMemo(() => courses.filter((course) => {
-    const matchesGrade = gradeFilter === 'all' || (course.grade && course.grade === gradeFilter) || (course.title && course.title.toLowerCase().includes(gradeFilter.toLowerCase()))
-    const title = course.title || ''
-    const description = course.description || ''
-    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      description.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesGrade && matchesSearch
-  }), [courses, gradeFilter, searchQuery])
+  const filteredCourses = useMemo(() => {
+    const getGradeNumber = (course) => {
+      const gradeMatch = (course.grade || '').match(/\d+/)
+      if (gradeMatch) return parseInt(gradeMatch[0], 10)
+      const titleMatch = (course.title || '').match(/\d+/)
+      if (titleMatch) return parseInt(titleMatch[0], 10)
+      return 9999
+    }
+
+    return courses.filter((course) => {
+      const matchesGrade = gradeFilter === 'all' || (course.grade && course.grade === gradeFilter) || (course.title && course.title.toLowerCase().includes(gradeFilter.toLowerCase()))
+      const title = course.title || ''
+      const description = course.description || ''
+      const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        description.toLowerCase().includes(searchQuery.toLowerCase())
+      return matchesGrade && matchesSearch
+    }).sort((a, b) => getGradeNumber(a) - getGradeNumber(b) || (a.title || '').localeCompare(b.title || ''))
+  }, [courses, gradeFilter, searchQuery])
 
   return (
     <div className="min-h-screen bg-academic pb-20 md:pb-0">
@@ -87,9 +97,7 @@ function CoursesContent() {
           <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Topic</span>
           <ArrowRight className="h-4 w-4" />
           <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full">Subtopic</span>
-          <span className="ml-4 text-xs text-muted flex items-center gap-1">
-            <Lock className="h-3.5 w-3.5" /> Login required for purchases, downloads & progress
-          </span>
+
         </div>
       </div>
 
@@ -128,19 +136,7 @@ function CoursesContent() {
                   <h3 className="line-clamp-2 text-xl font-black text-navy transition group-hover:text-primary">{course.title}</h3>
                   <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-muted">{course.description}</p>
 
-
-
-                  <div className="mt-5 flex items-center justify-between border-t border-primary/10 pt-5">
-                    <div>
-                      {course.isFree || course.isDemo ? (
-                        <p className="text-2xl font-black text-secondary">FREE</p>
-                      ) : (
-                        <>
-                          <p className="text-xs font-bold uppercase tracking-wide text-muted">Starts at</p>
-                          <p className="text-2xl font-black text-primary">₹{course.price || 1}</p>
-                        </>
-                      )}
-                    </div>
+                  <div className="mt-5 flex items-center justify-end border-t border-primary/10 pt-5">
                     <Link href={`/courses/${course._id}`} className="inline-flex items-center gap-2 rounded-full bg-brand-gradient px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-95">
                       Preview <ArrowRight className="h-4 w-4" />
                     </Link>

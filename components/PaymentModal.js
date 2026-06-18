@@ -5,7 +5,7 @@ import { X, CreditCard, Lock, CheckCircle, ShoppingBag, Tag, ChevronRight } from
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/utils/api'
 
-export default function PaymentModal({ isOpen, onClose, course, item, isPackage, onSuccess }) {
+export default function PaymentModal({ isOpen, onClose, course, item, isPackage, onSuccess, customAmount, selectedCourseIds }) {
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [promoCode, setPromoCode] = useState('')
@@ -15,7 +15,7 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
 
   // Use item if provided, otherwise fallback to course for backwards compatibility
   const currentItem = item || course
-  const originalAmount = isPackage ? (currentItem?.priceINR || 0) : (currentItem?.price || 0)
+  const originalAmount = customAmount !== undefined ? customAmount : (isPackage ? (currentItem?.priceINR || 0) : (currentItem?.price || 0))
   const finalAmount = promoApplied ? promoApplied.finalAmount : originalAmount
 
   const handleApplyPromo = async () => {
@@ -75,6 +75,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
         }
         if (isPackage) {
           payload.packageId = currentItem._id
+          if (selectedCourseIds && selectedCourseIds.length > 0) {
+            payload.selectedCourseIds = selectedCourseIds
+          }
         } else {
           payload.courseId = currentItem._id
         }
@@ -92,6 +95,36 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
 
       if (!resolvedKey || !order?.id) {
         alert('Payment configuration error. Please contact support.')
+        setLoading(false)
+        return
+      }
+
+      if (order.id.startsWith('order_mock_') || resolvedKey === 'your_razorpay_key_id') {
+        // Bypass Razorpay for mock orders (local development)
+        try {
+          const verifyPayload = {
+            razorpay_order_id: order.id,
+            razorpay_payment_id: `pay_mock_${Date.now()}`,
+            razorpay_signature: 'mock_signature',
+          }
+          if (isPackage) {
+            verifyPayload.packageId = currentItem._id
+          } else {
+            verifyPayload.courseId = currentItem._id
+          }
+          const verifyRes = await api.post('/payment/verify', verifyPayload)
+          if (verifyRes.data.success) {
+            if (promoApplied && promoCode) {
+              try {
+                await api.post('/promo-codes/apply', { code: promoCode.trim() })
+              } catch (_) {}
+            }
+            setDone(true)
+            setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
+          }
+        } catch {
+          alert('Mock payment verification failed. Please contact support.')
+        }
         setLoading(false)
         return
       }
@@ -159,29 +192,29 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="bg-gradient-to-br from-dark-100 to-dark-200 rounded-2xl border border-primary/20 p-8 max-w-md w-full shadow-2xl">
+            <div className="bg-white rounded-3xl border border-primary/10 p-8 max-w-md w-full shadow-premium">
               {done ? (
-                <div className="text-center py-6">
-                  <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-white mb-2">Purchase Successful!</h2>
-                  <p className="text-gray-400">You now have full access.</p>
+                <div className="text-center py-8">
+                  <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                  <h2 className="text-3xl font-black text-navy mb-2">Purchase Successful!</h2>
+                  <p className="text-muted font-medium">You now have full access.</p>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-white">Complete Purchase</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+                    <h2 className="text-2xl font-black text-navy">Complete Purchase</h2>
+                    <button onClick={onClose} className="text-muted hover:text-ink transition-colors">
                       <X className="h-6 w-6" />
                     </button>
                   </div>
 
-                  <div className="bg-white/5 rounded-xl p-6 mb-4">
-                    <h3 className="text-lg font-semibold text-white mb-1">{currentItem?.title || currentItem?.name}</h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">{currentItem?.description}</p>
-                    <div className="space-y-2 pt-4 border-t border-white/10">
+                  <div className="bg-academic rounded-2xl p-6 mb-5 border border-primary/5">
+                    <h3 className="text-lg font-black text-ink mb-1">{currentItem?.title || currentItem?.name}</h3>
+                    <p className="text-muted text-sm mb-4 line-clamp-2 leading-relaxed">{currentItem?.description}</p>
+                    <div className="space-y-3 pt-4 border-t border-primary/10">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-400 text-sm">Original Price</span>
-                        <span className={`font-semibold ${promoApplied ? 'line-through text-gray-500' : 'text-white'}`}>
+                        <span className="text-muted font-bold text-sm uppercase tracking-wide">Original Price</span>
+                        <span className={`font-black ${promoApplied ? 'line-through text-gray-400' : 'text-ink'}`}>
                           ₹{originalAmount}
                         </span>
                       </div>
@@ -193,16 +226,16 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                             </span>
                             <span className="text-green-400 font-semibold">−₹{promoApplied.discountAmount}</span>
                           </div>
-                          <div className="flex items-center justify-between border-t border-white/10 pt-2">
-                            <span className="text-white font-bold">Total</span>
+                          <div className="flex items-center justify-between border-t border-primary/10 pt-3">
+                            <span className="text-navy font-black">Total</span>
                             <span className="text-3xl font-black text-primary">₹{promoApplied.finalAmount}</span>
                           </div>
                         </>
                       )}
                       {!promoApplied && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-400">Total Amount</span>
-                          <span className="text-3xl font-bold text-primary">₹{originalAmount}</span>
+                        <div className="flex items-center justify-between border-t border-primary/10 pt-3">
+                          <span className="text-navy font-black">Total Amount</span>
+                          <span className="text-3xl font-black text-primary">₹{originalAmount}</span>
                         </div>
                       )}
                     </div>
@@ -217,7 +250,7 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                           <span className="text-green-400 font-semibold text-sm">{promoCode.toUpperCase()} applied</span>
                           <span className="text-green-300 text-xs">({promoApplied.discountPercent}% off)</span>
                         </div>
-                        <button onClick={handleRemovePromo} className="text-gray-400 hover:text-white">
+                        <button onClick={handleRemovePromo} className="text-muted hover:text-ink">
                           <X className="h-4 w-4" />
                         </button>
                       </div>
@@ -228,25 +261,25 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                           value={promoCode}
                           onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError('') }}
                           placeholder="Promo code (optional)"
-                          className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 text-sm focus:outline-none focus:border-primary"
+                          className="flex-1 px-4 py-3 bg-academic border border-primary/10 rounded-xl text-ink font-bold placeholder-muted text-sm focus:outline-none focus:border-primary/30 focus:ring-2 focus:ring-primary/10 transition-all"
                           onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
                         />
                         <button
                           onClick={handleApplyPromo}
                           disabled={!promoCode.trim() || promoLoading}
-                          className="px-4 py-2.5 bg-primary/20 text-primary rounded-xl font-semibold text-sm hover:bg-primary/30 transition-all disabled:opacity-40 flex items-center gap-1"
+                          className="px-5 py-3 bg-primary/10 text-primary rounded-xl font-bold text-sm hover:bg-primary/20 transition-all disabled:opacity-40 flex items-center gap-1"
                         >
                           {promoLoading ? <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-primary" /> : <>Apply <ChevronRight className="h-4 w-4" /></>}
                         </button>
                       </div>
                     )}
-                    {promoError && <p className="text-red-400 text-xs mt-1.5 ml-1">{promoError}</p>}
+                    {promoError && <p className="text-red-500 text-xs font-bold mt-2 ml-1">{promoError}</p>}
                   </div>
 
                   <button
                     onClick={handlePayment}
-                    disabled={loading || !course}
-                    className="w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    disabled={loading || !currentItem}
+                    className="w-full bg-brand-gradient text-white py-4 rounded-xl font-black hover:opacity-95 shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     {loading ? (
                       <><div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />Processing...</>
@@ -255,8 +288,8 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                     )}
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 mt-4 text-gray-500 text-xs">
-                    <Lock className="h-3 w-3" />
+                  <div className="flex items-center justify-center gap-2 mt-5 text-muted font-bold text-xs uppercase tracking-wider">
+                    <Lock className="h-3.5 w-3.5" />
                     <span>Secure payment · Instant access</span>
                   </div>
                 </>

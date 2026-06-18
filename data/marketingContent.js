@@ -36,6 +36,8 @@ export const packages = [
     popular: false,
     inr: 499,
     usd: 5.5,
+    oldInr: 799,
+    oldUsd: 10.5,
     validity: '365 Days',
     features: [
       { label: 'Classes 1 to 4 Foundation', detail: 'Perfect for primary school math' },
@@ -58,6 +60,8 @@ export const packages = [
     popular: false,
     inr: 699,
     usd: 7.5,
+    oldInr: 999,
+    oldUsd: 12.5,
     validity: '365 Days',
     features: [
       { label: 'Classes 5 to 8 Core Concepts', detail: 'Middle school mathematics focus' },
@@ -82,6 +86,8 @@ export const packages = [
     popular: true,
     inr: 999,
     usd: 10.5,
+    oldInr: 1299,
+    oldUsd: 15.5,
     validity: '365 Days',
     features: [
       { label: 'Classes 5 to 8 Advanced Prep', detail: 'Competitive & Olympiad focus' },
@@ -107,6 +113,8 @@ export const packages = [
     popular: false,
     inr: 1999,
     usd: 21,
+    oldInr: 2999,
+    oldUsd: 30,
     validity: '365 Days',
     features: [
       { label: 'Full Access to Classes 1 to 8', detail: 'Complete primary & middle school library' },
@@ -126,6 +134,8 @@ export const packages = [
     popular: false,
     inr: 9999,
     usd: 105,
+    oldInr: 14999,
+    oldUsd: 155,
     validity: '365 Days',
     features: [
       { label: 'Full Access to Classes 1 to 8', detail: 'Enterprise access for all students' },

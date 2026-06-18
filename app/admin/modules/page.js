@@ -228,6 +228,12 @@ function AdminModules() {
                         Manage Lessons
                       </button>
                       <button
+                        onClick={() => router.push(`/admin/subtopics?moduleId=${module._id}`)}
+                        className="px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 font-semibold transition-all text-sm"
+                      >
+                        Manage Subtopics
+                      </button>
+                      <button
                         onClick={() => handleEdit(module)}
                         className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 font-semibold transition-all text-sm flex items-center gap-2"
                       >

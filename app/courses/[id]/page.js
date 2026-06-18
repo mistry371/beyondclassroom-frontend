@@ -85,31 +85,28 @@ function CourseDetailsContent() {
       setCourse(loadedCourse)
 
       try {
-        let courseIdsToFetch = [params.id]
-        if (user && user.purchasedCourses && user.purchasedCourses.length > 0) {
-          courseIdsToFetch = user.purchasedCourses
-        }
+        const moduleRes = await api.get(`/modules/course/${params.id}`).catch(() => ({ data: { modules: [] } }))
+        const moduleList = moduleRes.data.modules || []
         
-        let allModules = []
-        for (const cid of courseIdsToFetch) {
-          try {
-            const cRes = await api.get(`/courses/${cid}`)
-            const cTitle = cRes.data.course.title
-            const moduleRes = await api.get(`/modules/course/${cid}`).catch(() => ({ data: { modules: [] } }))
-            const moduleList = moduleRes.data.modules || []
-            const populated = await Promise.all(moduleList.map(async (moduleItem) => {
-              const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
-              const lessonList = lessonRes.data.lessons || []
-              const lessons = await Promise.all(lessonList.map(async (lesson) => {
-                const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-                return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
-              }))
-              return { ...moduleItem, title: moduleItem.title, lessons }
-            }))
-            allModules = [...allModules, ...populated]
-          } catch (e) {}
-        }
-        setModules(allModules)
+        const populated = await Promise.all(moduleList.map(async (moduleItem) => {
+          // Fetch lessons for the module
+          const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
+          const lessonList = lessonRes.data.lessons || []
+          
+          const lessons = await Promise.all(lessonList.map(async (lesson) => {
+            const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
+            return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
+          }))
+
+          // Fetch direct subtopics for the module (without a lesson)
+          const moduleSubtopicRes = await api.get(`/subtopics/module/${moduleItem._id}`).catch(() => ({ data: { subtopics: [] } }))
+          const allModuleSubtopics = moduleSubtopicRes.data.subtopics || []
+          const directSubtopics = allModuleSubtopics.filter(st => !st.lessonId)
+
+          return { ...moduleItem, title: moduleItem.title, lessons, directSubtopics }
+        }))
+        
+        setModules(populated)
       } catch (err) {
         setModules([])
       }

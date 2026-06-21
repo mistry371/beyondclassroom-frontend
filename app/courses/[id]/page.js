@@ -88,6 +88,15 @@ function CourseDetailsContent() {
         const moduleRes = await api.get(`/modules/course/${params.id}`).catch(() => ({ data: { modules: [] } }))
         const moduleList = moduleRes.data.modules || []
         
+        const filterSubtopics = (subtopicsList) => {
+          if (user?.role === 'admin' || user?.role === 'super_admin') return subtopicsList;
+          return subtopicsList.filter(st => {
+            if (!st.packageIds || st.packageIds.length === 0) return true;
+            if (!user || !user.purchasedCourses) return false;
+            return st.packageIds.some(pkgId => user.purchasedCourses.includes(pkgId));
+          });
+        };
+
         const populated = await Promise.all(moduleList.map(async (moduleItem) => {
           // Fetch lessons for the module
           const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
@@ -95,13 +104,13 @@ function CourseDetailsContent() {
           
           const lessons = await Promise.all(lessonList.map(async (lesson) => {
             const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-            return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
+            return { ...lesson, subtopics: filterSubtopics(subtopicRes.data.subtopics || []) }
           }))
 
           // Fetch direct subtopics for the module (without a lesson)
           const moduleSubtopicRes = await api.get(`/subtopics/module/${moduleItem._id}`).catch(() => ({ data: { subtopics: [] } }))
           const allModuleSubtopics = moduleSubtopicRes.data.subtopics || []
-          const directSubtopics = allModuleSubtopics.filter(st => !st.lessonId)
+          const directSubtopics = filterSubtopics(allModuleSubtopics.filter(st => !st.lessonId))
 
           return { ...moduleItem, title: moduleItem.title, lessons, directSubtopics }
         }))
@@ -298,22 +307,6 @@ function CourseDetailsContent() {
             <p className="mt-8 max-w-3xl text-xl leading-relaxed text-muted font-medium">
               {course.description}
             </p>
-            
-            <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => {
-                  if (!user) {
-                    showError("Please login or register to download materials and continue.");
-                    router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
-                  } else {
-                    showSuccess("Please scroll down and select the materials you want to download from the curriculum.");
-                  }
-                }}
-                className="inline-flex items-center gap-2 rounded-2xl bg-brand-gradient px-8 py-4 text-lg font-bold text-white shadow-premium hover:shadow-primary/30 transition-all hover:-translate-y-1"
-              >
-                <Download className="h-5 w-5" /> Download Material
-              </button>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -367,15 +360,8 @@ function CourseDetailsContent() {
                                           {getDocs(subtopic).length > 0 && (
                                             <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
                                               {getDocs(subtopic).map((doc, index) => (
-                                                <button key={`${subtopic._id}-${index}`} onClick={() => {
-                                                  if (!user) {
-                                                    showError("Please login or register to download materials and continue.");
-                                                    router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
-                                                  } else {
-                                                    setPreviewDoc(doc);
-                                                  }
-                                                }} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all">
-                                                  <Download className="h-4 w-4" /> 
+                                                <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                                  <FileText className="h-4 w-4" /> 
                                                   <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
                                                 </button>
                                               ))}
@@ -427,15 +413,8 @@ function CourseDetailsContent() {
                                                         {getDocs(subtopic).length > 0 && (
                                                           <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
                                                             {getDocs(subtopic).map((doc, index) => (
-                                                              <button key={`${subtopic._id}-${index}`} onClick={() => {
-                                                                if (!user) {
-                                                                  showError("Please login or register to download materials and continue.");
-                                                                  router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
-                                                                } else {
-                                                                  setPreviewDoc(doc);
-                                                                }
-                                                              }} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-secondary hover:text-white hover:border-secondary transition-all">
-                                                                <Download className="h-4 w-4" /> 
+                                                              <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+                                                                <FileText className="h-4 w-4" /> 
                                                                 <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
                                                               </button>
                                                             ))}
@@ -555,7 +534,21 @@ function CourseDetailsContent() {
       <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} course={course} onSuccess={() => router.push('/dashboard')} />
 
       {previewDoc && (
-        <PdfPreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+        <PdfPreviewModal 
+          doc={previewDoc} 
+          onClose={() => setPreviewDoc(null)} 
+          user={user}
+          isPurchased={user && user.purchasedCourses && user.purchasedCourses.includes(course._id)}
+          onRequireLogin={() => {
+            setPreviewDoc(null);
+            showError("Please login or register to download materials.");
+            router.push(`/auth/login?redirect=${encodeURIComponent('/courses/' + params.id)}`);
+          }}
+          onRequirePurchase={() => {
+            setPreviewDoc(null);
+            setShowPaymentModal(true);
+          }}
+        />
       )}
     </div>
   )

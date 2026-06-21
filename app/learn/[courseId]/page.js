@@ -30,19 +30,37 @@ export default function LearnPage() {
 
       const courseData = courseRes.data.course
       setCourse(courseData)
-      setModules(modulesRes.data.modules || [])
 
       const freeCourse = courseData?.isFree || courseData?.isDemo
 
       // Try to get profile — may fail if not logged in (guest/unauthenticated)
+      let purchasedIds = []
+      let userRole = 'user'
       try {
         const profileRes = await api.get('/profile')
-        const purchasedIds = (profileRes.data?.user?.purchasedCourses || []).map((c) => c?._id || c)
+        purchasedIds = (profileRes.data?.user?.purchasedCourses || []).map((c) => c?._id || c)
+        userRole = profileRes.data?.user?.role || 'user'
         setHasAccess(freeCourse || purchasedIds.includes(params.courseId))
       } catch (_) {
         // Not logged in — only free/demo courses accessible
         setHasAccess(!!freeCourse)
       }
+
+      // Filter restricted subtopics based on user packages
+      const filterSubtopics = (subtopicsList) => {
+        if (userRole === 'admin' || userRole === 'super_admin') return subtopicsList;
+        return subtopicsList.filter(st => {
+          if (!st.packageIds || st.packageIds.length === 0) return true;
+          return st.packageIds.some(pkgId => purchasedIds.includes(pkgId));
+        });
+      };
+
+      const filteredModules = (modulesRes.data.modules || []).map(m => ({
+        ...m,
+        directSubtopics: filterSubtopics(m.directSubtopics || [])
+      }))
+      
+      setModules(filteredModules)
 
       try {
         const progressRes = await api.get(`/progress/course/${params.courseId}`)

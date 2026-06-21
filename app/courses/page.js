@@ -85,21 +85,6 @@ function CoursesContent() {
         </div>
       </section>
 
-      {/* Course Hierarchy Info */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-muted font-medium">
-          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Class</span>
-          <ArrowRight className="h-4 w-4" />
-          <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full">Package</span>
-          <ArrowRight className="h-4 w-4" />
-          <span className="px-3 py-1 bg-accent/10 text-accent rounded-full">Module</span>
-          <ArrowRight className="h-4 w-4" />
-          <span className="px-3 py-1 bg-primary/10 text-primary rounded-full">Topic</span>
-          <ArrowRight className="h-4 w-4" />
-          <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full">Subtopic</span>
-
-        </div>
-      </div>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 

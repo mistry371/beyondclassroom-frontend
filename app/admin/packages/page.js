@@ -357,6 +357,7 @@ export default function AdminPackages() {
                     <input
                       required
                       type="number"
+                      step="any"
                       min="0"
                       value={formData.priceINR}
                       onChange={(e) => setFormData({ ...formData, priceINR: e.target.value })}
@@ -368,6 +369,7 @@ export default function AdminPackages() {
                     <label className="block text-ink text-sm font-medium mb-1">Price USD ($)</label>
                     <input
                       type="number"
+                      step="any"
                       min="0"
                       value={formData.priceUSD}
                       onChange={(e) => setFormData({ ...formData, priceUSD: e.target.value })}

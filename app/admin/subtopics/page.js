@@ -25,7 +25,8 @@ function AdminSubtopicsContent() {
   const [docError, setDocError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [formData, setFormData] = useState({ title: '', content: '', lessonId: '', moduleId: '', courseId: '', order: 1, isPublished: true, documents: [] })
+  const [packages, setPackages] = useState([])
+  const [formData, setFormData] = useState({ title: '', content: '', lessonId: '', moduleId: '', courseId: '', order: 1, isPublished: true, documents: [], packageIds: [] })
 
   useEffect(() => { fetchModulesAndLessons() }, [user])
   useEffect(() => { if (selectedModule) fetchSubtopics() }, [selectedModule])
@@ -44,6 +45,13 @@ function AdminSubtopicsContent() {
       const lessonResults = await Promise.all(lessonPromises)
       const allLessons = lessonResults.flatMap(r => r.data.lessons || [])
       setLessons(allLessons)
+
+      try {
+        const pkgRes = await api.get('/packages/admin')
+        setPackages(pkgRes.data.packages || [])
+      } catch (err) {
+        console.error('Failed to fetch packages:', err)
+      }
     } finally { setLoading(false) }
   }
 
@@ -64,7 +72,8 @@ function AdminSubtopicsContent() {
       courseId: module?.courseId || '', 
       order: subtopics.length + 1, 
       isPublished: true, 
-      documents: [] 
+      documents: [],
+      packageIds: []
     })
     setShowModal(true)
   }
@@ -81,7 +90,8 @@ function AdminSubtopicsContent() {
       courseId: subtopic.courseId || '', 
       order: subtopic.order, 
       isPublished: subtopic.isPublished !== false, 
-      documents: docs 
+      documents: docs,
+      packageIds: subtopic.packageIds || []
     })
     setShowModal(true)
   }
@@ -245,6 +255,31 @@ function AdminSubtopicsContent() {
                 <div>
                   <label className="block text-sm font-bold text-navy mb-2">Content (Math Supported)</label>
                   <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-4 py-3 bg-white border border-primary/10 shadow-sm rounded-lg text-ink" rows="5" placeholder="Enter content or math equations..." />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-navy mb-2">Restrict to Packages (Optional)</label>
+                  <p className="text-xs text-muted mb-3">If no packages are selected, this content is visible to everyone in the course. Select packages to make it exclusive to those packages.</p>
+                  <div className="max-h-40 overflow-y-auto border border-primary/10 rounded-lg p-3 bg-white space-y-2">
+                    {packages.map(pkg => (
+                      <label key={pkg._id} className="flex items-center gap-3 cursor-pointer p-2 hover:bg-primary/5 rounded-lg transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={formData.packageIds.includes(pkg._id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({ ...formData, packageIds: [...formData.packageIds, pkg._id] })
+                            } else {
+                              setFormData({ ...formData, packageIds: formData.packageIds.filter(id => id !== pkg._id) })
+                            }
+                          }}
+                          className="w-4 h-4 accent-primary"
+                        />
+                        <span className="text-sm font-semibold text-navy">{pkg.name}</span>
+                      </label>
+                    ))}
+                    {packages.length === 0 && <p className="text-xs text-muted">No packages found.</p>}
+                  </div>
                 </div>
 
                 <label className="flex items-center gap-3 px-4 py-4 bg-white border-2 border-dashed border-primary/20 hover:border-primary/50 transition-colors rounded-xl cursor-pointer">

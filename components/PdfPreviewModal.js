@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { FileText, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react'
+import { FileText, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download } from 'lucide-react'
 import { Document, Page, pdfjs } from 'react-pdf'
 
 // Set worker url
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
-export default function PdfPreviewModal({ doc, onClose, isPurchased = false }) {
+export default function PdfPreviewModal({ doc, onClose, isPurchased = false, user = null, onRequireLogin = () => {}, onRequirePurchase = () => {} }) {
   const [numPages, setNumPages] = useState(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [scale, setScale] = useState(1.0)
@@ -53,6 +53,42 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false }) {
       document.removeEventListener('keydown', block, true)
     }
   }, [])
+
+  const handleDownload = () => {
+    if (!user) {
+      onRequireLogin();
+      return;
+    }
+    if (!isPurchased) {
+      onRequirePurchase();
+      return;
+    }
+
+    if (doc.url) {
+      const link = document.createElement('a');
+      link.href = doc.url;
+      link.download = doc.name || 'document.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (doc.data) {
+      const byteString = atob(doc.data);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = doc.name || 'document.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+  }
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages)
@@ -106,6 +142,10 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false }) {
               <span className="text-xs font-bold text-navy w-10 text-center">{Math.round(scale * 100)}%</span>
               <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="p-1 text-muted hover:text-primary"><ZoomIn className="h-4 w-4" /></button>
             </div>
+
+            <button onClick={handleDownload} className="flex items-center gap-2 bg-brand-gradient text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 ml-2">
+              <Download className="h-4 w-4" /> Download
+            </button>
 
             <button
               onClick={onClose}

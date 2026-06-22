@@ -36,7 +36,7 @@ export default function PackagesPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-cyan-50 pb-20 md:pb-0 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-cyan-50 pb-20 md:pb-0 relative overflow-clip">
       {/* Decorative background blobs */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl pointer-events-none" />

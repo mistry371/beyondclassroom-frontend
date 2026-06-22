@@ -16,7 +16,7 @@ body {
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: #F8FAFC;
   color: #334155;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @layer utilities {

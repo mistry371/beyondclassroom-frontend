@@ -59,23 +59,7 @@ function CourseDetailsContent() {
     fetchCourse()
   }, [params.id, user?._id])
 
-  useEffect(() => {
-    const block = (e) => {
-      if (e.type === 'contextmenu') e.preventDefault()
-      const key = e.key?.toLowerCase()
-      const ctrl = e.ctrlKey || e.metaKey
-      if (ctrl && ['s', 'p', 'u', 'c', 'v', 'a', 'x'].includes(key)) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    }
-    document.addEventListener('contextmenu', block, true)
-    document.addEventListener('keydown', block, true)
-    return () => {
-      document.removeEventListener('contextmenu', block, true)
-      document.removeEventListener('keydown', block, true)
-    }
-  }, [])
+  // Copy/paste restrictions temporarily removed
 
   const fetchCourse = async () => {
     try {

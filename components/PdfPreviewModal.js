@@ -36,24 +36,6 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
     }
   }, [doc])
 
-  // Block right-click and copy shortcuts inside modal completely
-  useEffect(() => {
-    const block = (e) => {
-      if (e.type === 'contextmenu') { e.preventDefault(); return }
-      const ctrl = e.ctrlKey || e.metaKey
-      if (ctrl && ['s', 'p', 'u', 'c', 'a', 'x'].includes(e.key?.toLowerCase())) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    }
-    document.addEventListener('contextmenu', block, true)
-    document.addEventListener('keydown', block, true)
-    return () => {
-      document.removeEventListener('contextmenu', block, true)
-      document.removeEventListener('keydown', block, true)
-    }
-  }, [])
-
   const handleDownload = () => {
     if (!user) {
       onRequireLogin();

@@ -34,7 +34,6 @@ export default function PromoterLandingPage() {
   }, [])
 
   return (
-  return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-cyan-50 pb-20 md:pb-0 relative overflow-clip">
       <Navbar />
 

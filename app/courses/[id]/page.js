@@ -71,16 +71,6 @@ function CourseDetailsContent() {
       try {
         const moduleRes = await api.get(`/modules/course/${params.id}`).catch(() => ({ data: { modules: [] } }))
         const moduleList = moduleRes.data.modules || []
-        
-        const filterSubtopics = (subtopicsList) => {
-          if (user?.role === 'admin' || user?.role === 'super_admin') return subtopicsList;
-          return subtopicsList.filter(st => {
-            if (!st.packageIds || st.packageIds.length === 0) return true;
-            if (!user || !user.purchasedCourses) return false;
-            return st.packageIds.some(pkgId => user.purchasedCourses.includes(pkgId));
-          });
-        };
-
         const populated = await Promise.all(moduleList.map(async (moduleItem) => {
           // Fetch lessons for the module
           const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
@@ -88,13 +78,13 @@ function CourseDetailsContent() {
           
           const lessons = await Promise.all(lessonList.map(async (lesson) => {
             const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-            return { ...lesson, subtopics: filterSubtopics(subtopicRes.data.subtopics || []) }
+            return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
           }))
 
           // Fetch direct subtopics for the module (without a lesson)
           const moduleSubtopicRes = await api.get(`/subtopics/module/${moduleItem._id}`).catch(() => ({ data: { subtopics: [] } }))
           const allModuleSubtopics = moduleSubtopicRes.data.subtopics || []
-          const directSubtopics = filterSubtopics(allModuleSubtopics.filter(st => !st.lessonId))
+          const directSubtopics = allModuleSubtopics.filter(st => !st.lessonId)
 
           return { ...moduleItem, title: moduleItem.title, lessons, directSubtopics }
         }))

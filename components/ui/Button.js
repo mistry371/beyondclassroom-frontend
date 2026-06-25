@@ -22,7 +22,7 @@ export default function Button({
   size = 'md', 
   className = '', 
   loading = false,
-  disabled = false,
+  disabled = false, 
   type = 'button',
   ...props 
 }) {

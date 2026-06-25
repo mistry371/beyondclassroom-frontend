@@ -56,7 +56,7 @@ export default function PromoterLandingPage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <PremiumButton href="/promoter/register" variant="primary">Become a Promoter</PremiumButton>
-                <PremiumButton href="/promoter/login" variant="secondary">Promoter Login</PremiumButton>
+                <PremiumButton href="/promoter/login" variant="outline">Promoter Login</PremiumButton>
               </div>
             </motion.div>
             
@@ -101,82 +101,40 @@ export default function PromoterLandingPage() {
         </div>
       </section>
 
-      <section className="py-20 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12">
-          <div>
-            <SectionHeader badge="Calculator" title="Earnings Calculator" center={false} />
-            <div className="bg-white/80 backdrop-blur-xl border border-primary/10 shadow-premium p-8 rounded-3xl">
-              <label className="block text-sm font-semibold text-navy mb-3">Monthly Referrals</label>
-              <input type="range" min="1" max="50" value={referrals} onChange={(e) => setReferrals(+e.target.value)} className="w-full accent-primary mb-3" />
-              <p className="text-primary font-bold mb-8 bg-primary/5 inline-block px-4 py-2 rounded-full text-sm border border-primary/10">{referrals} students/month</p>
-              
-              <label className="block text-sm font-semibold text-navy mb-3">Avg. Package Value (₹)</label>
-              <select value={avgPackage} onChange={(e) => setAvgPackage(+e.target.value)} className="w-full p-4 rounded-xl border border-primary/20 mb-8 bg-white text-ink shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
-                <option value={2999}>Starter — ₹2,999</option>
-                <option value={7999}>Pro — ₹7,999</option>
-                <option value={14999}>Elite — ₹14,999</option>
-              </select>
-              
-              <div className="p-8 bg-gradient-to-br from-primary to-blue-600 rounded-2xl text-white text-center shadow-lg relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
-                <p className="text-white/90 text-sm font-medium relative z-10">Estimated Monthly Earnings (20%)</p>
-                <p className="text-5xl font-black mt-3 relative z-10">₹{estimated.toLocaleString('en-IN')}</p>
-              </div>
-            </div>
-          </div>
-          <div>
-            <SectionHeader badge="How It Works" title="Referral Process" center={false} />
+      <section className="py-24 relative z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <SectionHeader badge="How It Works" title="Your Journey to Success" center={true} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             {[
-              { icon: Link2, step: '1', title: 'Sign Up & Get Link', desc: 'Register as promoter and receive your unique referral code.' },
-              { icon: Share2, step: '2', title: 'Share & Invite', desc: 'Share via WhatsApp, social media, or QR code.' },
-              { icon: TrendingUp, step: '3', title: 'Track & Earn', desc: 'Monitor signups in your dashboard and earn commissions.' },
-              { icon: QrCode, step: '4', title: 'Withdraw', desc: 'Request payouts when you hit milestones.' },
-            ].map((item) => (
-              <div key={item.step} className="flex gap-4 mb-6 glass-card p-5 rounded-xl">
-                <div className="w-12 h-12 bg-brand-gradient rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0">{item.step}</div>
-                <div>
-                  <h4 className="font-bold text-ink flex items-center gap-2"><item.icon className="h-4 w-4 text-primary" />{item.title}</h4>
-                  <p className="text-muted text-sm mt-1">{item.desc}</p>
+              { icon: Link2, step: '1', title: 'Sign Up & Get Link', desc: 'Register as a promoter and receive your unique tracking link.' },
+              { icon: Share2, step: '2', title: 'Share & Invite', desc: 'Share your link via WhatsApp, social media, or local groups.' },
+              { icon: TrendingUp, step: '3', title: 'Track & Earn', desc: 'Monitor signups live in your dashboard and earn commissions.' },
+              { icon: QrCode, step: '4', title: 'Withdraw Funds', desc: 'Request fast payouts directly to your bank account anytime.' },
+            ].map((item, i) => (
+              <motion.div 
+                key={item.step} 
+                initial={{ opacity: 0, y: 20 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                transition={{ delay: i * 0.1 }} 
+                viewport={{ once: true }} 
+                className="bg-white/80 backdrop-blur-xl p-8 pt-10 rounded-3xl border border-primary/10 shadow-premium relative group hover:-translate-y-2 transition-transform duration-300"
+              >
+                <div className="absolute -top-6 left-8 w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-primary/30 transform group-hover:scale-110 transition-transform">
+                  {item.step}
                 </div>
-              </div>
+                <div className="mt-2 mb-2">
+                  <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 border border-primary/10">
+                    <item.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h4 className="font-bold text-navy text-xl mb-3">{item.title}</h4>
+                  <p className="text-muted leading-relaxed text-sm">{item.desc}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 relative z-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <SectionHeader badge="Leaderboard" title="Top Promoters This Month" />
-          <div className="bg-white/80 backdrop-blur-xl border border-primary/10 shadow-premium rounded-3xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead className="bg-primary/5 text-navy font-semibold">
-                  <tr>
-                    <th className="p-5 border-b border-primary/10">Rank</th>
-                    <th className="p-5 border-b border-primary/10">Promoter</th>
-                    <th className="p-5 text-center border-b border-primary/10">Referrals</th>
-                    <th className="p-5 text-right border-b border-primary/10">Earnings</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map((row, idx) => (
-                    <tr key={row.rank} className="border-b border-primary/5 hover:bg-primary/5 transition-colors">
-                      <td className="p-5">
-                        <span className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${row.rank <= 3 ? 'bg-gradient-to-r from-primary to-blue-500 text-white shadow-md' : 'bg-slate-100 text-muted'}`}>
-                          {row.rank}
-                        </span>
-                      </td>
-                      <td className="p-5 font-semibold text-navy text-lg">{row.name}</td>
-                      <td className="p-5 text-center text-muted font-medium">{row.referrals}</td>
-                      <td className="p-5 text-right font-bold text-primary text-lg">{row.earnings}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-4">

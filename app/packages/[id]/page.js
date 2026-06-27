@@ -34,6 +34,24 @@ export default function PackageDetailsPage() {
     fetchPackageData()
   }, [params.id])
 
+  useEffect(() => {
+    if (pkg && user) {
+      const stored = localStorage.getItem('pendingPackagePurchase')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (parsed.packageId === pkg._id && Array.isArray(parsed.selectedCourseIds) && parsed.selectedCourseIds.length > 0) {
+            setSelectedCourses(parsed.selectedCourseIds)
+            setShowPaymentModal(true)
+            localStorage.removeItem('pendingPackagePurchase')
+          }
+        } catch (e) {
+          console.error('Failed to parse pendingPackagePurchase', e)
+        }
+      }
+    }
+  }, [pkg, user])
+
   const fetchPackageData = async () => {
     try {
       setLoading(true)
@@ -46,21 +64,11 @@ export default function PackageDetailsPage() {
       const pkgCourseIds = new Set(res.data.package.courseIds || [])
       let matchedCourses = allCourses.filter(c => pkgCourseIds.has(c._id))
       
-      // Fetch modules, lessons, and subtopics for each matched course
+      // Fetch modules, lessons, and subtopics for each matched course (optimized populated endpoint)
       matchedCourses = await Promise.all(matchedCourses.map(async (course) => {
         try {
-          const moduleRes = await api.get(`/modules/course/${course._id}`)
-          const moduleList = moduleRes.data.modules || []
-          const populatedModules = await Promise.all(moduleList.map(async (moduleItem) => {
-            const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
-            const lessonList = lessonRes.data.lessons || []
-            const lessons = await Promise.all(lessonList.map(async (lesson) => {
-              const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-              return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
-            }))
-            return { ...moduleItem, lessons }
-          }))
-          return { ...course, modules: populatedModules }
+          const courseRes = await api.get(`/courses/${course._id}?populate=true`)
+          return courseRes.data.course
         } catch (err) {
           return { ...course, modules: [] }
         }
@@ -270,8 +278,15 @@ export default function PackageDetailsPage() {
               
               <button 
                 onClick={() => {
-                  if (!user) router.push(`/auth/login?redirect=${encodeURIComponent(`/packages/${pkg._id}`)}`)
-                  else setShowPaymentModal(true)
+                  if (!user) {
+                    localStorage.setItem('pendingPackagePurchase', JSON.stringify({
+                      packageId: pkg._id,
+                      selectedCourseIds: selectedCourses
+                    }))
+                    router.push(`/auth/login?redirect=${encodeURIComponent(`/packages/${pkg._id}`)}`)
+                  } else {
+                    setShowPaymentModal(true)
+                  }
                 }}
                 className="w-full sm:w-auto px-8 py-3.5 bg-brand-gradient text-white font-bold rounded-xl shadow-lg hover:opacity-95 transition-opacity flex items-center justify-center gap-2"
               >

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft, Search, Layers } from 'lucide-react'
 import api from '@/utils/api'
+import { invalidateCache } from '@/lib/apiCache'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 
@@ -85,9 +86,14 @@ export default function AdminCourses() {
     try {
       if (selectedCourse) {
         await api.put(`/admin/courses/${selectedCourse._id}`, formData)
+        showSuccess('Course updated successfully')
       } else {
         await api.post('/admin/courses', formData)
+        showSuccess('Course created successfully')
       }
+      // Invalidate frontend cache so public pages show updated prices
+      invalidateCache('GET:/courses')
+      invalidateCache('GET:/admin/courses')
       setShowModal(false)
       fetchCourses()
     } catch (error) {
@@ -100,6 +106,8 @@ export default function AdminCourses() {
     
     try {
       await api.delete(`/admin/courses/${courseId}`)
+      invalidateCache('GET:/courses')
+      invalidateCache('GET:/admin/courses')
       fetchCourses()
     } catch (error) {
       showError(error.response?.data?.message || 'Delete failed')
@@ -109,6 +117,8 @@ export default function AdminCourses() {
   const handleToggleStatus = async (courseId) => {
     try {
       await api.post(`/admin/courses/${courseId}/toggle-status`)
+      invalidateCache('GET:/courses')
+      invalidateCache('GET:/admin/courses')
       fetchCourses()
     } catch (error) {
       showError(error.response?.data?.message || 'Status toggle failed')

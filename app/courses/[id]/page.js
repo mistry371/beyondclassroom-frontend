@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X, Download } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X, Download, Check } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
+import PackagePickerModal from '@/components/PackagePickerModal'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
@@ -55,44 +56,73 @@ function CourseDetailsContent() {
   const toggleModule = (id) => setExpandedModules((prev) => ({ ...prev, [id]: !prev[id] }))
   const toggleChapter = (id) => setExpandedChapters((prev) => ({ ...prev, [id]: !prev[id] }))
 
+  const [showPackagePicker, setShowPackagePicker] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState(null)
+  const [matchingPackages, setMatchingPackages] = useState([])
+  const [checkingPackages, setCheckingPackages] = useState(true)
+
   useEffect(() => {
     fetchCourse()
   }, [params.id, user?._id])
+
+  useEffect(() => {
+    if (course?._id) {
+      setCheckingPackages(true)
+      api.get('/packages')
+        .then(res => {
+          const allPkgs = res.data.packages || []
+          const filtered = allPkgs.filter(pkg => 
+            pkg.active !== false && 
+            Array.isArray(pkg.courseIds) && 
+            pkg.courseIds.includes(course._id)
+          )
+          setMatchingPackages(filtered)
+        })
+        .catch(err => console.error('Failed to load matching packages', err))
+        .finally(() => setCheckingPackages(false))
+    }
+  }, [course?._id])
+
+  useEffect(() => {
+    if (course && user) {
+      const stored = localStorage.getItem('pendingPackagePurchase')
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (parsed.packageId && Array.isArray(parsed.selectedCourseIds) && parsed.selectedCourseIds.includes(course._id)) {
+            // Fetch package details
+            api.get(`/packages/${parsed.packageId}`)
+              .then(res => {
+                if (res.data.package) {
+                  setSelectedPackage(res.data.package)
+                  setShowPaymentModal(true)
+                  localStorage.removeItem('pendingPackagePurchase')
+                }
+              })
+              .catch(err => console.error(err))
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+  }, [course, user])
+
+  useEffect(() => {
+    if (course && searchParams.get('buy') === 'true') {
+      setShowPackagePicker(true)
+    }
+  }, [course, searchParams])
 
   // Copy/paste restrictions temporarily removed
 
   const fetchCourse = async () => {
     try {
       setLoading(true)
-      const response = await api.get(`/courses/${params.id}`)
+      const response = await api.get(`/courses/${params.id}?populate=true`)
       const loadedCourse = response.data.course
       setCourse(loadedCourse)
-
-      try {
-        const moduleRes = await api.get(`/modules/course/${params.id}`).catch(() => ({ data: { modules: [] } }))
-        const moduleList = moduleRes.data.modules || []
-        const populated = await Promise.all(moduleList.map(async (moduleItem) => {
-          // Fetch lessons for the module
-          const lessonRes = await api.get(`/lessons/module/${moduleItem._id}`).catch(() => ({ data: { lessons: [] } }))
-          const lessonList = lessonRes.data.lessons || []
-          
-          const lessons = await Promise.all(lessonList.map(async (lesson) => {
-            const subtopicRes = await api.get(`/subtopics/lesson/${lesson._id}`).catch(() => ({ data: { subtopics: [] } }))
-            return { ...lesson, subtopics: subtopicRes.data.subtopics || [] }
-          }))
-
-          // Fetch direct subtopics for the module (without a lesson)
-          const moduleSubtopicRes = await api.get(`/subtopics/module/${moduleItem._id}`).catch(() => ({ data: { subtopics: [] } }))
-          const allModuleSubtopics = moduleSubtopicRes.data.subtopics || []
-          const directSubtopics = allModuleSubtopics.filter(st => !st.lessonId)
-
-          return { ...moduleItem, title: moduleItem.title, lessons, directSubtopics }
-        }))
-        
-        setModules(populated)
-      } catch (err) {
-        setModules([])
-      }
+      setModules(loadedCourse.modules || [])
     } catch (error) {
       console.error('Fetch course failed:', error)
     } finally {
@@ -286,7 +316,7 @@ function CourseDetailsContent() {
       </section>
 
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <section className={`grid gap-10 ${user ? 'lg:grid-cols-[1fr_1fr]' : 'max-w-6xl mx-auto w-full'}`}>
+        <section className="grid gap-10 lg:grid-cols-[1fr_420px] items-start">
           <div className="rounded-3xl border border-primary/10 bg-white p-8 shadow-premium">
 
             {modules.length === 0 ? (
@@ -419,93 +449,209 @@ function CourseDetailsContent() {
             )}
           </div>
 
-          {user && (
-            <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden">
-              <div>
-                <div className="mb-6 flex items-center justify-between gap-4">
+          {/* Right Column */}
+          {(() => {
+            const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.includes(course._id))
+            const isFreeOrDemo = course.isFree || course.isDemo
+
+            if (isAlreadyPurchased || isFreeOrDemo) {
+              if (user) {
+                // Show Customization Flow
+                return (
+                  <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden">
+                    <div>
+                      <div className="mb-6 flex items-center justify-between gap-4">
+                        <div>
+                          <h2 className="text-2xl font-black text-navy">Customize My Course</h2>
+                          <p className="text-sm text-muted">Select only what you want. Admin will review, finalize, and assign your package.</p>
+                        </div>
+                        <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{steps[step]}</span>
+                      </div>
+
+                      <div className="mb-6 grid grid-cols-6 gap-2">
+                        {steps.map((label, index) => (
+                          <button key={label} onClick={() => setStep(index)} className={`h-2 rounded-full transition ${index <= step ? 'bg-brand-gradient' : 'bg-slate-200'}`} aria-label={label} />
+                        ))}
+                      </div>
+
+                      {step === 0 && <SelectList title="Select modules" items={modules} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
+                      {step === 1 && (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <label className="block sm:col-span-2">
+                            <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
+                            <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
+                          </label>
+                          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
+                          
+                          <label className="block sm:col-span-2">
+                            <span className="mb-2 block text-sm font-bold text-ink">Requested Marks (Optional)</span>
+                            <input type="number" value={marks} onChange={(e) => setMarks(e.target.value)} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" placeholder="e.g. 50" />
+                          </label>
+                          
+                          <label className="block sm:col-span-2">
+                            <span className="mb-2 block text-sm font-bold text-ink">Upload Reference Material (Optional)</span>
+                            <input type="file" onChange={handleFileUpload} disabled={uploading} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" />
+                            {uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
+                            {studentAttachedFile && !uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
+                          </label>
+                        </div>
+                      )}
+                      {step === 2 && (
+                        <div className="space-y-5">
+                          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                            <SummaryCard label="Modules Selected" value={selection.selectedModules.length} />
+                          </div>
+                          <div className="rounded-2xl bg-academic p-5">
+                            <p className="font-black text-navy">Personalized roadmap</p>
+                            <ul className="mt-3 space-y-2 text-sm text-muted">
+                              {roadmap.lines.map((line) => <li key={line} className="flex gap-2"><Sparkles className="h-4 w-4 flex-shrink-0 text-accent" />{line}</li>)}
+                            </ul>
+                            <div className="mt-4 flex flex-wrap gap-3 text-sm font-bold">
+                              <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">Estimated Delivery: {roadmap.duration}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-between">
+                        <button disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/10 px-5 py-3 font-bold text-primary disabled:opacity-40">
+                          <ChevronLeft className="h-5 w-5" /> Back
+                        </button>
+                        {step < steps.length - 1 ? (
+                          <button onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white">
+                            Next <ChevronRight className="h-5 w-5" />
+                          </button>
+                        ) : (
+                          <div className="flex flex-col items-center sm:items-end">
+                            <button 
+                              onClick={submitCustomization} 
+                              disabled={requestLoading || (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit)} 
+                              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed">
+                              {requestLoading ? 'Submitting...' : 
+                               (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit) ? 'Package Limit Reached' : 
+                               'Send Request to Admin'} <ArrowRight className="h-5 w-5" />
+                            </button>
+                            {usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit && (
+                              <p className="text-red-500 text-xs font-bold mt-2">You have exhausted the {usageLimit.limit} requests in your package.</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              } else {
+                // Free course, guest user -> Show "Start Learning for Free" card
+                return (
+                  <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden flex flex-col justify-between min-h-[300px]">
+                    <div>
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                          <Award className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Free Access</span>
+                      </div>
+                      
+                      <h3 className="text-2xl font-black text-navy leading-tight">Start Learning for Free</h3>
+                      <p className="text-sm text-muted mt-2 leading-relaxed font-medium">
+                        This is a free preview course. Register an account to track your progress, take practice tests, and view full worksheets!
+                      </p>
+                    </div>
+
+                    <div className="mt-8 border-t border-slate-100 pt-6">
+                      <button 
+                        onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/courses/${course._id}`)}`)}
+                        className="w-full py-4 bg-brand-gradient text-white rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:opacity-95 shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+                      >
+                        Sign Up to Learn <ArrowRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                )
+              }
+            } else {
+              // Paid course, not purchased yet -> Show "Unlock Full Course" card
+              return (
+                <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden flex flex-col justify-between min-h-[350px]">
                   <div>
-                    <h2 className="text-2xl font-black text-navy">Customize My Course</h2>
-                  <p className="text-sm text-muted">Select only what you want. Admin will review, finalize, and assign your package.</p>
-                </div>
-                <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{steps[step]}</span>
-              </div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                        <Award className="w-6 h-6" />
+                      </div>
+                      <span className="text-xs font-bold text-muted uppercase tracking-wider">Premium Access</span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-black text-navy leading-tight">Unlock Full Course Benefits</h3>
+                    <p className="text-sm text-muted mt-2 leading-relaxed font-medium">
+                      Gain unlimited access to worksheets, solved examples, subjective chapter tests, study resources, and direct downloads.
+                    </p>
 
-            <div className="mb-6 grid grid-cols-6 gap-2">
-              {steps.map((label, index) => (
-                <button key={label} onClick={() => setStep(index)} className={`h-2 rounded-full transition ${index <= step ? 'bg-brand-gradient' : 'bg-slate-200'}`} aria-label={label} />
-              ))}
-            </div>
+                    <div className="mt-6 space-y-3.5">
+                      <div className="flex items-start gap-2.5 text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className="font-bold text-slate-700">Complete curriculum coverage</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className="font-bold text-slate-700">Downloadable PDF practice sheets</span>
+                      </div>
+                      <div className="flex items-start gap-2.5 text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span className="font-bold text-slate-700">Interactive chapter quizzes</span>
+                      </div>
+                    </div>
+                  </div>
 
-            {step === 0 && <SelectList title="Select modules" items={modules} selected={selected} onToggle={toggle} idKey="_id" titleKey="title" />}
-            {step === 1 && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block sm:col-span-2">
-                  <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
-                  <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
-                </label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
-                
-                <label className="block sm:col-span-2">
-                  <span className="mb-2 block text-sm font-bold text-ink">Requested Marks (Optional)</span>
-                  <input type="number" value={marks} onChange={(e) => setMarks(e.target.value)} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" placeholder="e.g. 50" />
-                </label>
-                
-                <label className="block sm:col-span-2">
-                  <span className="mb-2 block text-sm font-bold text-ink">Upload Reference Material (Optional)</span>
-                  <input type="file" onChange={handleFileUpload} disabled={uploading} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" />
-                  {uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
-                  {studentAttachedFile && !uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
-                </label>
-              </div>
-            )}
-            {step === 2 && (
-              <div className="space-y-5">
-                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                  <SummaryCard label="Modules Selected" value={selection.selectedModules.length} />
-                </div>
-                <div className="rounded-2xl bg-academic p-5">
-                  <p className="font-black text-navy">Personalized roadmap</p>
-                  <ul className="mt-3 space-y-2 text-sm text-muted">
-                    {roadmap.lines.map((line) => <li key={line} className="flex gap-2"><Sparkles className="h-4 w-4 flex-shrink-0 text-accent" />{line}</li>)}
-                  </ul>
-                  <div className="mt-4 flex flex-wrap gap-3 text-sm font-bold">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">Estimated Delivery: {roadmap.duration}</span>
+                  <div className="mt-8 border-t border-slate-100 pt-6">
+                    <button 
+                      onClick={() => setShowPackagePicker(true)}
+                      className="w-full py-4 bg-brand-gradient text-white rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:opacity-95 shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-5 h-5" /> Buy this Course
+                    </button>
+                    <p className="text-center text-[10px] text-muted font-bold uppercase tracking-wider mt-3">
+                      Secure payments via Razorpay
+                    </p>
                   </div>
                 </div>
-              </div>
-            )}
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-between">
-              <button disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/10 px-5 py-3 font-bold text-primary disabled:opacity-40">
-                <ChevronLeft className="h-5 w-5" /> Back
-              </button>
-              {step < steps.length - 1 ? (
-                <button onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white">
-                  Next <ChevronRight className="h-5 w-5" />
-                </button>
-              ) : (
-                <div className="flex flex-col items-center sm:items-end">
-                  <button 
-                    onClick={submitCustomization} 
-                    disabled={requestLoading || (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit)} 
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-5 py-3 font-bold text-white disabled:opacity-60 disabled:cursor-not-allowed">
-                    {requestLoading ? 'Submitting...' : 
-                     (usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit) ? 'Package Limit Reached' : 
-                     'Send Request to Admin'} <ArrowRight className="h-5 w-5" />
-                  </button>
-                  {usageLimit && !usageLimit.hasUnlimited && usageLimit.used >= usageLimit.limit && (
-                    <p className="text-red-500 text-xs font-bold mt-2">You have exhausted the {usageLimit.limit} requests in your package.</p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+              )
+            }
+          })()}
         </section>
       </main>
 
-      <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} course={course} onSuccess={() => router.push('/dashboard')} />
+      <PaymentModal 
+        isOpen={showPaymentModal} 
+        onClose={() => {
+          setShowPaymentModal(false)
+          setSelectedPackage(null)
+        }} 
+        course={selectedPackage ? undefined : course} 
+        item={selectedPackage}
+        isPackage={!!selectedPackage}
+        customAmount={selectedPackage ? (selectedPackage.priceINR || selectedPackage.inr) : undefined}
+        selectedCourseIds={selectedPackage ? [course._id] : undefined}
+        onSuccess={() => router.push('/dashboard')} 
+      />
+
+      <PackagePickerModal
+        isOpen={showPackagePicker}
+        onClose={() => setShowPackagePicker(false)}
+        courseId={course._id}
+        onSelectPackage={(selectedPkg) => {
+          setSelectedPackage(selectedPkg)
+          setShowPackagePicker(false)
+          if (!user) {
+            localStorage.setItem('pendingPackagePurchase', JSON.stringify({
+              packageId: selectedPkg._id || selectedPkg.id,
+              selectedCourseIds: [course._id]
+            }))
+            router.push(`/auth/login?redirect=${encodeURIComponent(`/courses/${course._id}`)}`)
+          } else {
+            setShowPaymentModal(true)
+          }
+        }}
+      />
 
       {previewDoc && (
         <PdfPreviewModal 

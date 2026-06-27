@@ -121,10 +121,19 @@ function CoursesContent() {
                   <h3 className="line-clamp-2 text-xl font-black text-navy transition group-hover:text-primary">{course.title}</h3>
                   <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-muted">{course.description}</p>
 
-                  <div className="mt-5 flex items-center justify-end border-t border-primary/10 pt-5">
-                    <Link href={`/courses/${course._id}`} className="inline-flex items-center gap-2 rounded-full bg-brand-gradient px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-95">
-                      Preview <ArrowRight className="h-4 w-4" />
+                  <div className="mt-5 flex items-center justify-between border-t border-primary/10 pt-5 gap-2">
+                    <Link href={`/courses/${course._id}`} className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-4 py-2.5 text-xs font-bold text-primary shadow-sm hover:bg-primary/5 transition-all">
+                      Preview
                     </Link>
+                    {course.isFree || course.isDemo ? (
+                      <Link href={`/courses/${course._id}`} className="inline-flex items-center gap-1 rounded-full bg-brand-gradient px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:opacity-95">
+                        Free Access <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    ) : (
+                      <Link href={`/courses/${course._id}?buy=true`} className="inline-flex items-center gap-1 rounded-full bg-brand-gradient px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:opacity-95">
+                        Buy Now <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </motion.article>

@@ -55,22 +55,13 @@ export default function PackageDetailsPage() {
   const fetchPackageData = async () => {
     try {
       setLoading(true)
-      const res = await api.get(`/packages/${params.id}`)
+      const res = await api.get(`/packages/${params.id}?populate=true`)
       setPkg(res.data.package)
       
-      const pkgCourseIds = res.data.package.courseIds || []
+      // The backend now populates the courses array inside the package
+      const populatedCourses = res.data.package.courses || []
       
-      // Fetch modules, lessons, and subtopics for each matched course directly
-      let matchedCourses = await Promise.all(pkgCourseIds.map(async (courseId) => {
-        try {
-          const courseRes = await api.get(`/courses/${courseId}?populate=true`)
-          return courseRes.data.course
-        } catch (err) {
-          return null
-        }
-      }))
-      
-      setCourses(matchedCourses.filter(Boolean))
+      setCourses(populatedCourses)
     } catch (error) {
       console.error('Failed to fetch package:', error)
     } finally {

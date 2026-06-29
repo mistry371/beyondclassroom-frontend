@@ -38,7 +38,8 @@ export default function PackagePickerModal({ isOpen, onClose, courseId, onSelect
     }
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = (e) => {
+    e?.stopPropagation();
     const selectedPkg = packages.find(p => (p._id || p.id) === selectedPkgId)
     if (selectedPkg) {
       onSelectPackage(selectedPkg)

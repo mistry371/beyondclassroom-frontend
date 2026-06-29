@@ -604,7 +604,7 @@ function CourseDetailsContent() {
 
                   <div className="mt-8 border-t border-slate-100 pt-6">
                     <button 
-                      onClick={() => setShowPackagePicker(true)}
+                      onClick={(e) => { e.stopPropagation(); setShowPackagePicker(true); }}
                       className="w-full py-4 bg-brand-gradient text-white rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:opacity-95 shadow-md shadow-primary/20 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-5 h-5" /> Buy this Course

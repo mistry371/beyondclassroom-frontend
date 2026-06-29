@@ -58,23 +58,19 @@ export default function PackageDetailsPage() {
       const res = await api.get(`/packages/${params.id}`)
       setPkg(res.data.package)
       
-      const coursesRes = await api.get('/courses')
-      const allCourses = coursesRes.data.courses || []
+      const pkgCourseIds = res.data.package.courseIds || []
       
-      const pkgCourseIds = new Set(res.data.package.courseIds || [])
-      let matchedCourses = allCourses.filter(c => pkgCourseIds.has(c._id))
-      
-      // Fetch modules, lessons, and subtopics for each matched course (optimized populated endpoint)
-      matchedCourses = await Promise.all(matchedCourses.map(async (course) => {
+      // Fetch modules, lessons, and subtopics for each matched course directly
+      let matchedCourses = await Promise.all(pkgCourseIds.map(async (courseId) => {
         try {
-          const courseRes = await api.get(`/courses/${course._id}?populate=true`)
+          const courseRes = await api.get(`/courses/${courseId}?populate=true`)
           return courseRes.data.course
         } catch (err) {
-          return { ...course, modules: [] }
+          return null
         }
       }))
       
-      setCourses(matchedCourses)
+      setCourses(matchedCourses.filter(Boolean))
     } catch (error) {
       console.error('Failed to fetch package:', error)
     } finally {
@@ -277,7 +273,8 @@ export default function PackageDetailsPage() {
               </div>
               
               <button 
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (!user) {
                     localStorage.setItem('pendingPackagePurchase', JSON.stringify({
                       packageId: pkg._id,

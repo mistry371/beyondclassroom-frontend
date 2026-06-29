@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { Trophy, XCircle, CheckCircle, Clock, Target, ArrowLeft, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trophy, XCircle, CheckCircle, Clock, Target, ArrowLeft, ChevronDown, ChevronUp, Circle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { motion } from 'framer-motion'
@@ -76,7 +76,7 @@ export default function ExamResultPage() {
                 <div className="flex items-center gap-4">
                   <div className="text-left">
                     <h3 className="text-white font-bold">{sec.name}</h3>
-                    <div className="flex gap-4 text-sm text-gray-400 mt-1">
+                    <div className="flex flex-wrap gap-2 sm:gap-4 text-sm text-gray-400 mt-1">
                       <span className="text-green-400">{sec.correct} correct</span>
                       <span className="text-red-400">{sec.wrong} wrong</span>
                       <span className="text-gray-500">{sec.unattempted} skipped</span>
@@ -104,7 +104,7 @@ export default function ExamResultPage() {
                         </div>
                       </div>
                       {qr.type === 'mcq' && qr.options && (
-                        <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
                           {qr.options.map((opt,oi) => (
                             <div key={oi} className={"px-3 py-2 rounded-lg text-sm " + (oi===qr.correctAnswer ? "bg-green-500/20 text-green-400 font-medium" : oi===qr.userAnswer&&oi!==qr.correctAnswer ? "bg-red-500/20 text-red-400" : "bg-white/5 text-gray-400")}>
                               {String.fromCharCode(65+oi)}. <MathRenderer content={opt}/>
@@ -113,7 +113,7 @@ export default function ExamResultPage() {
                         </div>
                       )}
                       {qr.type !== 'mcq' && (
-                        <div className="flex gap-4 text-sm mb-3">
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm mb-3">
                           <span className="text-gray-400">Your answer: <span className={qr.isCorrect?"text-green-400":"text-red-400"}>{qr.userAnswer===undefined||qr.userAnswer===''||qr.userAnswer===null?'Not answered':String(qr.userAnswer)}</span></span>
                           {!qr.isCorrect && <span className="text-gray-400">Correct: <span className="text-green-400">{String(qr.correctAnswer)}</span></span>}
                         </div>
@@ -132,7 +132,7 @@ export default function ExamResultPage() {
           ))}
         </div>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button onClick={() => router.push('/exams')} className="px-8 py-3 bg-dark-200 text-white rounded-xl hover:bg-gray-600">All Exams</button>
           <button onClick={() => router.push('/exams/'+params.examId)} className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold hover:opacity-90">Try Again</button>
         </div>

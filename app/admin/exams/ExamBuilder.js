@@ -183,7 +183,7 @@ function ExamBuilder({ isEdit }) {
                             </div>
                           )}
                           {q.type==='true_false'&&(
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4">
                               {['True','False'].map(v=>(
                                 <label key={v} className="flex items-center gap-2 cursor-pointer">
                                   <input type="radio" checked={q.correctAnswer===v} onChange={()=>updateQuestion(si,qi,'correctAnswer',v)} className="accent-green-400" />

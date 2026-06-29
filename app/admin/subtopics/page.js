@@ -63,13 +63,13 @@ function AdminSubtopicsContent() {
   const handleCreate = () => {
     setSelectedSubtopic(null)
     setDocError('')
-    const module = modules.find(m => m._id === selectedModule)
+    const foundModule = modules.find(m => m._id === selectedModule)
     setFormData({ 
       title: '', 
       content: '', 
       lessonId: '', // Optional now
-      moduleId: module?._id || '', 
-      courseId: module?.courseId || '', 
+      moduleId: foundModule?._id || '', 
+      courseId: foundModule?.courseId || '', 
       order: subtopics.length + 1, 
       isPublished: true, 
       documents: [],
@@ -175,7 +175,7 @@ function AdminSubtopicsContent() {
     <div className="min-h-screen bg-academic">
       <div className="bg-white border-b border-primary/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button onClick={() => router.push('/admin/modules')} className="p-2 hover:bg-slate-100 rounded-lg transition-all">
                 <ArrowLeft className="h-5 w-5 text-muted" />
@@ -203,7 +203,7 @@ function AdminSubtopicsContent() {
         <div className="space-y-4">
           {subtopics.map((s, i) => (
             <motion.div key={s._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="bg-white shadow-premium rounded-2xl border border-primary/10 p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-navy">{s.title}</h3>
                   <div className="flex gap-3 mt-2 text-sm text-muted">

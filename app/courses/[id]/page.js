@@ -468,7 +468,7 @@ function CourseDetailsContent() {
                         <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{steps[step]}</span>
                       </div>
 
-                      <div className="mb-6 grid grid-cols-6 gap-2">
+                      <div className="mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                         {steps.map((label, index) => (
                           <button key={label} onClick={() => setStep(index)} className={`h-2 rounded-full transition ${index <= step ? 'bg-brand-gradient' : 'bg-slate-200'}`} aria-label={label} />
                         ))}

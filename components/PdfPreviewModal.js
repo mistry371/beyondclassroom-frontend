@@ -87,8 +87,8 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-primary/10 bg-white px-5 py-3 flex-shrink-0 z-20">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-primary/10 bg-white px-5 py-3 flex-shrink-0 z-20">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <FileText className="h-5 w-5 text-primary" />
             <p className="font-bold text-navy truncate max-w-xs sm:max-w-md">{doc?.name || 'PDF Document'}</p>
             <span className="text-xs px-2 py-0.5 bg-red-500/10 text-red-500 rounded-full font-bold uppercase tracking-wide">
@@ -96,7 +96,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
             {numPages && (
               <div className="flex items-center gap-2 bg-academic rounded-lg px-2 py-1">
                 <button 

@@ -122,14 +122,14 @@ export default function PackagePickerModal({ isOpen, onClose, courseId, onSelect
                             <span className="text-2xl font-black text-primary">₹{pkg.priceINR || pkg.inr}</span>
                             <span className="text-[10px] text-muted font-bold">valid for {pkg.validity || '1 year'}</span>
                           </div>
-                        </div>
 
-                        {/* Selection check */}
-                        <div className="absolute top-4 right-4 pointer-events-none">
-                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
-                            isSelected ? 'bg-primary border-primary' : 'border-slate-300 bg-white'
-                          }`}>
-                            {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                          {/* Selection check */}
+                          <div className="ml-4 mt-1 shrink-0 pointer-events-none flex items-center justify-center">
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                              isSelected ? 'bg-primary border-primary' : 'border-slate-300 bg-white'
+                            }`}>
+                              {isSelected && <Check className="w-4 h-4 text-white" />}
+                            </div>
                           </div>
                         </div>
 

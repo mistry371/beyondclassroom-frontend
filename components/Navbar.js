@@ -114,7 +114,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <button onClick={() => setShowMenu(!showMenu)} className="lg:hidden text-ink p-2 rounded-xl border border-primary/10 bg-white">
+          <button onClick={() => setShowMenu(!showMenu)} className="xl:hidden text-ink p-2 rounded-xl border border-primary/10 bg-white">
             {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -126,7 +126,7 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden bg-white border-t border-primary/10 max-h-[70vh] overflow-y-auto"
+            className="xl:hidden bg-white border-t border-primary/10 max-h-[70vh] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-1">
               {!isAdmin && publicLinks.map((link) => (

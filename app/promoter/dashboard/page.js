@@ -108,7 +108,7 @@ export default function PromoterDashboardPage() {
       <div className="min-h-screen bg-slate-50 p-8 animate-pulse">
         <div className="h-16 bg-white border border-slate-200 rounded-xl mb-8 w-full max-w-7xl mx-auto"></div>
         <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="h-10 w-32 bg-slate-200 rounded-xl"></div>
             <div className="h-10 w-48 bg-slate-200 rounded-xl"></div>
           </div>

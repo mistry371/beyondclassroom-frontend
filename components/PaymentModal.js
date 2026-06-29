@@ -190,9 +190,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="bg-white rounded-3xl border border-primary/10 p-8 max-w-md w-full shadow-premium">
+            <div className="bg-white rounded-3xl border border-primary/10 p-6 sm:p-8 max-w-md w-full shadow-premium max-h-[90vh] overflow-y-auto custom-scrollbar pointer-events-auto">
               {done ? (
                 <div className="text-center py-8">
                   <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />

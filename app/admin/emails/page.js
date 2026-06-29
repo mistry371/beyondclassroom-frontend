@@ -357,7 +357,7 @@ export default function AdminEmails() {
               <motion.div key={email._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.03 }}
                 className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-xl border border-white/10 p-4"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div className={`p-2 rounded-lg ${email.status === 'sent' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
                       {email.status === 'sent' ? <CheckCircle className="h-4 w-4 text-green-400" /> : <AlertCircle className="h-4 w-4 text-red-400" />}

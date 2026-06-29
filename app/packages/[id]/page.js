@@ -261,7 +261,7 @@ export default function PackageDetailsPage() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none"
+            className="fixed bottom-[72px] md:bottom-0 left-0 right-0 z-40 p-4 pointer-events-none"
           >
             <div className="mx-auto max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-6 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.1)] flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-auto border border-primary/10">
               <div className="flex flex-col">

@@ -56,9 +56,31 @@ export default function AdvancedLearnPage() {
     setActiveModule(module)
     try {
       const lessonsRes = await api.get(`/lessons/module/${module._id}`)
-      setLessons(lessonsRes.data.lessons)
-      if (lessonsRes.data.lessons.length > 0) {
-        setActiveLesson(lessonsRes.data.lessons[0])
+      let fetchedLessons = lessonsRes.data.lessons || []
+      
+      if (fetchedLessons.length === 0) {
+        try {
+          const subRes = await api.get(`/subtopics/module/${module._id}`)
+          const subtopics = subRes.data.subtopics || []
+          fetchedLessons = subtopics.map(st => ({
+            _id: st._id,
+            title: st.title,
+            description: st.content,
+            content: { concept: st.content },
+            documents: st.documents || (st.document ? [st.document] : []),
+            type: 'subtopic',
+            isLocked: false
+          }))
+        } catch (e) {
+          console.error('Failed to fetch module subtopics:', e)
+        }
+      }
+
+      setLessons(fetchedLessons)
+      if (fetchedLessons.length > 0) {
+        setActiveLesson(fetchedLessons[0])
+      } else {
+        setActiveLesson(null)
       }
     } catch (error) {
       console.error('Fetch lessons failed:', error)
@@ -353,6 +375,36 @@ export default function AdvancedLearnPage() {
                               }}
                             />
                           </div>
+
+                          {/* Documents / PDFs Section */}
+                          {activeLesson.documents && activeLesson.documents.length > 0 && (
+                            <div className="mt-8 space-y-4">
+                              <h3 className="text-xl font-bold text-navy flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-primary" />
+                                Study Materials & PDFs
+                              </h3>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {activeLesson.documents.map((doc, idx) => (
+                                  <a
+                                    key={idx}
+                                    href={doc.url || doc.data}
+                                    download={doc.name}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center gap-3 p-4 rounded-xl border border-primary/10 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
+                                  >
+                                    <div className="bg-primary/10 p-3 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                      <FileText className="h-6 w-6" />
+                                    </div>
+                                    <div className="overflow-hidden">
+                                      <p className="font-semibold text-ink truncate">{doc.name || 'Study Material'}</p>
+                                      <p className="text-xs text-muted mt-1 uppercase tracking-wider">PDF Document</p>
+                                    </div>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
                           {/* Summary Section */}
                           {activeLesson.content?.summary && typeof activeLesson.content.summary === 'string' && (

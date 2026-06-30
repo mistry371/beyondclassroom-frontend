@@ -17,6 +17,11 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
 
   useEffect(() => {
     if (!doc) return
+    if (!doc.url && !doc.data) {
+      alert("Sorry, the file for this document has not been uploaded yet.");
+      onClose();
+      return;
+    }
     try {
       if (doc.data) {
         const byteChars = atob(doc.data)

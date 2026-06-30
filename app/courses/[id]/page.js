@@ -481,7 +481,24 @@ function CourseDetailsContent() {
                             <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
                             <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
                           </label>
-                          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
+                          
+                          {[
+                            ['level', ['Basic', 'Standard', 'Advanced']],
+                            ['learningSpeed', ['Relaxed', 'Balanced', 'Fast track']],
+                            ['worksheetFrequency', ['Daily', 'Weekly', 'Topic-wise']],
+                            ['testFrequency', ['Weekly', 'Bi-weekly', 'Monthly']],
+                            ['languagePreference', ['English', 'Hindi', 'English + Hindi']],
+                            ['revisionMode', ['Smart revision', 'Exam revision', 'Formula revision']],
+                          ].map(([key, options]) => (
+                            <label key={key} className="block">
+                              <span className="mb-2 block text-sm font-bold capitalize text-ink">{key.replace(/([A-Z])/g, ' $1')}</span>
+                              <select value={preferences[key] || options[0]} onChange={(e) => setPreferences((prev) => ({ ...prev, [key]: e.target.value }))} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none">
+                                {options.map((option) => <option key={option}>{option}</option>)}
+                              </select>
+                            </label>
+                          ))}
+                          
+                          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none mt-2" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
                           
                           <label className="block sm:col-span-2">
                             <span className="mb-2 block text-sm font-bold text-ink">Requested Marks (Optional)</span>
@@ -491,7 +508,7 @@ function CourseDetailsContent() {
                           <label className="block sm:col-span-2">
                             <span className="mb-2 block text-sm font-bold text-ink">Upload Reference Material (Optional)</span>
                             <input type="file" onChange={handleFileUpload} disabled={uploading} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" />
-                            {uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
+                            {uploading && <span className="text-sm text-green-600 mt-1 block">Uploading...</span>}
                             {studentAttachedFile && !uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
                           </label>
                         </div>

@@ -384,24 +384,33 @@ export default function AdvancedLearnPage() {
                                 Study Materials & PDFs
                               </h3>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {activeLesson.documents.map((doc, idx) => (
-                                  <a
-                                    key={idx}
-                                    href={doc.url || doc.data}
-                                    download={doc.name}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-3 p-4 rounded-xl border border-primary/10 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
-                                  >
-                                    <div className="bg-primary/10 p-3 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                      <FileText className="h-6 w-6" />
-                                    </div>
-                                    <div className="overflow-hidden">
-                                      <p className="font-semibold text-ink truncate">{doc.name || 'Study Material'}</p>
-                                      <p className="text-xs text-muted mt-1 uppercase tracking-wider">PDF Document</p>
-                                    </div>
-                                  </a>
-                                ))}
+                                {activeLesson.documents.map((doc, idx) => {
+                                  const fileUrl = doc.url || doc.data;
+                                  return (
+                                    <a
+                                      key={idx}
+                                      href={fileUrl || '#'}
+                                      download={doc.name}
+                                      target={fileUrl ? "_blank" : "_self"}
+                                      rel="noreferrer"
+                                      onClick={(e) => {
+                                        if (!fileUrl) {
+                                          e.preventDefault();
+                                          alert('Sorry, the file for this document has not been uploaded yet.');
+                                        }
+                                      }}
+                                      className="flex items-center gap-3 p-4 rounded-xl border border-primary/10 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
+                                    >
+                                      <div className="bg-primary/10 p-3 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                        <FileText className="h-6 w-6" />
+                                      </div>
+                                      <div className="overflow-hidden">
+                                        <p className="font-semibold text-ink truncate">{doc.name || 'Study Material'}</p>
+                                        <p className="text-xs text-muted mt-1 uppercase tracking-wider">PDF Document</p>
+                                      </div>
+                                    </a>
+                                  );
+                                })}
                               </div>
                             </div>
                           )}

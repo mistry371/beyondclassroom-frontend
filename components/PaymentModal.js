@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { X, CreditCard, Lock, CheckCircle, ShoppingBag, Tag, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/utils/api'
+import { invalidateCache } from '@/lib/apiCache'
 
 export default function PaymentModal({ isOpen, onClose, course, item, isPackage, onSuccess, customAmount, selectedCourseIds }) {
   const [loading, setLoading] = useState(false)
@@ -113,15 +114,18 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
             verifyPayload.courseId = currentItem._id
           }
           const verifyRes = await api.post('/payment/verify', verifyPayload)
-          if (verifyRes.data.success) {
-            if (promoApplied && promoCode) {
-              try {
-                await api.post('/promo-codes/apply', { code: promoCode.trim() })
-              } catch (_) {}
+            if (verifyRes.data.success) {
+              if (promoApplied && promoCode) {
+                try {
+                  await api.post('/promo-codes/apply', { code: promoCode.trim() })
+                } catch (_) {}
+              }
+              invalidateCache('GET:/profile')
+              invalidateCache('GET:/dashboard')
+              invalidateCache('')
+              setDone(true)
+              setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
             }
-            setDone(true)
-            setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
-          }
         } catch {
           alert('Mock payment verification failed. Please contact support.')
         }
@@ -157,6 +161,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                   await api.post('/promo-codes/apply', { code: promoCode.trim() })
                 } catch (_) {}
               }
+              invalidateCache('GET:/profile')
+              invalidateCache('GET:/dashboard')
+              invalidateCache('')
               setDone(true)
               setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
             }

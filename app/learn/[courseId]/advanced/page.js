@@ -187,6 +187,21 @@ export default function AdvancedLearnPage() {
                   ))
                 )}
               </div>
+
+              {/* Custom Request Promo in Sidebar */}
+              <div className="mt-8 pt-6 border-t border-primary/10">
+                <div className="bg-gradient-to-br from-primary to-secondary rounded-xl p-5 text-white shadow-md shadow-primary/20 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+                  <h3 className="font-bold text-lg mb-2 relative z-10">Need a Custom Package?</h3>
+                  <p className="text-sm text-white/90 mb-4 relative z-10 font-medium">Request personalized practice papers and notes from the admin.</p>
+                  <button 
+                    onClick={() => router.push('/dashboard/custom-requests')}
+                    className="w-full py-2.5 bg-white text-primary rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors relative z-10 shadow-sm"
+                  >
+                    Request Now
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -447,7 +462,10 @@ export default function AdvancedLearnPage() {
                                     const completed = prev?.lessonsCompleted || []
                                     if (!completed.includes(activeLesson._id)) {
                                       const newCompleted = [...completed, activeLesson._id]
-                                      const totalLessons = modules.reduce((acc, m) => acc + (m.lessonCount || 1), 0) || newCompleted.length
+                                      const totalLessons = modules.reduce((acc, m) => {
+                                        const subtopicsCount = (moduleSubtopics[m._id] || []).length;
+                                        return acc + (m.lessonCount || subtopicsCount || 1);
+                                      }, 0) || newCompleted.length
                                       return {
                                         ...prev,
                                         lessonsCompleted: newCompleted,

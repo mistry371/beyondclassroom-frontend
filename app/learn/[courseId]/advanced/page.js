@@ -459,6 +459,15 @@ export default function AdvancedLearnPage() {
                                   const currentIndex = lessons.findIndex(l => l._id === activeLesson._id)
                                   if (currentIndex < lessons.length - 1) {
                                     setActiveLesson(lessons[currentIndex + 1])
+                                  } else {
+                                    // Move to next module
+                                    const currentModuleIndex = modules.findIndex(m => m._id === activeModule?._id)
+                                    if (currentModuleIndex >= 0 && currentModuleIndex < modules.length - 1) {
+                                      const nextModule = modules[currentModuleIndex + 1]
+                                      selectModule(nextModule)
+                                    } else {
+                                      alert("Congratulations! You have completed all lessons in this course.")
+                                    }
                                   }
                                 } catch (err) {
                                   console.log('Progress update failed:', err)
@@ -466,6 +475,15 @@ export default function AdvancedLearnPage() {
                                   const currentIndex = lessons.findIndex(l => l._id === activeLesson._id)
                                   if (currentIndex < lessons.length - 1) {
                                     setActiveLesson(lessons[currentIndex + 1])
+                                  } else {
+                                    // Move to next module
+                                    const currentModuleIndex = modules.findIndex(m => m._id === activeModule?._id)
+                                    if (currentModuleIndex >= 0 && currentModuleIndex < modules.length - 1) {
+                                      const nextModule = modules[currentModuleIndex + 1]
+                                      selectModule(nextModule)
+                                    } else {
+                                      alert("Congratulations! You have completed all lessons in this course.")
+                                    }
                                   }
                                 }
                               }}

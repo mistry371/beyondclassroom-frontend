@@ -159,21 +159,7 @@ function AdminModules() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Course Selector */}
-        <div className="mb-6">
-          <label className="block text-slate-700 text-sm font-semibold mb-2">Filter by Course</label>
-          <select
-            value={selectedCourse}
-            onChange={(e) => setSelectedCourse(e.target.value)}
-            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-          >
-            <option value="all">All Modules</option>
-            <option value="">— No Course (Standalone) —</option>
-            {courses.map(course => (
-              <option key={course._id} value={course._id}>{course.title}</option>
-            ))}
-          </select>
-        </div>
+
 
         {/* Modules List */}
         <div className="space-y-4">

@@ -79,6 +79,7 @@ export default function Navbar() {
                 {!isAdmin && (
                   <>
                     <Link href="/profile" className={`${linkClass} text-[13px] whitespace-nowrap`}>My Learning</Link>
+                    <Link href="/dashboard/purchases" className={`${linkClass} text-[13px] whitespace-nowrap`}>Purchases</Link>
                     <Link href="/notifications" className="relative">
                       <Bell className="h-5 w-5" />
                       {unreadCount > 0 && (
@@ -140,6 +141,7 @@ export default function Navbar() {
                   {!isAdmin && (
                     <>
                       <Link href="/profile" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">My Learning</Link>
+                      <Link href="/dashboard/purchases" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">Purchases & Bills</Link>
                       <Link href="/cart" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">Cart</Link>
                     </>
                   )}

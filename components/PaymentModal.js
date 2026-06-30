@@ -110,6 +110,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
           }
           if (isPackage) {
             verifyPayload.packageId = currentItem._id
+            if (selectedCourseIds && selectedCourseIds.length > 0) {
+              verifyPayload.selectedCourseIds = selectedCourseIds
+            }
           } else {
             verifyPayload.courseId = currentItem._id
           }
@@ -149,6 +152,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
             }
             if (isPackage) {
               verifyPayload.packageId = currentItem._id
+              if (selectedCourseIds && selectedCourseIds.length > 0) {
+                verifyPayload.selectedCourseIds = selectedCourseIds
+              }
             } else {
               verifyPayload.courseId = currentItem._id
             }

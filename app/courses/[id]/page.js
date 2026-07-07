@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic'
 
 const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { ssr: false })
 
-const steps = ['Modules', 'Details', 'Summary']
+const steps = ['Modules', 'Preferences', 'Summary']
 
 const defaultPreferences = {
   level: 'Standard',
@@ -270,20 +270,27 @@ function CourseDetailsContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
-        <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
+      <div className="min-h-screen bg-academic">
+        <Navbar />
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
+        </div>
       </div>
     )
   }
 
   if (!course) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center text-xl font-bold text-navy">Course not found</div>
+      <div className="min-h-screen bg-academic">
+        <Navbar />
+        <div className="flex min-h-[70vh] items-center justify-center text-xl font-bold text-navy">Course not found</div>
+      </div>
     )
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-academic pb-16 select-none">
+      <Navbar />
 
       <section className="relative overflow-hidden premium-section border-b border-primary/10 bg-gradient-to-b from-white/40 to-transparent">
         <div className="absolute inset-0 hero-grid opacity-70" />
@@ -474,10 +481,7 @@ function CourseDetailsContent() {
                             <span className="mb-2 block text-sm font-bold text-ink">Selected Course</span>
                             <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
                           </label>
-                          
-                          
-                          
-                          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none mt-2" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
+                          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
                           
                           <label className="block sm:col-span-2">
                             <span className="mb-2 block text-sm font-bold text-ink">Requested Marks (Optional)</span>
@@ -487,7 +491,7 @@ function CourseDetailsContent() {
                           <label className="block sm:col-span-2">
                             <span className="mb-2 block text-sm font-bold text-ink">Upload Reference Material (Optional)</span>
                             <input type="file" onChange={handleFileUpload} disabled={uploading} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none" />
-                            {uploading && <span className="text-sm text-green-600 mt-1 block">Uploading...</span>}
+                            {uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
                             {studentAttachedFile && !uploading && <span className="text-sm text-green-600 mt-1 block">File attached successfully</span>}
                           </label>
                         </div>
@@ -666,7 +670,7 @@ function CourseDetailsContent() {
           }}
         />
       )}
-    </>
+    </div>
   )
 }
 
@@ -703,23 +707,10 @@ function SummaryCard({ label, value }) {
 }
 
 export default function CourseDetails() {
-  const [mounted, setMounted] = useState(false)
-  
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
-    <div className="min-h-screen bg-academic pb-16 select-none">
-      <Navbar />
-      {mounted ? (
-        <CourseDetailsContent />
-      ) : (
-        <div className="flex min-h-[70vh] items-center justify-center">
-          <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
-        </div>
-      )}
-    </div>
+    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center"><div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" /></div>}>
+      <CourseDetailsContent />
+    </Suspense>
   )
 }
 

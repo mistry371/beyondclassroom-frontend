@@ -244,7 +244,10 @@ export default function AdminCustomRequests() {
                 {selected.studentAttachedFile && (
                   <div className="mt-3 flex items-center gap-3">
                     <span className="text-xs text-slate-500 font-bold">Reference Material:</span>
-                    <button type="button" onClick={() => setPreviewUrl(getFullUrl(selected.studentAttachedFile))} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-colors">
+                    <button type="button" onClick={() => {
+                      const u = getFullUrl(selected.studentAttachedFile);
+                      setPreviewUrl(u + (u.toLowerCase().includes('.pdf') ? '#toolbar=0' : ''));
+                    }} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-colors">
                       View File
                     </button>
                     <button type="button" onClick={async () => {
@@ -269,7 +272,10 @@ export default function AdminCustomRequests() {
                   </div>
                 )}
                 {selected.assignedPdf && (
-                  <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <a href={getFullUrl(selected.assignedPdf)} target="_blank" rel="noopener noreferrer" className="hover:underline">View File</a></p>
+                  <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <button type="button" onClick={() => {
+                    const u = getFullUrl(selected.assignedPdf);
+                    setPreviewUrl(u + (u.toLowerCase().includes('.pdf') ? '#toolbar=0' : ''));
+                  }} className="hover:underline">View File</button></p>
                 )}
               </div>
 

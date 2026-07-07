@@ -18,6 +18,8 @@ const emptyForm = {
   active: true,
   popular: false,
   courseIds: [],
+  customRequestLimit: 0,
+  customRequestMaxMarks: 0,
 }
 
 export default function AdminPackages() {
@@ -77,6 +79,8 @@ export default function AdminPackages() {
       active: pkg.active !== false,
       popular: pkg.popular || false,
       courseIds: pkg.courseIds || [],
+      customRequestLimit: pkg.customRequestLimit !== undefined ? pkg.customRequestLimit : 0,
+      customRequestMaxMarks: pkg.customRequestMaxMarks !== undefined ? pkg.customRequestMaxMarks : 0,
     })
     setError('')
     setShowModal(true)
@@ -97,6 +101,8 @@ export default function AdminPackages() {
         priceINR: Number(formData.priceINR),
         priceUSD: Number(formData.priceUSD),
         courseIds: formData.courseIds,
+        customRequestLimit: Number(formData.customRequestLimit),
+        customRequestMaxMarks: Number(formData.customRequestMaxMarks),
       }
       if (selectedPkg) {
         await api.put(`/packages/admin/${selectedPkg._id}`, payload)
@@ -387,6 +393,31 @@ export default function AdminPackages() {
                     className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
                     placeholder="e.g. 1 month, 3 months, 1 year"
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-ink text-sm font-medium mb-1">Custom Request Limit (-1 for Unlimited)</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.customRequestLimit}
+                      onChange={(e) => setFormData({ ...formData, customRequestLimit: e.target.value })}
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
+                      placeholder="e.g. 25"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-ink text-sm font-medium mb-1">Max Marks per Request (-1 for Unlimited)</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.customRequestMaxMarks}
+                      onChange={(e) => setFormData({ ...formData, customRequestMaxMarks: e.target.value })}
+                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
+                      placeholder="e.g. 40"
+                    />
+                  </div>
                 </div>
 
                 <div>

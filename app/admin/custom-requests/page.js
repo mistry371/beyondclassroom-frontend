@@ -3,9 +3,15 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { ArrowLeft, Clock, CheckCircle, XCircle, MessageSquare, Briefcase, Calendar, DollarSign, Edit } from 'lucide-react'
-import api from '@/utils/api'
+import api, { API_URL } from '@/utils/api'
 import { motion } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
+
+const getFullUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return API_URL.replace('/api', '') + (url.startsWith('/') ? url : '/' + url);
+};
 
 const STATUS_COLORS = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -23,6 +29,7 @@ export default function AdminCustomRequests() {
   const [form, setForm] = useState({ status:'', adminNote:'', finalDuration:'', finalRoadmap:'', assignedToUserId:'', deliveryTitle:'', deliveryType:'question_paper', deliveryUrl:'', deliveryNote:'' })
   const [pdfFile, setPdfFile] = useState(null)
   const [uploadingPdf, setUploadingPdf] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState(null)
 
   useEffect(() => {
     api.get('/custom-requests/admin').then(r => setRequests(r.data.requests || [])).catch(e => { console.error(e); showError('Failed to load requests'); }).finally(() => setLoading(false))
@@ -237,16 +244,32 @@ export default function AdminCustomRequests() {
                 {selected.studentAttachedFile && (
                   <div className="mt-3 flex items-center gap-3">
                     <span className="text-xs text-slate-500 font-bold">Reference Material:</span>
-                    <a href={selected.studentAttachedFile} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-colors">
+                    <button type="button" onClick={() => setPreviewUrl(getFullUrl(selected.studentAttachedFile))} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-colors">
                       View File
-                    </a>
-                    <a href={selected.studentAttachedFile} download target="_blank" rel="noopener noreferrer" className="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold hover:bg-slate-300 transition-colors">
+                    </button>
+                    <button type="button" onClick={async () => {
+                      try {
+                        const url = getFullUrl(selected.studentAttachedFile);
+                        const res = await fetch(url);
+                        const blob = await res.blob();
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = `Reference_Document_${selected._id}.${url.split('.').pop() || 'pdf'}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(blobUrl);
+                        document.body.removeChild(a);
+                      } catch(e) {
+                        showError('Download failed');
+                      }
+                    }} className="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold hover:bg-slate-300 transition-colors">
                       Download File
-                    </a>
+                    </button>
                   </div>
                 )}
                 {selected.assignedPdf && (
-                  <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <a href={selected.assignedPdf} target="_blank" rel="noopener noreferrer" className="hover:underline">View File</a></p>
+                  <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <a href={getFullUrl(selected.assignedPdf)} target="_blank" rel="noopener noreferrer" className="hover:underline">View File</a></p>
                 )}
               </div>
 
@@ -305,6 +328,20 @@ export default function AdminCustomRequests() {
             <div className="px-6 py-4 border-t border-slate-100 flex gap-3 shrink-0 bg-slate-50 rounded-b-3xl">
               <button type="button" onClick={() => setSelected(null)} className="flex-1 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">Cancel</button>
               <button type="submit" form="edit-form" className="flex-1 py-3 bg-primary !text-white rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-md shadow-primary/20">Save Changes</button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {previewUrl && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 sm:p-6" onClick={() => setPreviewUrl(null)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl border border-slate-200 shadow-2xl p-0 w-full max-w-5xl h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+              <h3 className="text-lg font-bold text-slate-800">Document Preview</h3>
+              <button onClick={() => setPreviewUrl(null)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><XCircle className="w-5 h-5"/></button>
+            </div>
+            <div className="flex-1 bg-slate-100 rounded-b-3xl overflow-hidden relative">
+              <iframe src={previewUrl} className="w-full h-full border-0" title="Document Preview" />
             </div>
           </motion.div>
         </div>

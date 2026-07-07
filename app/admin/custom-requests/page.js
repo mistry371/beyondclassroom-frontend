@@ -235,9 +235,15 @@ export default function AdminCustomRequests() {
                 <p className="text-xs text-slate-500">From: {selected.userName} ({selected.userEmail})</p>
                 {selected.marks && <p className="text-xs text-slate-500 mt-1">Marks Requested: <span className="font-bold text-slate-800">{selected.marks}</span></p>}
                 {selected.studentAttachedFile && (
-                  <a href={selected.studentAttachedFile} target="_blank" rel="noopener noreferrer" className="text-xs text-primary font-bold mt-2 inline-flex items-center gap-1 hover:underline">
-                    Download Reference Material
-                  </a>
+                  <div className="mt-3 flex items-center gap-3">
+                    <span className="text-xs text-slate-500 font-bold">Reference Material:</span>
+                    <a href={selected.studentAttachedFile} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-lg font-bold hover:bg-primary hover:text-white transition-colors">
+                      View File
+                    </a>
+                    <a href={selected.studentAttachedFile} download target="_blank" rel="noopener noreferrer" className="text-xs bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold hover:bg-slate-300 transition-colors">
+                      Download File
+                    </a>
+                  </div>
                 )}
                 {selected.assignedPdf && (
                   <p className="text-xs text-green-600 font-bold mt-2">Assigned PDF: <a href={selected.assignedPdf} target="_blank" rel="noopener noreferrer" className="hover:underline">View File</a></p>

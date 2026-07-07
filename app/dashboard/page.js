@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState('')
   const [trialStatus, setTrialStatus] = useState(null)
+  const [customRequestsStats, setCustomRequestsStats] = useState({ total: 0, completed: 0 })
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -54,6 +55,16 @@ export default function Dashboard() {
       try {
         const trialRes = await cachedGet('/trial/status', 20 * 1000)
         setTrialStatus(trialRes.data)
+      } catch {}
+
+      // Fetch custom requests for stats
+      try {
+        const reqRes = await cachedGet('/custom-requests/my', 60 * 1000)
+        const reqs = reqRes.data.requests || []
+        setCustomRequestsStats({
+          total: reqs.length,
+          completed: reqs.filter(r => r.status === 'completed').length
+        })
       } catch {}
     } catch (error) {
       setFetchError(error.userMessage || 'Could not load your dashboard.')
@@ -123,19 +134,19 @@ export default function Dashboard() {
 
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6"
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-xl">
                 <BookOpen className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-slate-500 text-sm">Enrolled Courses</p>
+                <p className="text-slate-500 text-sm">Enrolled</p>
                 <p className="text-3xl font-black text-slate-800">{purchasedCourses.length}</p>
               </div>
             </div>
@@ -162,7 +173,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6"
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-green-100 rounded-xl">
@@ -172,6 +183,26 @@ export default function Dashboard() {
                 <p className="text-slate-500 text-sm">Completed</p>
                 <p className="text-3xl font-black text-slate-800">
                   {progress.filter(p => p?.completionPercentage === 100).length}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            onClick={() => router.push('/dashboard/custom-requests')}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 hover:shadow-md transition-shadow cursor-pointer group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-orange-100 rounded-xl group-hover:bg-orange-200 transition-colors">
+                <Package className="h-8 w-8 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-slate-500 text-sm">Custom Requests</p>
+                <p className="text-3xl font-black text-slate-800">
+                  {customRequestsStats.completed} <span className="text-lg text-slate-400 font-semibold">/ {customRequestsStats.total}</span>
                 </p>
               </div>
             </div>
@@ -256,14 +287,14 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push('/courses')}
-            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-primary/40 hover:shadow-md transition-all"
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-primary/40 hover:shadow-md transition-all group"
           >
-            <BookOpen className="h-8 w-8 text-primary mb-3" />
+            <BookOpen className="h-8 w-8 text-primary mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="text-lg font-bold text-slate-800 mb-2">Browse Courses</h3>
             <p className="text-slate-500 text-sm">Explore our catalog and find your next course</p>
           </motion.button>
@@ -272,9 +303,9 @@ export default function Dashboard() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => router.push('/profile')}
-            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-secondary/40 hover:shadow-md transition-all"
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-secondary/40 hover:shadow-md transition-all group"
           >
-            <User className="h-8 w-8 text-secondary mb-3" />
+            <User className="h-8 w-8 text-secondary mb-3 group-hover:scale-110 transition-transform" />
             <h3 className="text-lg font-bold text-slate-800 mb-2">My Profile</h3>
             <p className="text-slate-500 text-sm">View and update your profile details</p>
           </motion.button>
@@ -282,12 +313,23 @@ export default function Dashboard() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => router.push('/packages')}
-            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-primary/40 hover:shadow-md transition-all"
+            onClick={() => router.push('/dashboard/purchases')}
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-green-500/40 hover:shadow-md transition-all group"
           >
-            <Package className="h-8 w-8 text-primary mb-3" />
-            <h3 className="text-lg font-bold text-slate-800 mb-2">Our Packages</h3>
-            <p className="text-slate-500 text-sm">Browse our learning packages and plans</p>
+            <ShoppingCart className="h-8 w-8 text-green-600 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-bold text-slate-800 mb-2">Billing & Purchases</h3>
+            <p className="text-slate-500 text-sm">View your purchase and billing history</p>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => router.push('/dashboard/custom-requests')}
+            className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 text-left hover:border-orange-500/40 hover:shadow-md transition-all group"
+          >
+            <Package className="h-8 w-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-bold text-slate-800 mb-2">Custom Requests</h3>
+            <p className="text-slate-500 text-sm">Track your custom study materials</p>
           </motion.button>
         </div>
       </div>

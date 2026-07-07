@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { BookOpen, CheckCircle, PlayCircle, FileText, Lock, Clock, Award, TrendingUp, AlertCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export default function AdvancedLearnPage() {
   const params = useParams()
+  const router = useRouter()
   const [course, setCourse] = useState(null)
   const [modules, setModules] = useState([])
   const [activeModule, setActiveModule] = useState(null)
@@ -195,7 +196,7 @@ export default function AdvancedLearnPage() {
                   <h3 className="font-bold text-lg mb-2 relative z-10">Need a Custom Package?</h3>
                   <p className="text-sm text-white/90 mb-4 relative z-10 font-medium">Request personalized practice papers and notes from the admin.</p>
                   <button 
-                    onClick={() => router.push('/dashboard/custom-requests')}
+                    onClick={() => router.push(`/courses/${params.courseId}`)}
                     className="w-full py-2.5 bg-white text-primary rounded-lg font-bold text-sm hover:bg-slate-50 transition-colors relative z-10 shadow-sm"
                   >
                     Request Now

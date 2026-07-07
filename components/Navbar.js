@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter, usePathname } from 'next/navigation'
 import { Bell, ShoppingCart, LogOut, Menu, X } from 'lucide-react'
@@ -26,8 +26,16 @@ export default function Navbar() {
   const { items } = useSelector((state) => state.cart)
   const { unreadCount } = useSelector((state) => state.notifications)
   const [showMenu, setShowMenu] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin'
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Use a stable null user during SSR and initial hydration to prevent mismatches
+  const displayUser = mounted ? user : null
+
+  const isAdmin = displayUser?.role === 'admin' || displayUser?.role === 'super_admin'
   const dashboardLink = isAdmin ? '/admin' : '/dashboard'
   const dashboardText = isAdmin ? 'Admin Panel' : 'Dashboard'
   const isMarketing = !pathname?.startsWith('/admin') && !pathname?.startsWith('/learn')
@@ -47,7 +55,7 @@ export default function Navbar() {
     <nav className={`${navBg} border-b sticky top-0 z-50 backdrop-blur-xl`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href={user ? dashboardLink : '/'} className="flex items-center space-x-3">
+          <Link href={displayUser ? dashboardLink : '/'} className="flex items-center space-x-3">
             <div className="relative w-64 h-16 lg:w-[320px] lg:h-[80px]">
               <Image 
                 src="/full-logo.png" 
@@ -73,14 +81,11 @@ export default function Navbar() {
           </div>
 
           <div className="hidden xl:flex items-center space-x-3">
-            {user && (
+            {displayUser && (
               <>
                 <Link href={dashboardLink} className="font-bold text-primary text-[13px] whitespace-nowrap">{dashboardText}</Link>
                 {!isAdmin && (
                   <>
-                    <Link href="/profile" className={`${linkClass} text-[13px] whitespace-nowrap`}>My Learning</Link>
-                    <Link href="/dashboard/purchases" className={`${linkClass} text-[13px] whitespace-nowrap`}>Purchases</Link>
-                    <Link href="/dashboard/custom-requests" className={`${linkClass} text-[13px] whitespace-nowrap`}>Custom Requests</Link>
                     <Link href="/notifications" className="relative">
                       <Bell className="h-5 w-5" />
                       {unreadCount > 0 && (
@@ -101,7 +106,7 @@ export default function Navbar() {
                 )}
                 <Link href="/profile">
                   <div className="w-8 h-8 bg-brand-gradient rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    {user?.name?.charAt(0).toUpperCase()}
+                    {displayUser?.name?.charAt(0).toUpperCase()}
                   </div>
                 </Link>
                 <button onClick={handleLogout} className="text-muted hover:text-red-500 transition-colors">
@@ -109,7 +114,7 @@ export default function Navbar() {
                 </button>
               </>
             )}
-            {!user && (
+            {!displayUser && (
               <div className="flex items-center space-x-3">
                 <Link href="/auth/login" className={`${linkClass} font-semibold text-[13px] whitespace-nowrap`}>Sign In</Link>
               </div>
@@ -136,14 +141,11 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              {user ? (
+              {displayUser ? (
                 <>
                   <Link href={dashboardLink} onClick={() => setShowMenu(false)} className="block py-2.5 text-primary font-semibold">{dashboardText}</Link>
                   {!isAdmin && (
                     <>
-                      <Link href="/profile" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">My Learning</Link>
-                      <Link href="/dashboard/purchases" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">Purchases & Bills</Link>
-                      <Link href="/dashboard/custom-requests" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">Customized Requests</Link>
                       <Link href="/cart" onClick={() => setShowMenu(false)} className="block py-2.5 text-ink">Cart</Link>
                     </>
                   )}

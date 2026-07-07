@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic'
 
 const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { ssr: false })
 
-const steps = ['Modules', 'Preferences', 'Summary']
+const steps = ['Modules', 'Details', 'Summary']
 
 const defaultPreferences = {
   level: 'Standard',
@@ -270,27 +270,20 @@ function CourseDetailsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-academic">
-        <Navbar />
-        <div className="flex min-h-[70vh] items-center justify-center">
-          <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
-        </div>
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
       </div>
     )
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-academic">
-        <Navbar />
-        <div className="flex min-h-[70vh] items-center justify-center text-xl font-bold text-navy">Course not found</div>
-      </div>
+      <div className="flex min-h-[70vh] items-center justify-center text-xl font-bold text-navy">Course not found</div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-academic pb-16 select-none">
-      <Navbar />
+    <>
 
       <section className="relative overflow-hidden premium-section border-b border-primary/10 bg-gradient-to-b from-white/40 to-transparent">
         <div className="absolute inset-0 hero-grid opacity-70" />
@@ -482,21 +475,7 @@ function CourseDetailsContent() {
                             <input type="text" value={course?.title || ''} readOnly className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none opacity-70 cursor-not-allowed" />
                           </label>
                           
-                          {[
-                            ['level', ['Basic', 'Standard', 'Advanced']],
-                            ['learningSpeed', ['Relaxed', 'Balanced', 'Fast track']],
-                            ['worksheetFrequency', ['Daily', 'Weekly', 'Topic-wise']],
-                            ['testFrequency', ['Weekly', 'Bi-weekly', 'Monthly']],
-                            ['languagePreference', ['English', 'Hindi', 'English + Hindi']],
-                            ['revisionMode', ['Smart revision', 'Exam revision', 'Formula revision']],
-                          ].map(([key, options]) => (
-                            <label key={key} className="block">
-                              <span className="mb-2 block text-sm font-bold capitalize text-ink">{key.replace(/([A-Z])/g, ' $1')}</span>
-                              <select value={preferences[key] || options[0]} onChange={(e) => setPreferences((prev) => ({ ...prev, [key]: e.target.value }))} className="w-full rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none">
-                                {options.map((option) => <option key={option}>{option}</option>)}
-                              </select>
-                            </label>
-                          ))}
+                          
                           
                           <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="sm:col-span-2 rounded-2xl border border-primary/10 bg-academic px-4 py-3 text-ink outline-none mt-2" rows={4} placeholder="Tell admin what you want merged, customized, or prepared..." />
                           
@@ -687,7 +666,7 @@ function CourseDetailsContent() {
           }}
         />
       )}
-    </div>
+    </>
   )
 }
 
@@ -724,10 +703,23 @@ function SummaryCard({ label, value }) {
 }
 
 export default function CourseDetails() {
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <Suspense fallback={<div className="min-h-screen bg-academic flex items-center justify-center"><div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" /></div>}>
-      <CourseDetailsContent />
-    </Suspense>
+    <div className="min-h-screen bg-academic pb-16 select-none">
+      <Navbar />
+      {mounted ? (
+        <CourseDetailsContent />
+      ) : (
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div className="h-14 w-14 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
+        </div>
+      )}
+    </div>
   )
 }
 

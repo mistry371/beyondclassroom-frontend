@@ -135,30 +135,51 @@ export default function Dashboard() {
 
         {/* Announcements Section */}
         {announcements.length > 0 && (
-          <div className="mb-8 space-y-3">
-            {announcements.map((ann, idx) => (
-              <motion.div 
-                key={ann._id} 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                transition={{ delay: idx * 0.1 }}
-                className={`p-4 rounded-2xl border flex gap-4 ${
-                  ann.priority === 'high' 
-                    ? 'bg-red-50 border-red-100 text-red-900' 
-                    : ann.priority === 'medium'
-                      ? 'bg-blue-50 border-blue-100 text-blue-900'
-                      : 'bg-slate-50 border-slate-200 text-slate-800'
-                }`}
-              >
-                <div className="shrink-0 mt-1">
-                  {ann.priority === 'high' ? <AlertTriangle className="w-5 h-5 text-red-500" /> : <Bell className="w-5 h-5 text-blue-500" />}
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm">{ann.title}</h3>
-                  <p className="text-sm opacity-90 mt-1 whitespace-pre-wrap">{ann.message}</p>
-                </div>
-              </motion.div>
-            ))}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-5 px-1">
+              <div className="p-2 bg-rose-100 rounded-xl">
+                <Bell className="w-5 h-5 text-rose-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-navy">Announcements</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {announcements.map((ann, idx) => (
+                <motion.div 
+                  key={ann._id} 
+                  initial={{ opacity: 0, y: 15 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  transition={{ delay: idx * 0.1 }}
+                  className={`relative overflow-hidden p-6 rounded-3xl border transition-all hover:shadow-md ${
+                    ann.priority === 'high' 
+                      ? 'bg-gradient-to-br from-red-50/80 to-rose-50/80 border-red-100' 
+                      : ann.priority === 'medium'
+                        ? 'bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border-blue-100'
+                        : 'bg-white border-slate-200'
+                  }`}
+                >
+                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 ${
+                    ann.priority === 'high' ? 'bg-red-400/20' : ann.priority === 'medium' ? 'bg-blue-400/20' : 'bg-slate-300/20'
+                  }`}></div>
+                  
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className={`shrink-0 p-2.5 rounded-xl mt-0.5 ${
+                         ann.priority === 'high' ? 'bg-red-100 text-red-600' : ann.priority === 'medium' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {ann.priority === 'high' ? <AlertTriangle className="w-5 h-5" /> : ann.priority === 'medium' ? <Info className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-navy text-[17px] leading-tight mb-1">{ann.title}</h3>
+                        {ann.priority === 'high' && <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">Important</span>}
+                      </div>
+                    </div>
+                    {ann.message && (
+                      <p className="text-slate-600 text-sm leading-relaxed mt-2 pl-14 flex-grow">{ann.message}</p>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
 

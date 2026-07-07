@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, ShoppingCart, User, Package, Bell, Info } from 'lucide-react'
+import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, ShoppingCart, User, Package, Bell, Info, X } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [trialStatus, setTrialStatus] = useState(null)
   const [customRequestsStats, setCustomRequestsStats] = useState({ total: 0, completed: 0 })
   const [announcements, setAnnouncements] = useState([])
+  const [showAnnouncements, setShowAnnouncements] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -130,56 +131,87 @@ export default function Dashboard() {
               </h1>
               <p className="text-slate-500 text-lg">Continue your learning journey</p>
             </motion.div>
+
+            {announcements.length > 0 && (
+              <button
+                onClick={() => setShowAnnouncements(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-100 transition-colors shrink-0 font-medium"
+              >
+                <Bell className="w-5 h-5" />
+                <span>Announcements</span>
+                <span className="bg-rose-600 text-white text-xs px-2 py-0.5 rounded-full ml-1 font-bold">
+                  {announcements.length}
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Announcements Section */}
-        {announcements.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-5 px-1">
-              <div className="p-2 bg-rose-100 rounded-xl">
-                <Bell className="w-5 h-5 text-rose-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-navy">Announcements</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {announcements.map((ann, idx) => (
-                <motion.div 
-                  key={ann._id} 
-                  initial={{ opacity: 0, y: 15 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  transition={{ delay: idx * 0.1 }}
-                  className={`relative overflow-hidden p-6 rounded-3xl border transition-all hover:shadow-md ${
-                    ann.priority === 'high' 
-                      ? 'bg-gradient-to-br from-red-50/80 to-rose-50/80 border-red-100' 
-                      : ann.priority === 'medium'
-                        ? 'bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border-blue-100'
-                        : 'bg-white border-slate-200'
-                  }`}
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 ${
-                    ann.priority === 'high' ? 'bg-red-400/20' : ann.priority === 'medium' ? 'bg-blue-400/20' : 'bg-slate-300/20'
-                  }`}></div>
-                  
-                  <div className="relative z-10 flex flex-col h-full">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className={`shrink-0 p-2.5 rounded-xl mt-0.5 ${
-                         ann.priority === 'high' ? 'bg-red-100 text-red-600' : ann.priority === 'medium' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'
-                      }`}>
-                        {ann.priority === 'high' ? <AlertTriangle className="w-5 h-5" /> : ann.priority === 'medium' ? <Info className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-navy text-[17px] leading-tight mb-1">{ann.title}</h3>
-                        {ann.priority === 'high' && <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">Important</span>}
-                      </div>
-                    </div>
-                    {ann.message && (
-                      <p className="text-slate-600 text-sm leading-relaxed mt-2 pl-14 flex-grow">{ann.message}</p>
-                    )}
+        {/* Announcements Modal */}
+        {showAnnouncements && announcements.length > 0 && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAnnouncements(false)}></div>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative bg-white rounded-3xl p-6 md:p-8 w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-100 rounded-xl">
+                    <Bell className="w-5 h-5 text-rose-600" />
                   </div>
-                </motion.div>
-              ))}
-            </div>
+                  <h2 className="text-2xl font-bold text-navy">Platform Announcements</h2>
+                </div>
+                <button 
+                  onClick={() => setShowAnnouncements(false)}
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                >
+                  <X className="w-6 h-6 text-slate-500" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto pr-2 pb-4 -mx-2 px-2 custom-scrollbar flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {announcements.map((ann, idx) => (
+                    <motion.div 
+                      key={ann._id} 
+                      initial={{ opacity: 0, y: 15 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      transition={{ delay: idx * 0.1 }}
+                      className={`relative overflow-hidden p-6 rounded-3xl border transition-all hover:shadow-md ${
+                        ann.priority === 'high' 
+                          ? 'bg-gradient-to-br from-red-50/80 to-rose-50/80 border-red-100' 
+                          : ann.priority === 'medium'
+                            ? 'bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border-blue-100'
+                            : 'bg-white border-slate-200'
+                      }`}
+                    >
+                      <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 ${
+                        ann.priority === 'high' ? 'bg-red-400/20' : ann.priority === 'medium' ? 'bg-blue-400/20' : 'bg-slate-300/20'
+                      }`}></div>
+                      
+                      <div className="relative z-10 flex flex-col h-full">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`shrink-0 p-2.5 rounded-xl mt-0.5 ${
+                             ann.priority === 'high' ? 'bg-red-100 text-red-600' : ann.priority === 'medium' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'
+                          }`}>
+                            {ann.priority === 'high' ? <AlertTriangle className="w-5 h-5" /> : ann.priority === 'medium' ? <Info className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-navy text-[17px] leading-tight mb-1">{ann.title}</h3>
+                            {ann.priority === 'high' && <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">Important</span>}
+                          </div>
+                        </div>
+                        {ann.message && (
+                          <p className="text-slate-600 text-sm leading-relaxed mt-2 pl-14 flex-grow">{ann.message}</p>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
           </div>
         )}
 

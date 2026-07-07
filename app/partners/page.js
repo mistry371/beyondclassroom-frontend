@@ -71,7 +71,7 @@ export default function PartnersPage() {
             <p className="text-muted text-lg mb-8 max-w-2xl mx-auto">
               Are you a school coordinator, tuition center owner, or parent-teacher association representative? Let's work together to boost student outcomes.
             </p>
-            <PremiumButton href="/contact" variant="primary">
+            <PremiumButton href="mailto:partnerships@beyondclassroom.in" variant="primary">
               Get in Touch for Partnerships <Briefcase className="h-5 w-5 ml-2" />
             </PremiumButton>
           </motion.div>

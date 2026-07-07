@@ -10,7 +10,7 @@ import { showSuccess, showError } from '@/components/ui/Toast'
 const emptyForm = {
   name: '',
   description: '',
-  features: '',
+  features: [{ label: '', detail: '' }],
   priceINR: '',
   priceUSD: '',
   validity: '',
@@ -71,7 +71,9 @@ export default function AdminPackages() {
     setFormData({
       name: pkg.name || '',
       description: pkg.description || '',
-      features: Array.isArray(pkg.features) ? pkg.features.map(f => typeof f === 'object' ? `${f.label}${f.detail ? ' | ' + f.detail : ''}` : f).join('\n') : (pkg.features || ''),
+      features: Array.isArray(pkg.features) && pkg.features.length > 0 
+        ? pkg.features.map(f => typeof f === 'object' ? { label: f.label || '', detail: f.detail || '' } : { label: f || '', detail: '' }) 
+        : [{ label: '', detail: '' }],
       priceINR: pkg.priceINR || pkg.inr || '',
       priceUSD: pkg.priceUSD || pkg.usd || '',
       validity: pkg.validity || '',
@@ -93,11 +95,7 @@ export default function AdminPackages() {
     try {
       const payload = {
         ...formData,
-        features: formData.features.split('\n').map((f) => {
-          const parts = f.split('|').map(p => p.trim());
-          if (parts.length > 1) return { label: parts[0], detail: parts[1] };
-          return parts[0];
-        }).filter(f => typeof f === 'object' ? f.label : f),
+        features: formData.features.filter(f => f.label.trim()),
         priceINR: Number(formData.priceINR),
         priceUSD: Number(formData.priceUSD),
         courseIds: formData.courseIds,
@@ -346,15 +344,53 @@ export default function AdminPackages() {
                 </div>
 
                 <div>
-                  <label className="block text-ink text-sm font-medium mb-1">Features (one per line) *</label>
-                  <textarea
-                    required
-                    value={formData.features}
-                    onChange={(e) => setFormData({ ...formData, features: e.target.value })}
-                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary font-mono text-sm"
-                    rows="6"
-                    placeholder="Class 1-8 Mathematics&#10;Structured Practice Papers&#10;Detailed Solutions&#10;Progress Tracking"
-                  />
+                  <label className="block text-ink text-sm font-medium mb-2">Features *</label>
+                  <div className="space-y-3">
+                    {formData.features.map((feature, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          required
+                          value={feature.label}
+                          onChange={(e) => {
+                            const newFeatures = [...formData.features];
+                            newFeatures[index].label = e.target.value;
+                            setFormData({ ...formData, features: newFeatures });
+                          }}
+                          className="flex-1 px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
+                          placeholder="Feature (e.g. Class 1-8 Mathematics)"
+                        />
+                        <input
+                          value={feature.detail}
+                          onChange={(e) => {
+                            const newFeatures = [...formData.features];
+                            newFeatures[index].detail = e.target.value;
+                            setFormData({ ...formData, features: newFeatures });
+                          }}
+                          className="flex-[0.6] px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary text-sm"
+                          placeholder="Detail (Optional)"
+                        />
+                        {formData.features.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newFeatures = formData.features.filter((_, i) => i !== index);
+                              setFormData({ ...formData, features: newFeatures });
+                            }}
+                            className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, features: [...formData.features, { label: '', detail: '' }] })}
+                      className="flex items-center gap-2 text-sm text-primary font-medium hover:text-primary-hover"
+                    >
+                      <Plus className="h-4 w-4" /> Add Feature
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, ShoppingCart, User, Package } from 'lucide-react'
+import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, ShoppingCart, User, Package, Bell, Info } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [fetchError, setFetchError] = useState('')
   const [trialStatus, setTrialStatus] = useState(null)
   const [customRequestsStats, setCustomRequestsStats] = useState({ total: 0, completed: 0 })
+  const [announcements, setAnnouncements] = useState([])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -66,6 +67,12 @@ export default function Dashboard() {
           completed: reqs.filter(r => r.status === 'completed').length
         })
       } catch {}
+
+      // Fetch active announcements
+      try {
+        const annRes = await cachedGet('/announcements', 5 * 60 * 1000)
+        setAnnouncements(annRes.data.announcements || [])
+      } catch {}
     } catch (error) {
       setFetchError(error.userMessage || 'Could not load your dashboard.')
     } finally {
@@ -109,22 +116,52 @@ export default function Dashboard() {
     <div className="min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-              Welcome back, {user?.name}! 👋
-            </h1>
-            <p className="text-slate-500 text-lg">Continue your learning journey</p>
-          </motion.div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm relative overflow-hidden mb-8">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+                Welcome back, {user?.name}! 👋
+              </h1>
+              <p className="text-slate-500 text-lg">Continue your learning journey</p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Announcements Section */}
+        {announcements.length > 0 && (
+          <div className="mb-8 space-y-3">
+            {announcements.map((ann, idx) => (
+              <motion.div 
+                key={ann._id} 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ delay: idx * 0.1 }}
+                className={`p-4 rounded-2xl border flex gap-4 ${
+                  ann.priority === 'high' 
+                    ? 'bg-red-50 border-red-100 text-red-900' 
+                    : ann.priority === 'medium'
+                      ? 'bg-blue-50 border-blue-100 text-blue-900'
+                      : 'bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
+                <div className="shrink-0 mt-1">
+                  {ann.priority === 'high' ? <AlertTriangle className="w-5 h-5 text-red-500" /> : <Bell className="w-5 h-5 text-blue-500" />}
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm">{ann.title}</h3>
+                  <p className="text-sm opacity-90 mt-1 whitespace-pre-wrap">{ann.message}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
         {fetchError && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex justify-between items-center gap-4 flex-wrap">
             <span>{fetchError}</span>

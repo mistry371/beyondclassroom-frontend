@@ -56,16 +56,15 @@ export default function CourseCard({ course }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-gray-900">
-            {course.price === 0 ? 'Free' : `$${course.price}`}
+        <div className="flex items-center justify-between mt-4">
+          <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">
+            {course.isFree ? 'Free Access' : 'Included in Packages'}
           </span>
           <button
-            onClick={handleAddToCart}
-            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+            onClick={(e) => { e.stopPropagation(); router.push(`/courses/${course._id}?buy=true`); }}
+            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm font-bold"
           >
-            <ShoppingCart className="h-4 w-4" />
-            Add
+            {course.isFree ? 'Explore' : 'Buy Package'}
           </button>
         </div>
       </div>

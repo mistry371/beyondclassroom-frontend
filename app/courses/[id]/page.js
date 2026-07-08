@@ -452,7 +452,7 @@ function CourseDetailsContent() {
 
           {/* Right Column */}
           {(() => {
-            const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.includes(course._id))
+            const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.some(pc => (pc._id || pc) === course._id))
             const isFreeOrDemo = course.isFree || course.isDemo
 
             if (isAlreadyPurchased || isFreeOrDemo) {
@@ -685,7 +685,7 @@ function CourseDetailsContent() {
           doc={previewDoc} 
           onClose={() => setPreviewDoc(null)} 
           user={user}
-          isPurchased={user && user.purchasedCourses && user.purchasedCourses.includes(course._id)}
+          isPurchased={user && user.purchasedCourses && user.purchasedCourses.some(pc => (pc._id || pc) === course._id)}
           onRequireLogin={() => {
             setPreviewDoc(null);
             showError("Please login or register to download materials.");

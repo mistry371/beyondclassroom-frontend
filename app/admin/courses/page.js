@@ -211,10 +211,7 @@ export default function AdminCourses() {
                   <span className="text-muted">Category:</span>
                   <span className="text-navy">{course.category}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Price:</span>
-                  <span className="text-primary font-semibold">₹{course.price}</span>
-                </div>
+
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted">Enrolled:</span>
                   <span className="text-navy">{course.enrolledCount || 0}</span>
@@ -343,20 +340,7 @@ export default function AdminCourses() {
                   </select>
                   <p className="text-muted text-xs mt-1">Assign a class so students can filter by grade.</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-ink text-sm font-medium mb-2">Price (₹)</label>
-                    <input
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
-                      placeholder="e.g. 999"
-                      min="1"
-                      required
-                    />
-                    <p className="text-muted text-xs mt-1">Enter ₹1 or more. Use isFree flag for free courses.</p>
-                  </div>
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-ink text-sm font-medium mb-2">Duration</label>
                     <input

@@ -131,7 +131,7 @@ function CoursesContent() {
                       </Link>
                     ) : (
                       <Link href={`/courses/${course._id}?buy=true`} className="inline-flex items-center gap-1 rounded-full bg-brand-gradient px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:opacity-95">
-                        Buy Now <ArrowRight className="h-3 w-3" />
+                        Buy Package <ArrowRight className="h-3 w-3" />
                       </Link>
                     )}
                   </div>

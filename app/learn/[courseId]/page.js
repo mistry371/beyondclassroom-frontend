@@ -233,7 +233,7 @@ export default function LearnPage() {
             <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-2xl p-6">
               <h3 className="text-2xl font-bold text-navy mb-2">Purchase to Unlock</h3>
               <p className="text-muted mb-4">You can preview structure, but lessons and quizzes are locked until purchase.</p>
-              <button onClick={() => router.push(`/courses/${params.courseId}`)} className="px-5 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold">Unlock Course</button>
+              <button onClick={() => router.push(`/packages`)} className="px-5 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold">Purchase a Package</button>
             </div>
           )}
           {modules.length === 0 ? (

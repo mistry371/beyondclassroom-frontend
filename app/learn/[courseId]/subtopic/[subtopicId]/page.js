@@ -104,15 +104,23 @@ export default function SubtopicPage() {
             {docs.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-navy mb-4">📄 Attached Materials</h2>
-                <div className="flex flex-wrap gap-4 mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
                   {docs.map((doc, idx) => (
                     <button
                       key={idx}
                       onClick={() => setPreviewDoc(doc)}
-                      className="inline-flex items-center gap-2 bg-brand-gradient text-white px-5 py-3 rounded-xl font-semibold shadow-premium hover:opacity-90 transition-opacity"
+                      className="flex items-center gap-4 p-5 rounded-2xl border border-primary/10 bg-white hover:border-primary/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-left"
                     >
-                      <FileText className="h-5 w-5" />
-                      {doc?.name ? `View ${doc.name}` : 'Secure View PDF'}
+                      <div className="bg-gradient-to-br from-primary/10 to-secondary/10 p-3.5 rounded-xl text-primary group-hover:from-primary group-hover:to-secondary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-primary/30">
+                        <FileText className="h-6 w-6" />
+                      </div>
+                      <div className="overflow-hidden flex-1">
+                        <p className="font-bold text-navy truncate text-sm mb-1 group-hover:text-primary transition-colors">{doc.name || 'Study Material'}</p>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span>
+                          PDF Document
+                        </p>
+                      </div>
                     </button>
                   ))}
                 </div>

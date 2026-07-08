@@ -16,12 +16,6 @@ export default function LessonPage() {
   const params = useParams()
   const router = useRouter()
   const [lesson, setLesson] = useState(null)
-  const [practices, setPractices] = useState([])
-  const [subtopics, setSubtopics] = useState([])
-  const [currentPractice, setCurrentPractice] = useState(0)
-  const [userAnswer, setUserAnswer] = useState('')
-  const [showSolution, setShowSolution] = useState(false)
-  const [practiceResult, setPracticeResult] = useState(null)
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
   const [previewDoc, setPreviewDoc] = useState(null)
@@ -35,12 +29,8 @@ export default function LessonPage() {
       const lessonRes = await api.get(`/lessons/${params.lessonId}`)
       setLesson(lessonRes.data.lesson)
 
-      const [practicesRes, subtopicsRes] = await Promise.all([
-        api.get(`/practices/lesson/${params.lessonId}`).catch(() => ({ data: { practices: [] } })),
-        api.get(`/subtopics/lesson/${params.lessonId}`).catch(() => ({ data: { subtopics: [] } }))
-      ])
+      const subtopicsRes = await api.get(`/subtopics/lesson/${params.lessonId}`).catch(() => ({ data: { subtopics: [] } }))
       
-      setPractices(practicesRes.data.practices || [])
       setSubtopics(subtopicsRes.data.subtopics || [])
     } catch (error) {
       console.error('Failed to fetch lesson:', error)
@@ -49,39 +39,7 @@ export default function LessonPage() {
     }
   }
 
-  const handleSubmitPractice = async () => {
-    if (!userAnswer.trim()) return
 
-    try {
-      const practice = practices[currentPractice]
-      const res = await api.post(`/practices/${practice._id}/submit`, {
-        answer: userAnswer
-      })
-
-      setPracticeResult(res.data)
-      setShowSolution(true)
-    } catch (error) {
-      console.error('Failed to submit practice:', error)
-    }
-  }
-
-  const handleNextPractice = () => {
-    if (currentPractice < practices.length - 1) {
-      setCurrentPractice(currentPractice + 1)
-      setUserAnswer('')
-      setShowSolution(false)
-      setPracticeResult(null)
-    }
-  }
-
-  const handlePreviousPractice = () => {
-    if (currentPractice > 0) {
-      setCurrentPractice(currentPractice - 1)
-      setUserAnswer('')
-      setShowSolution(false)
-      setPracticeResult(null)
-    }
-  }
 
   const handleCompleteLesson = async () => {
     setCompleting(true)
@@ -115,7 +73,6 @@ export default function LessonPage() {
     )
   }
 
-  const practice = practices[currentPractice]
 
   return (
     <TrialGuard courseId={params.courseId}>
@@ -207,17 +164,33 @@ export default function LessonPage() {
                           </div>
                         )}
                         {docs.length > 0 && (
-                          <div className="flex flex-wrap gap-3 mt-4">
-                            {docs.map((doc, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setPreviewDoc(doc)}
-                                className="inline-flex items-center gap-2 bg-brand-gradient text-white px-4 py-2 rounded-xl font-semibold shadow-premium hover:opacity-90 transition-opacity"
-                              >
-                                <FileText className="h-4 w-4" />
-                                {doc?.name ? `View ${doc.name}` : 'Secure View PDF'}
-                              </button>
-                            ))}
+                          <div className="mt-6 pt-6 border-t border-primary/10">
+                            <h4 className="text-lg font-bold text-navy flex items-center gap-2 mb-4">
+                              <FileText className="h-5 w-5 text-primary" />
+                              Study Materials & PDFs
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                              {docs.map((doc, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setPreviewDoc(doc)}
+                                  className="group flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg transition-all text-left"
+                                >
+                                  <div className="bg-slate-50 p-3 rounded-xl text-primary border border-slate-100 group-hover:bg-primary group-hover:text-white transition-colors shrink-0 shadow-sm">
+                                    <FileText className="h-5 w-5" />
+                                  </div>
+                                  <div className="flex-1 min-w-0 py-0.5">
+                                    <p className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">
+                                      {doc.name || 'Study Material'}
+                                    </p>
+                                    <p className="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5 uppercase tracking-wide">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_4px_rgba(239,68,68,0.4)]"></span>
+                                      Document File
+                                    </p>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -238,158 +211,7 @@ export default function LessonPage() {
               )}
             </motion.div>
 
-            {/* Practice Problems */}
-            {practices.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white shadow-premium rounded-2xl border border-primary/10 p-8"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-navy flex items-center gap-2">
-                    <Target className="h-6 w-6 text-secondary" />
-                    Practice Problems
-                  </h2>
-                  <span className="text-sm text-muted">
-                    {currentPractice + 1} / {practices.length}
-                  </span>
-                </div>
-
-                {practice && (
-                  <div className="space-y-6">
-                    {/* Question */}
-                    <div className="bg-academic border border-primary/10 rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-navy mb-4">Question:</h3>
-                      <div className="text-ink text-lg">
-                        <MathRenderer content={practice.question} />
-                      </div>
-                    </div>
-
-                    {/* Answer Input */}
-                    {!showSolution && (
-                      <div>
-                        <label className="block text-sm font-medium text-ink mb-2">
-                          Your Answer:
-                        </label>
-                        <div className="flex gap-3">
-                          <input
-                            type="text"
-                            value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSubmitPractice()}
-                            className="flex-1 px-4 py-3 bg-white border border-primary/10 rounded-xl text-ink placeholder-muted focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
-                            placeholder="Enter your answer..."
-                          />
-                          <button
-                            onClick={handleSubmitPractice}
-                            disabled={!userAnswer.trim()}
-                            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:opacity-90 transition-all disabled:opacity-50"
-                          >
-                            Submit
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Result */}
-                    {showSolution && practiceResult && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className={`border rounded-xl p-6 ${
-                          practiceResult.isCorrect
-                            ? 'bg-green-500/10 border-green-500/30'
-                            : 'bg-red-500/10 border-red-500/30'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3 mb-4">
-                          {practiceResult.isCorrect ? (
-                            <>
-                              <CheckCircle className="h-6 w-6 text-green-400" />
-                              <span className="text-xl font-bold text-green-400">Correct!</span>
-                            </>
-                          ) : (
-                            <>
-                              <div className="h-6 w-6 rounded-full border-2 border-red-400 flex items-center justify-center">
-                                <span className="text-red-400 text-sm">✕</span>
-                              </div>
-                              <span className="text-xl font-bold text-red-400">Incorrect</span>
-                            </>
-                          )}
-                        </div>
-
-                        <div className="space-y-3">
-                          <div>
-                            <span className="text-muted">Your answer: </span>
-                            <span className="text-navy font-semibold">{userAnswer}</span>
-                          </div>
-                          {!practiceResult.isCorrect && (
-                            <div>
-                              <span className="text-muted">Correct answer: </span>
-                              <span className="text-green-400 font-semibold">
-                                {practiceResult.correctAnswer}
-                              </span>
-                            </div>
-                          )}
-                          {practiceResult.solution && (
-                            <div className="mt-4 pt-4 border-t border-primary/10">
-                              <h4 className="text-navy font-semibold mb-2">Solution:</h4>
-                              <div className="text-ink">
-                                <MathRenderer content={practiceResult.solution} />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {/* Navigation */}
-                    <div className="flex items-center justify-between pt-4">
-                      <button
-                        onClick={handlePreviousPractice}
-                        disabled={currentPractice === 0}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-navy rounded-lg hover:bg-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ArrowLeft className="h-4 w-4" />
-                        Previous
-                      </button>
-
-                      {currentPractice < practices.length - 1 ? (
-                        <button
-                          onClick={handleNextPractice}
-                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90 transition-all"
-                        >
-                          Next
-                          <ArrowRight className="h-4 w-4" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={handleCompleteLesson}
-                          disabled={completing}
-                          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50"
-                        >
-                          {completing ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-                              Completing...
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="h-4 w-4" />
-                              Complete Lesson
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {/* Complete Lesson Button (if no practices) */}
-            {practices.length === 0 && (
+            {/* Complete Lesson Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -413,7 +235,6 @@ export default function LessonPage() {
                   )}
                 </button>
               </motion.div>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -426,28 +247,6 @@ export default function LessonPage() {
                   <span className="text-muted">Duration</span>
                   <span className="text-navy font-semibold">{lesson.duration}</span>
                 </div>
-
-                <div className="flex items-center justify-between p-3 bg-academic rounded-lg">
-                  <span className="text-muted">Practice Problems</span>
-                  <span className="text-navy font-semibold">{practices.length}</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg border border-primary/30">
-                  <span className="text-muted">Points</span>
-                  <span className="text-primary font-bold text-xl">
-                    {practiceResult?.points || 0}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <Award className="h-5 w-5 text-yellow-500" />
-                  <span className="text-navy font-semibold">Pro Tip</span>
-                </div>
-                <p className="text-sm text-muted">
-                  Complete all practice problems to master this concept and unlock the module quiz!
-                </p>
               </div>
             </div>
           </div>

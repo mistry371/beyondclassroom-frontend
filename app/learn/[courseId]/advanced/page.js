@@ -6,6 +6,9 @@ import { BookOpen, CheckCircle, PlayCircle, FileText, Lock, Clock, Award, Trendi
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
+import dynamic from 'next/dynamic'
+
+const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { ssr: false })
 
 export default function AdvancedLearnPage() {
   const params = useParams()
@@ -17,7 +20,7 @@ export default function AdvancedLearnPage() {
   const [activeLesson, setActiveLesson] = useState(null)
   const [progress, setProgress] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState('lesson') // lesson, practice, quiz
+  const [previewDoc, setPreviewDoc] = useState(null)
 
   useEffect(() => {
     fetchCourseData()
@@ -25,13 +28,13 @@ export default function AdvancedLearnPage() {
 
   const fetchCourseData = async () => {
     try {
-      // Fetch course
-      const courseRes = await api.get(`/courses/${params.courseId}`)
-      setCourse(courseRes.data.course)
+      // Fetch course with populate=true to get modules -> lessons -> subtopics -> documents
+      const courseRes = await api.get(`/courses/${params.courseId}?populate=true`)
+      const fetchedCourse = courseRes.data.course
+      setCourse(fetchedCourse)
       
-      // Fetch modules
-      const modulesRes = await api.get(`/modules/course/${params.courseId}`)
-      setModules(modulesRes.data.modules || [])
+      const courseModules = fetchedCourse.modules || []
+      setModules(courseModules)
       
       // Fetch progress (optional - may fail if not logged in)
       try {
@@ -43,8 +46,8 @@ export default function AdvancedLearnPage() {
       }
       
       // Select first module if available
-      if (modulesRes.data.modules && modulesRes.data.modules.length > 0) {
-        selectModule(modulesRes.data.modules[0])
+      if (courseModules.length > 0) {
+        selectModule(courseModules[0])
       }
     } catch (error) {
       console.error('Fetch failed:', error)
@@ -53,38 +56,14 @@ export default function AdvancedLearnPage() {
     }
   }
 
-  const selectModule = async (module) => {
+  const selectModule = (module) => {
     setActiveModule(module)
-    try {
-      const lessonsRes = await api.get(`/lessons/module/${module._id}`)
-      let fetchedLessons = lessonsRes.data.lessons || []
-      
-      if (fetchedLessons.length === 0) {
-        try {
-          const subRes = await api.get(`/subtopics/module/${module._id}`)
-          const subtopics = subRes.data.subtopics || []
-          fetchedLessons = subtopics.map(st => ({
-            _id: st._id,
-            title: st.title,
-            description: st.content,
-            content: { concept: st.content },
-            documents: st.documents || (st.document ? [st.document] : []),
-            type: 'subtopic',
-            isLocked: false
-          }))
-        } catch (e) {
-          console.error('Failed to fetch module subtopics:', e)
-        }
-      }
-
-      setLessons(fetchedLessons)
-      if (fetchedLessons.length > 0) {
-        setActiveLesson(fetchedLessons[0])
-      } else {
-        setActiveLesson(null)
-      }
-    } catch (error) {
-      console.error('Fetch lessons failed:', error)
+    const fetchedLessons = module.lessons || []
+    setLessons(fetchedLessons)
+    if (fetchedLessons.length > 0) {
+      setActiveLesson(fetchedLessons[0])
+    } else {
+      setActiveLesson(null)
     }
   }
 
@@ -223,7 +202,7 @@ export default function AdvancedLearnPage() {
                       lessons.map((lesson) => (
                         <motion.button
                           key={lesson._id}
-                          onClick={() => { setActiveLesson(lesson); setView('lesson') }}
+                          onClick={() => setActiveLesson(lesson)}
                           whileHover={{ scale: 1.02, x: 4 }}
                           whileTap={{ scale: 0.98 }}
                           className={`w-full text-left px-3 py-3 rounded-lg text-sm transition-all duration-200 ${
@@ -261,39 +240,9 @@ export default function AdvancedLearnPage() {
                       transition={{ duration: 0.3 }}
                       className="bg-white rounded-2xl border border-primary/10 p-8 shadow-premium"
                     >
-                      {/* View Tabs */}
-                      <div className="flex gap-3 mb-8">
-                        <motion.button
-                          onClick={() => setView('lesson')}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-                            view === 'lesson'
-                              ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30'
-                              : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
-                          }`}
-                        >
-                          <FileText className="h-4 w-4" />
-                          Lesson
-                        </motion.button>
-                        <motion.button
-                          onClick={() => setView('practice')}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-                            view === 'practice'
-                              ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30'
-                              : 'bg-slate-50 text-ink hover:bg-slate-100 border border-primary/10'
-                          }`}
-                        >
-                          <Award className="h-4 w-4" />
-                          Practice
-                        </motion.button>
-                      </div>
-
-                      {view === 'lesson' && (
-                        <>
-                          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-3">
+                      {/* Lesson Content Wrapper */}
+                      <div className="w-full">
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-3">
                             {activeLesson.title}
                           </h1>
                           <p className="text-ink mb-6 text-lg">
@@ -317,8 +266,8 @@ export default function AdvancedLearnPage() {
                             </div>
                           )}
 
-                          {/* Lesson Content */}
-                          <div className="lesson-content space-y-6">
+                          {/* Subtopics Content */}
+                          <div className="lesson-content space-y-8">
                             <style jsx global>{`
                               .lesson-content h2 {
                                 font-size: 1.75rem;
@@ -380,56 +329,64 @@ export default function AdvancedLearnPage() {
                                 font-size: 0.95rem;
                               }
                             `}</style>
-                            {/* Render content safely — strip script tags before rendering */}
-                            <div
-                              className="bg-academic rounded-xl p-6 border border-primary/10"
-                              dangerouslySetInnerHTML={{
-                                __html: (activeLesson.content?.concept || '<p class="text-muted">No content available</p>')
-                                  .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                                  .replace(/on\w+="[^"]*"/gi, '')
-                                  .replace(/javascript:/gi, '')
-                              }}
-                            />
-                          </div>
 
-                          {/* Documents / PDFs Section */}
-                          {activeLesson.documents && activeLesson.documents.length > 0 && (
-                            <div className="mt-8 space-y-4">
-                              <h3 className="text-xl font-bold text-navy flex items-center gap-2">
-                                <FileText className="h-5 w-5 text-primary" />
-                                Study Materials & PDFs
-                              </h3>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {activeLesson.documents.map((doc, idx) => {
-                                  const fileUrl = doc.url || doc.data;
+                            {(activeLesson.subtopics || []).map((subtopic) => (
+                              <div key={subtopic._id} className="bg-academic rounded-xl p-6 border border-primary/10">
+                                <h2 className="text-2xl font-bold text-navy mb-4">{subtopic.title}</h2>
+                                {subtopic.content && (
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: subtopic.content
+                                        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                                        .replace(/on\w+="[^"]*"/gi, '')
+                                        .replace(/javascript:/gi, '')
+                                    }}
+                                  />
+                                )}
+                                
+                                {/* Documents / PDFs Section for Subtopic */}
+                                {(() => {
+                                  const docs = subtopic.documents || (subtopic.document ? [subtopic.document] : []);
+                                  if (!docs || docs.length === 0) return null;
                                   return (
-                                    <a
-                                      key={idx}
-                                      href={fileUrl || '#'}
-                                      download={doc.name}
-                                      target={fileUrl ? "_blank" : "_self"}
-                                      rel="noreferrer"
-                                      onClick={(e) => {
-                                        if (!fileUrl) {
-                                          e.preventDefault();
-                                          alert('Sorry, the file for this document has not been uploaded yet.');
-                                        }
-                                      }}
-                                      className="flex items-center gap-3 p-4 rounded-xl border border-primary/10 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
-                                    >
-                                      <div className="bg-primary/10 p-3 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                        <FileText className="h-6 w-6" />
+                                    <div className="mt-6 pt-6 border-t border-primary/10">
+                                      <h3 className="text-lg font-bold text-navy flex items-center gap-2 mb-4">
+                                        <FileText className="h-5 w-5 text-primary" />
+                                        Study Materials & PDFs
+                                      </h3>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                                        {docs.map((doc, idx) => {
+                                          return (
+                                            <button
+                                              key={idx}
+                                              onClick={() => setPreviewDoc(doc)}
+                                              className="group flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg transition-all text-left"
+                                            >
+                                              <div className="bg-slate-50 p-3 rounded-xl text-primary border border-slate-100 group-hover:bg-primary group-hover:text-white transition-colors shrink-0 shadow-sm">
+                                                <FileText className="h-5 w-5" />
+                                              </div>
+                                              <div className="flex-1 min-w-0 py-0.5">
+                                                <p className="font-bold text-slate-800 text-sm truncate group-hover:text-primary transition-colors">
+                                                  {doc.name || 'Study Material'}
+                                                </p>
+                                                <p className="text-xs font-semibold text-slate-500 mt-1 flex items-center gap-1.5 uppercase tracking-wide">
+                                                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_4px_rgba(239,68,68,0.4)]"></span>
+                                                  Document File
+                                                </p>
+                                              </div>
+                                            </button>
+                                          );
+                                        })}
                                       </div>
-                                      <div className="overflow-hidden">
-                                        <p className="font-semibold text-ink truncate">{doc.name || 'Study Material'}</p>
-                                        <p className="text-xs text-muted mt-1 uppercase tracking-wider">PDF Document</p>
-                                      </div>
-                                    </a>
+                                    </div>
                                   );
-                                })}
+                                })()}
                               </div>
-                            </div>
-                          )}
+                            ))}
+                            {(activeLesson.subtopics || []).length === 0 && (
+                              <p className="text-muted text-center py-6">No content available</p>
+                            )}
+                          </div>
 
                           {/* Summary Section */}
                           {activeLesson.content?.summary && typeof activeLesson.content.summary === 'string' && (
@@ -464,8 +421,7 @@ export default function AdvancedLearnPage() {
                                     if (!completed.includes(activeLesson._id)) {
                                       const newCompleted = [...completed, activeLesson._id]
                                       const totalLessons = modules.reduce((acc, m) => {
-                                        const subtopicsCount = (moduleSubtopics[m._id] || []).length;
-                                        return acc + (m.lessonCount || subtopicsCount || 1);
+                                        return acc + (m.lessons || []).length;
                                       }, 0) || newCompleted.length
                                       return {
                                         ...prev,
@@ -511,19 +467,7 @@ export default function AdvancedLearnPage() {
                               Complete & Next
                             </button>
                           </div>
-                        </>
-                      )}
-
-                      {view === 'practice' && (
-                        <div>
-                          <h2 className="text-2xl font-bold text-navy mb-4">Practice Problems</h2>
-                          <p className="text-muted mb-6">Test your understanding with these practice problems</p>
-                          <div className="bg-primary/10 border border-primary/30 rounded-lg p-6 text-center">
-                            <Award className="h-12 w-12 text-primary mx-auto mb-3" />
-                            <p className="text-ink">Practice problems coming soon!</p>
-                          </div>
-                        </div>
-                      )}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -532,6 +476,9 @@ export default function AdvancedLearnPage() {
           </div>
         </div>
       </div>
+      {previewDoc && (
+        <PdfPreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} isPurchased={true} user={{ _id: 'dummy' }} />
+      )}
     </div>
   )
 }

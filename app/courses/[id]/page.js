@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X, Download, Check } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, FileText, Lock, PackageCheck, PlayCircle, ShieldCheck, ShoppingCart, Sparkles, Star, Target, X, Download, Check } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
 import PackagePickerModal from '@/components/PackagePickerModal'
@@ -131,12 +131,12 @@ function CourseDetailsContent() {
   }
 
   useEffect(() => {
-    if (user) {
-      api.get('/custom-requests/my/limits')
+    if (user && course) {
+      api.get(`/custom-requests/my/limits?courseId=${course._id}`)
         .then(res => setUsageLimit(res.data.usage))
         .catch(err => console.error('Failed to fetch usage limits', err))
     }
-  }, [user])
+  }, [user, course])
 
   const selection = useMemo(() => {
     const selectedModules = []
@@ -212,6 +212,7 @@ function CourseDetailsContent() {
         packageSummary: `${selection.selectedModules.length} modules, ${selection.selectedLessons.length} lessons, ${selection.selectedSubtopics.length} subtopics, ${selection.selectedPdfs.length} PDFs`,
         status: 'pending',
         packageId,
+        courseId: course._id,
         marks: marks ? Number(marks) : undefined,
         studentAttachedFile,
       })
@@ -458,9 +459,34 @@ function CourseDetailsContent() {
               if (user) {
                 // Show Customization Flow
                 return (
-                  <div className="rounded-3xl border border-primary/10 bg-white p-7 shadow-premium relative overflow-hidden">
-                    <div>
-                      <div className="mb-6 flex items-center justify-between gap-4">
+                  <div className="space-y-6">
+                    {/* Package Limit Usage Card */}
+                    {usageLimit && (
+                      <div className="p-6 bg-white rounded-3xl border border-primary/20 shadow-premium flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                          <h2 className="text-xl font-bold text-navy">Package Usage Limit</h2>
+                          <p className="text-sm text-muted mt-1">Track your personalized custom request limit</p>
+                        </div>
+                        <div className="sm:text-right">
+                          {usageLimit.hasUnlimited ? (
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-xl font-bold border border-green-200">
+                              <PackageCheck className="w-4 h-4"/> Unlimited Requests Available
+                            </div>
+                          ) : (
+                            <div className="flex flex-col sm:items-end">
+                              <div className="text-2xl font-black text-navy">{usageLimit.used} <span className="text-base text-muted font-semibold">/ {usageLimit.limit}</span></div>
+                              <div className="text-sm text-primary font-bold bg-primary/10 px-3 py-1 rounded-lg mt-1 inline-block">
+                                {usageLimit.remaining} Requests Remaining
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="rounded-3xl border border-primary/10 bg-white p-7 sm:p-10 shadow-premium relative overflow-hidden">
+                      <div>
+                        <div className="mb-6 flex items-center justify-between gap-4">
                         <div>
                           <h2 className="text-2xl font-black text-navy">Customize My Course</h2>
                           <p className="text-sm text-muted">Select only what you want. Admin will review, finalize, and assign your package.</p>
@@ -539,6 +565,7 @@ function CourseDetailsContent() {
                       </div>
                     </div>
                   </div>
+                  </div>
                 )
               } else {
                 // Free course, guest user -> Show "Start Learning for Free" card
@@ -607,7 +634,7 @@ function CourseDetailsContent() {
                       onClick={(e) => { e.stopPropagation(); setShowPackagePicker(true); }}
                       className="w-full py-4 bg-brand-gradient text-white rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:opacity-95 shadow-md shadow-primary/20 flex items-center justify-center gap-2"
                     >
-                      <ShoppingCart className="w-5 h-5" /> Buy this Course
+                      <ShoppingCart className="w-5 h-5" /> Buy a Package to Unlock
                     </button>
                     <p className="text-center text-[10px] text-muted font-bold uppercase tracking-wider mt-3">
                       Secure payments via Razorpay

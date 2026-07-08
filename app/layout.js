@@ -1,4 +1,5 @@
 import './globals.css'
+import 'react-phone-input-2/lib/style.css'
 import { Providers } from './providers'
 import ClientWrappers from '@/components/ClientWrappers'
 import SecurityWrapper from '@/components/SecurityWrapper'

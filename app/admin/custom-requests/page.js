@@ -347,7 +347,35 @@ export default function AdminCustomRequests() {
               <button onClick={() => setPreviewUrl(null)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><XCircle className="w-5 h-5"/></button>
             </div>
             <div className="flex-1 bg-slate-100 rounded-b-3xl overflow-hidden relative">
-              <iframe src={previewUrl} className="w-full h-full border-0" title="Document Preview" />
+              {(() => {
+                const cleanUrl = previewUrl.split('#')[0].split('?')[0].toLowerCase();
+                const isPdfOrImage = cleanUrl.endsWith('.pdf') || cleanUrl.match(/\.(png|jpe?g|gif|webp|svg)$/);
+
+                if (isPdfOrImage) {
+                  return <iframe src={previewUrl} className="w-full h-full border-0" title="Document Preview" />;
+                }
+
+                const gviewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`;
+                return (
+                  <div className="w-full h-full flex flex-col">
+                    <div className="bg-blue-50 border-b border-blue-200 p-4 text-sm flex sm:flex-row flex-col items-center justify-between gap-4 shrink-0">
+                      <span className="text-blue-900 font-semibold text-center sm:text-left">
+                        Previewing via Google Docs Viewer. If the preview is blank (e.g. on localhost), please download the file directly.
+                      </span>
+                      <a 
+                        href={previewUrl} 
+                        download 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ backgroundColor: '#2563eb', color: '#ffffff', padding: '8px 20px', borderRadius: '8px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                      >
+                        Download File
+                      </a>
+                    </div>
+                    <iframe src={gviewUrl} className="w-full flex-1 border-0" title="Document Preview" />
+                  </div>
+                );
+              })()}
             </div>
           </motion.div>
         </div>

@@ -3,9 +3,11 @@
 import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDispatch } from 'react-redux'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { Lock, LogIn, Home, ArrowLeft, AlertCircle, Eye, EyeOff, Phone } from 'lucide-react'
+import dynamic from 'next/dynamic'
+const PhoneInput = dynamic(() => import('@/components/ui/PhoneInputWrapper'), { ssr: false, loading: () => <div className="w-full h-[46px] bg-gray-100 rounded-xl animate-pulse" /> })
+import { Mail, Lock, LogIn, Home, ArrowLeft, AlertCircle, Eye, EyeOff, Phone } from 'lucide-react'
 import { setCredentials } from '@/store/slices/authSlice'
 import api from '@/utils/api'
 import Link from 'next/link'
@@ -16,22 +18,24 @@ function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, control, formState: { errors } } = useForm()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showForceLoginPrompt, setShowForceLoginPrompt] = useState(false)
   const [pendingLoginData, setPendingLoginData] = useState(null)
+  const [isEmailLogin, setIsEmailLogin] = useState(false)
 
   const onSubmit = async (data) => {
     try {
       setLoading(true)
       setError('')
-      const loginId = (data.loginId || '').trim()
-      const isEmail = loginId.includes('@')
+      const email = isEmailLogin ? (data.email || '').toLowerCase().trim() : '';
+      const phone = !isEmailLogin ? (data.phone || '').trim() : '';
+      
       const response = await api.post('/auth/login', {
-        phone: isEmail ? '' : loginId,
-        email: isEmail ? loginId.toLowerCase() : '',
+        phone,
+        email,
         password: data.password,
         force: false,
       }, { timeout: 45000 })
@@ -77,11 +81,12 @@ function LoginContent() {
       setShowForceLoginPrompt(false)
       setLoading(true)
       setError('')
-      const loginId = (pendingLoginData.loginId || '').trim()
-      const isEmail = loginId.includes('@')
+      const email = isEmailLogin ? (pendingLoginData.email || '').toLowerCase().trim() : '';
+      const phone = !isEmailLogin ? (pendingLoginData.phone || '').trim() : '';
+
       const response = await api.post('/auth/login', {
-        phone: isEmail ? '' : loginId,
-        email: isEmail ? loginId.toLowerCase() : '',
+        phone,
+        email,
         password: pendingLoginData.password,
         force: true,
       }, { timeout: 45000 })
@@ -107,35 +112,72 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 relative overflow-clip">
-      {/* Decorative background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl" />
-      <Link href="/" className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-xl border border-gray-200 rounded-xl text-navy hover:bg-gray-50 transition-all group shadow-sm">
-        <Home className="h-5 w-5 group-hover:scale-110 transition-transform" />
-        <span className="hidden sm:inline font-medium">Home</span>
-      </Link>
-      <Link href="/courses" className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-xl border border-gray-200 rounded-xl text-navy hover:bg-gray-50 transition-all group shadow-sm">
-        <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-        <span className="hidden sm:inline font-medium">Courses</span>
-      </Link>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 w-full max-w-md z-10"
-      >
-        <div className="text-center mb-8">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
-            className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <LogIn className="h-8 w-8 text-navy" />
-          </motion.div>
-          <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-gray-500">Sign in to Beyond Classroom</p>
+    <div className="min-h-screen flex flex-col md:flex-row bg-white font-sans">
+      {/* Left Panel - Hidden on mobile */}
+      <div className="hidden md:flex md:w-5/12 lg:w-1/2 bg-gradient-to-br from-primary via-navy to-secondary p-12 flex-col justify-between relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-white/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-20%] w-[60%] h-[60%] bg-secondary/30 rounded-full blur-[100px]" />
+        
+        <div className="relative z-10">
+          <Link href="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white font-medium transition-colors bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 hover:bg-white/20">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
         </div>
+
+        <div className="relative z-10 text-white mt-12 mb-auto pt-20">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium text-white mb-6 backdrop-blur-md">
+              👋 Welcome Back
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-black mb-6 leading-[1.1] tracking-tight">
+              Continue Your <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-emerald-300">Learning Journey</span> <br/>
+              With Us.
+            </h1>
+            <p className="text-lg text-white/80 mb-10 max-w-md leading-relaxed font-medium">
+              Log in to pick up right where you left off. Access your personalized dashboard, live classes, and resources.
+            </p>
+            
+            <div className="space-y-5">
+              {[
+                'Track your progress effortlessly',
+                'Engage with expert educators',
+                'Join our global community'
+              ].map((feature, idx) => (
+                <div key={idx} className="flex items-center gap-4 text-white/90">
+                  <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 shadow-inner">
+                     <svg className="w-5 h-5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <span className="font-semibold text-lg">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+        
+        <div className="relative z-10 text-white/50 text-sm font-medium">
+          © {new Date().getFullYear()} Beyond Classroom. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right Panel - Form */}
+      <div className="w-full md:w-7/12 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-[#F8FAFC]">
+        <div className="w-full max-w-md">
+          {/* Mobile Back Button */}
+          <div className="md:hidden mb-8">
+            <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors font-semibold bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
+            </Link>
+          </div>
+
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-gray-100/80">
+            <div className="mb-8">
+              <h2 className="text-3xl font-black text-navy mb-2 tracking-tight">Sign In</h2>
+              <p className="text-gray-500 font-medium">Log in to your Beyond Classroom account.</p>
+            </div>
 
         {error && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
@@ -147,19 +189,58 @@ function LoginContent() {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <Input
-            label="Mobile Number or Email"
-            theme="light"
-            icon={Phone}
-            placeholder="9876543210"
-            error={errors.loginId?.message}
-            {...register('loginId', { required: 'Mobile number or email is required' })}
-          />
+          {isEmailLogin ? (
+            <div>
+              <Input
+                label="Email Address"
+                theme="light"
+                icon={Mail}
+                placeholder="you@example.com"
+                error={errors.email?.message}
+                {...register('email', { 
+                  required: isEmailLogin ? 'Email is required' : false,
+                  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email' }
+                })}
+              />
+              <div className="text-right mt-1">
+                <button type="button" onClick={() => setIsEmailLogin(false)} className="text-xs text-primary hover:underline font-medium">Use Mobile Number instead</button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label className="text-sm font-semibold text-ink mb-2 block">Mobile Number</label>
+              <div className="relative">
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ 
+                    required: !isEmailLogin ? 'Mobile number is required' : false,
+                    minLength: { value: 10, message: 'Invalid mobile number' }
+                  }}
+                  render={({ field: { onChange, value } }) => (
+                    <PhoneInput
+                      country={'in'}
+                      value={value}
+                      onChange={onChange}
+                      inputClass="!w-full !py-3 !pl-[50px] !pr-4 !bg-white !border !border-gray-200 !text-navy !rounded-xl !shadow-sm focus:!ring-2 focus:!ring-primary focus:!border-transparent !transition-all"
+                      containerClass="w-full"
+                      buttonClass="!border-gray-200 !bg-transparent !rounded-l-xl !pl-2"
+                      dropdownClass="!rounded-xl !shadow-xl !border-gray-100"
+                    />
+                  )}
+                />
+              </div>
+              {errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>}
+              <div className="text-right mt-1">
+                <button type="button" onClick={() => setIsEmailLogin(true)} className="text-xs text-primary hover:underline font-medium">Use Email instead</button>
+              </div>
+            </div>
+          )}
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold text-ink">Password</label>
-              <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-secondary transition-colors">
+              <label className="text-sm font-semibold text-ink block">Password</label>
+              <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-secondary transition-colors font-medium">
                 Forgot password?
               </Link>
             </div>
@@ -180,17 +261,20 @@ function LoginContent() {
             </div>
           </div>
 
-          <Button type="submit" loading={loading} className="w-full py-4">
+          <Button type="submit" loading={loading} className="w-full py-4 mt-2">
             {!loading && <LogIn className="h-5 w-5" />}
             Sign In
           </Button>
 
-          <p className="text-center text-gray-500 text-sm pt-2">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/register" className="text-primary hover:text-secondary font-bold transition-colors">Sign Up Free</Link>
-          </p>
         </form>
+
+        <p className="text-center text-gray-500 text-sm mt-8 font-medium">
+          Don&apos;t have an account?{' '}
+          <Link href="/auth/register" className="text-primary hover:text-secondary font-bold transition-colors">Sign Up Free</Link>
+        </p>
       </motion.div>
+    </div>
+  </div>
 
       {/* Force Login Prompt Modal */}
       {showForceLoginPrompt && (

@@ -31,7 +31,7 @@ export default function TrialGuard({ children, courseId }) {
 
           <h1 className="text-3xl font-black text-navy mb-3">Premium Content</h1>
           <p className="text-muted mb-8 leading-relaxed">
-            You need to purchase this course to access its modules, lessons, and practice materials.
+            You need to purchase a package containing this class to access its modules, lessons, and practice materials.
           </p>
 
           <div className="bg-slate-50 border border-primary/5 rounded-2xl p-5 mb-8 text-left space-y-3">
@@ -51,11 +51,11 @@ export default function TrialGuard({ children, courseId }) {
 
           <div className="flex flex-col gap-3">
             <button
-              onClick={() => router.push(`/courses/${courseId}`)}
+              onClick={() => router.push('/packages')}
               className="w-full px-6 py-4 bg-brand-gradient text-white rounded-xl font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2 text-lg shadow-md"
             >
               <ShoppingCart className="h-5 w-5" />
-              Purchase Course
+              Purchase a Package to Unlock
             </button>
             <button
               onClick={() => router.push('/dashboard')}

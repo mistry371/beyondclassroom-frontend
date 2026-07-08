@@ -14,7 +14,7 @@ export default function TrialGuard({ children, courseId }) {
     return null
   }
 
-  const hasAccess = user?.purchasedCourses?.includes(courseId)
+  const hasAccess = user?.purchasedCourses?.some(pc => (pc._id || pc) === courseId)
 
   // No access — show paywall
   if (!hasAccess) {

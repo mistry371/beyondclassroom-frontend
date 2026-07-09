@@ -454,8 +454,9 @@ function CourseDetailsContent() {
           {(() => {
             const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.some(pc => (pc._id || pc) === course._id))
             const isFreeOrDemo = course.isFree || course.isDemo
+            const hasAvailablePackage = !!(usageLimit && (usageLimit.hasUnlimited || usageLimit.used < usageLimit.limit))
 
-            if (isAlreadyPurchased || isFreeOrDemo) {
+            if (isAlreadyPurchased || isFreeOrDemo || hasAvailablePackage) {
               if (user) {
                 // Show Customization Flow
                 return (
@@ -693,7 +694,12 @@ function CourseDetailsContent() {
           }}
           onRequirePurchase={() => {
             setPreviewDoc(null);
-            setShowPaymentModal(true);
+            const hasAvailablePackage = !!(usageLimit && (usageLimit.hasUnlimited || usageLimit.used < usageLimit.limit));
+            if (hasAvailablePackage) {
+              showError("Please unlock this course by submitting a Custom Request to Admin from the panel above.");
+            } else {
+              setShowPackagePicker(true);
+            }
           }}
         />
       )}

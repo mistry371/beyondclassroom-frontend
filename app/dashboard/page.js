@@ -50,7 +50,8 @@ export default function Dashboard() {
       try {
         const pkgsRes = await cachedGet('/packages', 60 * 1000)
         if (pkgsRes && pkgsRes.data.success) {
-          const pkgs = pkgsRes.data.packages.filter(p => userCourses.includes(p._id))
+          const rawIds = profileRes.data.user.purchasedCourseIds || []
+          const pkgs = pkgsRes.data.packages.filter(p => rawIds.includes(p._id) || rawIds.includes(p.id))
           setPurchasedPackages(pkgs)
         }
       } catch (err) {

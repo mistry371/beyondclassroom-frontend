@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { BookOpen, Plus, CreditCard, CheckCircle, RefreshCw, PackageCheck, X } from 'lucide-react'
 import Navbar from '@/components/Navbar'
-import api, { API_URL } from '@/utils/api'
+import api, { API_URL, cachedGet } from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 import PdfPreviewModal from '@/components/PdfPreviewModal'
@@ -44,7 +44,7 @@ export default function CustomRequestsPage() {
         userCourses.map(async (item) => {
           if (item && typeof item === 'object' && item._id) return item
           try {
-            const res = await api.get(`/courses/${item}`)
+            const res = await cachedGet(`/courses/${item}`)
             return res.data.course
           } catch { return null }
         })

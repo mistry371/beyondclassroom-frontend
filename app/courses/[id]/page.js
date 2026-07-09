@@ -63,7 +63,7 @@ function CourseDetailsContent() {
 
   useEffect(() => {
     fetchCourse()
-  }, [params.id, user?._id])
+  }, [params.id])
 
   useEffect(() => {
     if (course?._id) {

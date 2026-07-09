@@ -369,7 +369,7 @@ export default function AdvancedLearnPage() {
                                           return (
                                             <button
                                               key={idx}
-                                              onClick={() => setPreviewDoc(doc)}
+                                              onClick={() => setPreviewDoc({...doc, subtopicId: subtopic._id})}
                                               className="group flex items-start gap-4 p-4 rounded-2xl bg-white border border-slate-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg transition-all text-left"
                                             >
                                               <div className="bg-slate-50 p-3 rounded-xl text-primary border border-slate-100 group-hover:bg-primary group-hover:text-white transition-colors shrink-0 shadow-sm">

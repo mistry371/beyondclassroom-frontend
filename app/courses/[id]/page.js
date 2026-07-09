@@ -365,7 +365,7 @@ function CourseDetailsContent() {
                                           {getDocs(subtopic).length > 0 && (
                                             <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
                                               {getDocs(subtopic).map((doc, index) => (
-                                                <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                                <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc({...doc, subtopicId: subtopic._id})} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-primary hover:text-white hover:border-primary transition-all">
                                                   <FileText className="h-4 w-4" /> 
                                                   <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
                                                 </button>
@@ -418,7 +418,7 @@ function CourseDetailsContent() {
                                                         {getDocs(subtopic).length > 0 && (
                                                           <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-100">
                                                             {getDocs(subtopic).map((doc, index) => (
-                                                              <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc(doc)} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+                                                              <button key={`${subtopic._id}-${index}`} onClick={() => setPreviewDoc({...doc, subtopicId: subtopic._id})} className="inline-flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-secondary hover:text-white hover:border-secondary transition-all">
                                                                 <FileText className="h-4 w-4" /> 
                                                                 <span className="truncate max-w-[200px]">{doc?.name || `Document ${index + 1}`}</span>
                                                               </button>

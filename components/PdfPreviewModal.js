@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { FileText, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download } from 'lucide-react'
 import { Document, Page, pdfjs } from 'react-pdf'
+import api from '@/utils/api'
 
 // Set worker url
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
@@ -15,30 +16,57 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
   const [error, setError] = useState(false)
   const containerRef = useRef(null)
 
+  const [loadingFile, setLoadingFile] = useState(false)
+
   useEffect(() => {
     if (!doc) return
-    if (!doc.url && !doc.data) {
-      alert("Sorry, the file for this document has not been uploaded yet.");
-      onClose();
-      return;
-    }
-    try {
-      if (doc.data) {
-        const byteChars = atob(doc.data)
-        const byteNums = new Array(byteChars.length)
-        for (let i = 0; i < byteChars.length; i++) {
-          byteNums[i] = byteChars.charCodeAt(i)
+    const loadFile = async () => {
+      setLoadingFile(true)
+      try {
+        if (doc.data) {
+          const byteChars = atob(doc.data)
+          const byteNums = new Array(byteChars.length)
+          for (let i = 0; i < byteChars.length; i++) {
+            byteNums[i] = byteChars.charCodeAt(i)
+          }
+          const byteArray = new Uint8Array(byteNums)
+          setFile({ data: byteArray })
+        } else if (doc.url) {
+          setFile(doc.url)
+        } else if (doc.subtopicId) {
+          const res = await api.get(`/subtopics/${doc.subtopicId}`)
+          const fetchedSubtopic = res.data.subtopic
+          let matchingDoc = null;
+          if (fetchedSubtopic.documents && fetchedSubtopic.documents.length > 0) {
+             matchingDoc = fetchedSubtopic.documents.find(d => d.name === doc.name)
+          } else if (fetchedSubtopic.document) {
+             matchingDoc = fetchedSubtopic.document
+          }
+          
+          if (matchingDoc && matchingDoc.data) {
+            const byteChars = atob(matchingDoc.data)
+            const byteNums = new Array(byteChars.length)
+            for (let i = 0; i < byteChars.length; i++) {
+              byteNums[i] = byteChars.charCodeAt(i)
+            }
+            const byteArray = new Uint8Array(byteNums)
+            setFile({ data: byteArray })
+          } else {
+            alert("Sorry, you don't have access to this document or it was not found.")
+            onClose()
+          }
+        } else {
+          alert("Sorry, the file for this document has not been uploaded yet.")
+          onClose()
         }
-        const byteArray = new Uint8Array(byteNums)
-        // Pass unit8 array directly to react-pdf to avoid creating blob URLs that can be downloaded
-        setFile({ data: byteArray })
-      } else if (doc.url) {
-        setFile(doc.url)
+      } catch (e) {
+        console.error('PDF preview error:', e)
+        setError(true)
+      } finally {
+        setLoadingFile(false)
       }
-    } catch (e) {
-      console.error('PDF preview error:', e)
-      setError(true)
     }
+    loadFile()
   }, [doc])
 
   const handleDownload = () => {

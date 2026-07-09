@@ -58,10 +58,20 @@ export default function AdvancedLearnPage() {
 
   const selectModule = (module) => {
     setActiveModule(module)
-    const fetchedLessons = module.lessons || []
-    setLessons(fetchedLessons)
-    if (fetchedLessons.length > 0) {
-      setActiveLesson(fetchedLessons[0])
+    // Combine real lessons with directSubtopics treated as lessons
+    const fetchedLessons = [...(module.lessons || [])]
+    const directTopics = (module.directSubtopics || []).map(topic => ({
+      _id: topic._id,
+      title: topic.title,
+      type: 'subtopic',
+      duration: 'N/A',
+      isLocked: false,
+      subtopics: [topic], // Wrap the subtopic itself so the UI renders its content
+    }))
+    const combined = [...fetchedLessons, ...directTopics]
+    setLessons(combined)
+    if (combined.length > 0) {
+      setActiveLesson(combined[0])
     } else {
       setActiveLesson(null)
     }

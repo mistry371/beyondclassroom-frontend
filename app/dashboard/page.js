@@ -311,49 +311,7 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
-        {/* My Packages */}
-        {purchasedPackages.length > 0 && (
-          <div className="mb-8 border-b border-slate-100 pb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-              <Package className="h-6 w-6 text-primary" />
-              My Packages
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {purchasedPackages.map((pkg, index) => (
-                <motion.div
-                  key={pkg._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white border border-primary/20 shadow-premium rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-lg transition-all group relative"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 bg-primary/10"></div>
-                  <div className="p-6 relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-primary transition-colors">
-                          {pkg.name || pkg.title || 'Package'}
-                        </h3>
-                        <p className="text-slate-500 text-sm line-clamp-2">{pkg.description}</p>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                        Active Package
-                      </span>
-                      <button
-                        onClick={() => router.push('/courses')}
-                        className="text-sm font-bold text-primary hover:underline flex items-center gap-1"
-                      >
-                        Use Package
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         {/* My Courses */}
         <div className="mb-8">

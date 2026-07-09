@@ -3,7 +3,7 @@ import { getCached, setCached, invalidateCache } from '@/lib/apiCache'
 import { getErrorMessage } from '@/lib/getErrorMessage'
 import { dedupeGet } from '@/lib/requestDedup'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://beyondclassroom-backend.onrender.com/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.beyondclassroom.co.in/api'
 
 const api = axios.create({
   baseURL: API_URL,

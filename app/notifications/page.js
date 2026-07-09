@@ -98,9 +98,9 @@ export default function NotificationsPage() {
         </motion.div>
 
         {notifications.length === 0 ? (
-          <div className="bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border border-white/10 p-12 text-center">
-            <Bell className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-muted text-lg">No notifications yet</p>
+          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+            <Bell className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+            <p className="font-bold text-navy text-lg">No notifications yet</p>
             <p className="text-muted text-sm mt-2">You'll see updates about your courses here</p>
           </div>
         ) : (
@@ -112,10 +112,10 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => !notification.isRead && markAsRead(notification._id)}
-                className={`bg-gradient-to-br from-dark-100/80 to-dark/80 backdrop-blur-xl rounded-2xl border p-6 cursor-pointer transition-all hover:border-primary/30 ${
+                className={`bg-white rounded-2xl border p-6 cursor-pointer transition-all hover:shadow-md ${
                   !notification.isRead
-                    ? 'border-primary/40 bg-primary/5'
-                    : 'border-white/10'
+                    ? 'border-primary/40 shadow-sm ring-1 ring-primary/10'
+                    : 'border-slate-200 shadow-sm opacity-75 hover:opacity-100'
                 }`}
               >
                 <div className="flex items-start gap-4">

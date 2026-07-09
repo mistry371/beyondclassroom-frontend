@@ -86,14 +86,8 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } else if (doc.data) {
-      const byteString = atob(doc.data);
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      const blob = new Blob([ab], { type: 'application/pdf' });
+    } else if (file && file.data) {
+      const blob = new Blob([file.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

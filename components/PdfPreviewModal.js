@@ -30,7 +30,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             byteNums[i] = byteChars.charCodeAt(i)
           }
           const byteArray = new Uint8Array(byteNums)
-          setFile({ data: byteArray })
+          setFile({ data: byteArray, base64: doc.data })
         } else if (doc.url) {
           setFile(doc.url)
         } else if (doc.subtopicId) {
@@ -50,7 +50,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
               byteNums[i] = byteChars.charCodeAt(i)
             }
             const byteArray = new Uint8Array(byteNums)
-            setFile({ data: byteArray })
+            setFile({ data: byteArray, base64: matchingDoc.data })
           } else {
             alert("Sorry, you don't have access to this document or it was not found.")
             onClose()
@@ -86,8 +86,14 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } else if (file && file.data) {
-      const blob = new Blob([file.data], { type: 'application/pdf' });
+    } else if (file && file.base64) {
+      const byteChars = atob(file.base64);
+      const byteNums = new Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) {
+        byteNums[i] = byteChars.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNums);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

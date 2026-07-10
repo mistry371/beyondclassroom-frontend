@@ -32,60 +32,16 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const profileRes = await cachedGet('/profile', 30 * 1000)
-      const userCourses = profileRes.data.user.purchasedCourses || []
-
-      const courses = await Promise.all(
-        userCourses.map(async (item) => {
-          if (item && typeof item === 'object' && item._id) return item
-          try {
-            const res = await cachedGet(`/courses/${item}`, 60 * 1000)
-            return res.data.course
-          } catch { return null }
-        })
-      )
-      const validCourses = courses.filter(Boolean)
-      setPurchasedCourses(validCourses)
-
-      try {
-        const pkgsRes = await cachedGet('/packages', 60 * 1000)
-        if (pkgsRes && pkgsRes.data.success) {
-          const rawIds = profileRes.data.user.purchasedCourseIds || []
-          const pkgs = pkgsRes.data.packages.filter(p => rawIds.includes(p._id) || rawIds.includes(p.id))
-          setPurchasedPackages(pkgs)
-        }
-      } catch (err) {
-        console.error('Failed to fetch packages:', err)
+      const summaryRes = await cachedGet('/profile/dashboard-summary', 30 * 1000)
+      if (summaryRes && summaryRes.data && summaryRes.data.success) {
+        const data = summaryRes.data;
+        
+        setPurchasedCourses(data.courses || [])
+        setProgress(data.progress || [])
+        setTrialStatus(data.trialStatus || null)
+        setCustomRequestsStats(data.customRequestsStats || { total: 0, completed: 0 })
+        setAnnouncements(data.announcements || [])
       }
-
-      const progressResults = await Promise.all(
-        validCourses.map(course =>
-          cachedGet(`/progress/course/${course._id}`, 20 * 1000).catch(() => null)
-        )
-      )
-      setProgress(progressResults.filter(r => r !== null).map(r => r.data.progress))
-
-      // Fetch trial status
-      try {
-        const trialRes = await cachedGet('/trial/status', 20 * 1000)
-        setTrialStatus(trialRes.data)
-      } catch {}
-
-      // Fetch custom requests for stats
-      try {
-        const reqRes = await cachedGet('/custom-requests/my', 60 * 1000)
-        const reqs = reqRes.data.requests || []
-        setCustomRequestsStats({
-          total: reqs.length,
-          completed: reqs.filter(r => r.status === 'completed').length
-        })
-      } catch {}
-
-      // Fetch active announcements
-      try {
-        const annRes = await cachedGet('/announcements', 5 * 60 * 1000)
-        setAnnouncements(annRes.data.announcements || [])
-      } catch {}
     } catch (error) {
       setFetchError(error.userMessage || 'Could not load your dashboard.')
     } finally {

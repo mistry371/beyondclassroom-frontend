@@ -7,10 +7,11 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   TrendingUp, Users, DollarSign, Link2, Copy, Check, QrCode,
-  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle,
+  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings
 } from 'lucide-react'
 import promoterApi, { clearPromoterSession, getStoredPromoter } from '@/utils/promoterApi'
 import PromoterOnboarding from '@/components/promoter/PromoterOnboarding'
+import SettingsModal from '@/components/SettingsModal'
 
 export default function PromoterDashboardPage() {
   const router = useRouter()
@@ -27,6 +28,7 @@ export default function PromoterDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [showTour, setShowTour] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   const qrUrl = useMemo(() => {
     if (!promoter?.referralLink) return ''
@@ -98,6 +100,16 @@ export default function PromoterDashboardPage() {
     setTimeout(() => setNotification(''), 4000)
   }
 
+  const handleSaveProfile = async (formData) => {
+    const res = await promoterApi.put('/promoters/profile', formData)
+    setPromoter(res.data.promoter)
+    localStorage.setItem('promoter', JSON.stringify(res.data.promoter))
+  }
+
+  const handleChangePassword = async (passwordData) => {
+    await promoterApi.put('/promoters/change-password', passwordData)
+  }
+
   const handleLogout = () => {
     clearPromoterSession()
     router.push('/promoter/login')
@@ -149,7 +161,7 @@ export default function PromoterDashboardPage() {
               <p className="text-slate-500 text-xs">{promoter.name}</p>
             </div>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden sm:flex items-center gap-1 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm font-semibold">
               <Trophy className="h-4 w-4" /> {promoter.rank || 'Bronze'}
             </span>
@@ -161,7 +173,6 @@ export default function PromoterDashboardPage() {
                 aria-label="Notifications"
               >
                 <Bell className="h-5 w-5" />
-                {/* Optional badge can go here later */}
               </button>
               
               {showNotifications && (
@@ -179,6 +190,14 @@ export default function PromoterDashboardPage() {
                 </div>
               )}
             </div>
+            <button 
+              type="button" 
+              onClick={() => setIsSettingsOpen(true)} 
+              className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg" 
+              aria-label="Settings"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
             <button type="button" onClick={handleLogout} className="p-2 text-red-500 hover:bg-red-50 rounded-lg" aria-label="Logout">
               <LogOut className="h-5 w-5" />
             </button>
@@ -362,6 +381,17 @@ export default function PromoterDashboardPage() {
           </div>
         </div>
       </main>
+
+      {promoter && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          initialData={promoter}
+          onSaveProfile={handleSaveProfile}
+          onChangePassword={handleChangePassword}
+          role="promoter"
+        />
+      )}
     </div>
   )
 }

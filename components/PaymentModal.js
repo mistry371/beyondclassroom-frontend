@@ -123,9 +123,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                   await api.post('/promo-codes/apply', { code: promoCode.trim() })
                 } catch (_) {}
               }
+              invalidateCache('GET:/profile/dashboard-summary')
+              invalidateCache('GET:/courses')
               invalidateCache('GET:/profile')
-              invalidateCache('GET:/dashboard')
-              invalidateCache('')
               setDone(true)
               setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
             }
@@ -167,9 +167,9 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
                   await api.post('/promo-codes/apply', { code: promoCode.trim() })
                 } catch (_) {}
               }
+              invalidateCache('GET:/profile/dashboard-summary')
+              invalidateCache('GET:/courses')
               invalidateCache('GET:/profile')
-              invalidateCache('GET:/dashboard')
-              invalidateCache('')
               setDone(true)
               setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
             }

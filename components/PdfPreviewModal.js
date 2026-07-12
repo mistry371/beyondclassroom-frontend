@@ -15,11 +15,44 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
   const [file, setFile] = useState(null)
   const [error, setError] = useState(false)
   const [notAvailable, setNotAvailable] = useState(false)
+  const [docxHtml, setDocxHtml] = useState(null)
+  const [docxLoading, setDocxLoading] = useState(false)
   const containerRef = useRef(null)
 
   const [loadingFile, setLoadingFile] = useState(false)
 
-  const isPdf = doc?.name ? doc.name.toLowerCase().endsWith('.pdf') : true;
+  const lowerName = (doc?.name || '').toLowerCase()
+  const isDocx = lowerName.endsWith('.docx')
+  const isPdf = doc?.name ? lowerName.endsWith('.pdf') : true;
+
+  // Render .docx documents (which react-pdf can't) by converting them to HTML.
+  useEffect(() => {
+    if (!isDocx || !file) return
+    let cancelled = false
+    ;(async () => {
+      setDocxLoading(true)
+      try {
+        let arrayBuffer
+        if (file.base64) {
+          const bin = atob(file.base64)
+          const arr = new Uint8Array(bin.length)
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
+          arrayBuffer = arr.buffer
+        } else if (typeof file === 'string') {
+          arrayBuffer = await (await fetch(file)).arrayBuffer()
+        }
+        if (!arrayBuffer) throw new Error('no data')
+        const mammoth = await import('mammoth')
+        const result = await (mammoth.default || mammoth).convertToHtml({ arrayBuffer })
+        if (!cancelled) setDocxHtml(result.value || '<p>(This document appears to be empty.)</p>')
+      } catch (e) {
+        if (!cancelled) setError(true)
+      } finally {
+        if (!cancelled) setDocxLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [file, isDocx])
 
   useEffect(() => {
     if (!doc) return
@@ -222,13 +255,38 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
               <FileText className="h-16 w-16 text-primary/30" />
               <p className="font-semibold text-lg">Unable to load document</p>
             </div>
+          ) : isDocx ? (
+            (docxLoading || (!docxHtml && file)) ? (
+              <div className="flex flex-col items-center justify-center h-full gap-4 m-auto">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+                <p className="text-sm font-bold text-muted animate-pulse">Rendering document…</p>
+              </div>
+            ) : docxHtml ? (
+              <div className="relative w-full max-w-3xl">
+                <div className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center overflow-hidden opacity-[0.08]">
+                  <p className="rotate-[-35deg] text-4xl sm:text-7xl font-black text-gray-600 whitespace-nowrap select-none">
+                    {isPurchased ? 'Beyond Classroom — Licensed Copy' : 'Beyond Classroom — Preview Only'}
+                  </p>
+                </div>
+                <div
+                  className="docx-preview bg-white rounded-lg shadow-lg p-8 mx-auto text-slate-800 leading-relaxed"
+                  style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
+                  dangerouslySetInnerHTML={{ __html: docxHtml }}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full gap-4 m-auto">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary" />
+                <p className="text-sm font-bold text-muted animate-pulse">Loading secure document…</p>
+              </div>
+            )
           ) : !isPdf ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-muted m-auto p-8 text-center max-w-md">
               <FileText className="h-16 w-16 text-primary/30" />
               <p className="font-semibold text-lg text-navy">Preview Not Available</p>
               <p className="text-sm">
-                This document is a {doc?.name?.split('.').pop()?.toUpperCase()} file. Browser previews are only supported for PDF files. 
-                {isPurchased ? " Please use the download button to view it locally." : " Please sign up or unlock the course to download and view this file."}
+                This document is a {doc?.name?.split('.').pop()?.toUpperCase()} file. Browser previews are only supported for PDF and Word (.docx) files.
+                {isPurchased ? " Please use the download button to view it locally." : " Please log in to download and view this file."}
               </p>
             </div>
           ) : !file ? (

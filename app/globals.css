@@ -494,3 +494,13 @@ input, textarea, select, button, a, label {
 .admin-panel ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
 }
+
+/* ── Rendered .docx preview (mammoth output) ─────────────────────────────────── */
+.docx-preview { font-family: 'Segoe UI', Calibri, Arial, sans-serif; }
+.docx-preview p { margin: 0 0 10px 0; }
+.docx-preview h1, .docx-preview h2, .docx-preview h3 { font-weight: 700; margin: 16px 0 8px; color: #0f172a; }
+.docx-preview table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+.docx-preview td, .docx-preview th { border: 1px solid #94a3b8; padding: 6px 10px; vertical-align: top; }
+.docx-preview ul, .docx-preview ol { margin: 0 0 10px 24px; }
+.docx-preview img { max-width: 100%; height: auto; }
+.docx-preview strong { font-weight: 700; }

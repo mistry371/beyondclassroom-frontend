@@ -72,7 +72,10 @@ export default function PromoterLoginPage() {
               </div>
             </div>
             <div>
-              <label className="text-ink text-sm font-medium mb-2 block">Password</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-ink text-sm font-medium">Password</label>
+                <Link href="/promoter/forgot-password" className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">Forgot password?</Link>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required

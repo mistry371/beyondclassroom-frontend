@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Lock, Save } from 'lucide-react'
+import PasswordInput from '@/components/ui/PasswordInput'
 
 export default function SettingsModal({ isOpen, onClose, initialData, onSaveProfile, onChangePassword }) {
   const [activeTab, setActiveTab] = useState('profile')
@@ -181,8 +182,7 @@ export default function SettingsModal({ isOpen, onClose, initialData, onSaveProf
               <form onSubmit={handlePasswordSubmit} className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Current Password</label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
@@ -191,8 +191,7 @@ export default function SettingsModal({ isOpen, onClose, initialData, onSaveProf
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">New Password</label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required
                     minLength={6}
                     value={passwordData.newPassword}
@@ -202,8 +201,7 @@ export default function SettingsModal({ isOpen, onClose, initialData, onSaveProf
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Confirm New Password</label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required
                     minLength={6}
                     value={passwordData.confirmPassword}

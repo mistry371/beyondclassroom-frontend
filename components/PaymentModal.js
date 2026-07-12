@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { X, CreditCard, Lock, CheckCircle, ShoppingBag, Tag, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '@/utils/api'
 import { invalidateCache } from '@/lib/apiCache'
+import { updateUser } from '@/store/slices/authSlice'
 
 export default function PaymentModal({ isOpen, onClose, course, item, isPackage, onSuccess, customAmount, selectedCourseIds }) {
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [promoCode, setPromoCode] = useState('')
@@ -18,6 +21,24 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
   const currentItem = item || course
   const originalAmount = customAmount !== undefined ? customAmount : (isPackage ? (currentItem?.priceINR || 0) : (currentItem?.price || 0))
   const finalAmount = promoApplied ? promoApplied.finalAmount : originalAmount
+
+  // Runs after the server confirms the payment. Promo usedCount + promoter
+  // commission are handled server-side in /payment/verify, so no /apply call here.
+  const handleVerifySuccess = async () => {
+    invalidateCache('GET:/profile/dashboard-summary')
+    invalidateCache('GET:/courses')
+    invalidateCache('GET:/profile')
+    // Refresh the cached auth user so newly purchased courses unlock immediately.
+    try {
+      const profileRes = await api.get('/profile')
+      const fresh = profileRes.data?.user
+      if (fresh?.purchasedCourses) {
+        dispatch(updateUser({ purchasedCourses: fresh.purchasedCourses }))
+      }
+    } catch (_) {}
+    setDone(true)
+    setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
+  }
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) return
@@ -118,16 +139,7 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
           }
           const verifyRes = await api.post('/payment/verify', verifyPayload)
             if (verifyRes.data.success) {
-              if (promoApplied && promoCode) {
-                try {
-                  await api.post('/promo-codes/apply', { code: promoCode.trim() })
-                } catch (_) {}
-              }
-              invalidateCache('GET:/profile/dashboard-summary')
-              invalidateCache('GET:/courses')
-              invalidateCache('GET:/profile')
-              setDone(true)
-              setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
+              await handleVerifySuccess()
             }
         } catch {
           alert('Mock payment verification failed. Please contact support.')
@@ -161,17 +173,7 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
 
             const verifyRes = await api.post('/payment/verify', verifyPayload)
             if (verifyRes.data.success) {
-              // Record promo code usage
-              if (promoApplied && promoCode) {
-                try {
-                  await api.post('/promo-codes/apply', { code: promoCode.trim() })
-                } catch (_) {}
-              }
-              invalidateCache('GET:/profile/dashboard-summary')
-              invalidateCache('GET:/courses')
-              invalidateCache('GET:/profile')
-              setDone(true)
-              setTimeout(() => { setDone(false); onSuccess(); onClose() }, 1500)
+              await handleVerifySuccess()
             }
           } catch {
             alert('Payment verification failed. Please contact support.')

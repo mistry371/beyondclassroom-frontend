@@ -7,6 +7,8 @@ import { BookOpen, TrendingUp, Award, Clock, PlayCircle, Lock, AlertTriangle, Sh
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
+import { invalidateCache } from '@/lib/apiCache'
+import usePolling from '@/hooks/usePolling'
 import { motion } from 'framer-motion'
 
 export default function Dashboard() {
@@ -29,6 +31,9 @@ export default function Dashboard() {
     }
     fetchDashboardData()
   }, [isAuthenticated])
+
+  // Auto-refresh purchases and progress every 45s (#2), bypassing the cache.
+  usePolling(() => { invalidateCache('GET:/profile/dashboard-summary'); fetchDashboardData() }, 45000, isAuthenticated)
 
   const fetchDashboardData = async () => {
     try {

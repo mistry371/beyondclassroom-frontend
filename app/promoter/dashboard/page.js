@@ -10,6 +10,7 @@ import {
   Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings, ShieldCheck
 } from 'lucide-react'
 import promoterApi, { clearPromoterSession, getStoredPromoter } from '@/utils/promoterApi'
+import usePolling from '@/hooks/usePolling'
 import PromoterOnboarding from '@/components/promoter/PromoterOnboarding'
 import PromoterProfileModal from '@/components/promoter/PromoterProfileModal'
 import SettingsModal from '@/components/SettingsModal'
@@ -72,6 +73,9 @@ export default function PromoterDashboardPage() {
       if (r.data.success) setLeaderboard(r.data.leaderboard || [])
     }).catch(() => {})
   }, [router])
+
+  // Auto-refresh earnings, commissions, and withdrawal status every 30s (#2).
+  usePolling(loadDashboard, 30000)
 
   const copyLink = () => {
     if (!promoter?.referralLink) return

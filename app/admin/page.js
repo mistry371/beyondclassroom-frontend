@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
+import { invalidateCache } from '@/lib/apiCache'
+import usePolling from '@/hooks/usePolling'
 import { motion } from 'framer-motion'
 
 export default function AdminDashboard() {
@@ -24,6 +26,9 @@ export default function AdminDashboard() {
     if (!authReady) return
     fetchDashboardStats()
   }, [authReady])
+
+  // Auto-refresh stats and pending-action counts every 45s (#2).
+  usePolling(() => { invalidateCache('GET:/admin/dashboard/stats'); fetchDashboardStats() }, 45000, authReady)
 
   const fetchDashboardStats = async () => {
     setStatsLoading(true)

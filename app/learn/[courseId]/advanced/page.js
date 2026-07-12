@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useSelector } from 'react-redux'
 import { BookOpen, CheckCircle, PlayCircle, FileText, Lock, Clock, Award, TrendingUp, AlertCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
@@ -13,6 +14,7 @@ const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { 
 export default function AdvancedLearnPage() {
   const params = useParams()
   const router = useRouter()
+  const { user } = useSelector((state) => state.auth)
   const [course, setCourse] = useState(null)
   const [modules, setModules] = useState([])
   const [activeModule, setActiveModule] = useState(null)
@@ -491,7 +493,14 @@ export default function AdvancedLearnPage() {
         </div>
       </div>
       {previewDoc && (
-        <PdfPreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} isPurchased={true} user={{ _id: 'dummy' }} />
+        <PdfPreviewModal
+          doc={previewDoc}
+          onClose={() => setPreviewDoc(null)}
+          isPurchased={!!course?.viewerAuthorized}
+          user={user}
+          onRequireLogin={() => router.push('/auth/login')}
+          onRequirePurchase={() => router.push(`/courses/${params.courseId}`)}
+        />
       )}
     </div>
   )

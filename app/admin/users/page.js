@@ -39,7 +39,7 @@ export default function AdminUsers() {
       if (roleFilter) params.append('role', roleFilter)
       
       const res = await api.get(`/admin/users?${params}`)
-      setUsers(res.data.users)
+      setUsers(Array.isArray(res.data.users) ? res.data.users : [])
     } catch (error) {
       console.error('Failed to fetch users:', error)
     } finally {

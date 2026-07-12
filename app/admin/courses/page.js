@@ -39,7 +39,7 @@ export default function AdminCourses() {
       if (search) params.append('search', search)
       
       const res = await api.get(`/admin/courses?${params}`)
-      setCourses(res.data.courses)
+      setCourses(Array.isArray(res.data.courses) ? res.data.courses : [])
     } catch (error) {
       console.error('Failed to fetch courses:', error)
     } finally {

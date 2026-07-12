@@ -7,10 +7,11 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   TrendingUp, Users, DollarSign, Link2, Copy, Check, QrCode,
-  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings
+  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings, ShieldCheck
 } from 'lucide-react'
 import promoterApi, { clearPromoterSession, getStoredPromoter } from '@/utils/promoterApi'
 import PromoterOnboarding from '@/components/promoter/PromoterOnboarding'
+import PromoterProfileModal from '@/components/promoter/PromoterProfileModal'
 import SettingsModal from '@/components/SettingsModal'
 
 export default function PromoterDashboardPage() {
@@ -29,6 +30,7 @@ export default function PromoterDashboardPage() {
   const [showTour, setShowTour] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   const qrUrl = useMemo(() => {
     if (!promoter?.referralLink) return ''
@@ -192,10 +194,22 @@ export default function PromoterDashboardPage() {
                 </div>
               )}
             </div>
-            <button 
-              type="button" 
-              onClick={() => setIsSettingsOpen(true)} 
-              className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg" 
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium"
+              aria-label="Profile and KYC"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span className="hidden sm:inline">Profile &amp; KYC</span>
+              {promoter?.kyc?.status && promoter.kyc.status !== 'verified' && (
+                <span className="w-2 h-2 bg-amber-400 rounded-full" title="Complete your KYC" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg"
               aria-label="Settings"
             >
               <Settings className="h-5 w-5" />
@@ -392,6 +406,15 @@ export default function PromoterDashboardPage() {
           onSaveProfile={handleSaveProfile}
           onChangePassword={handleChangePassword}
           role="promoter"
+        />
+      )}
+
+      {promoter && isProfileOpen && (
+        <PromoterProfileModal
+          open={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+          promoter={promoter}
+          onUpdated={(p) => { setPromoter(p); localStorage.setItem('promoter', JSON.stringify(p)) }}
         />
       )}
     </div>

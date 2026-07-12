@@ -7,10 +7,12 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   TrendingUp, Users, DollarSign, Link2, Copy, Check, QrCode,
-  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings
+  Bell, LogOut, Trophy, Target, Wallet, Share2, Flame, Award, MessageCircle, Settings, ShieldCheck
 } from 'lucide-react'
 import promoterApi, { clearPromoterSession, getStoredPromoter } from '@/utils/promoterApi'
+import usePolling from '@/hooks/usePolling'
 import PromoterOnboarding from '@/components/promoter/PromoterOnboarding'
+import PromoterProfileModal from '@/components/promoter/PromoterProfileModal'
 import SettingsModal from '@/components/SettingsModal'
 
 export default function PromoterDashboardPage() {
@@ -29,6 +31,7 @@ export default function PromoterDashboardPage() {
   const [showTour, setShowTour] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
 
   const qrUrl = useMemo(() => {
     if (!promoter?.referralLink) return ''
@@ -71,6 +74,9 @@ export default function PromoterDashboardPage() {
     }).catch(() => {})
   }, [router])
 
+  // Auto-refresh earnings, commissions, and withdrawal status every 30s (#2).
+  usePolling(loadDashboard, 30000)
+
   const copyLink = () => {
     if (!promoter?.referralLink) return
     navigator.clipboard.writeText(promoter.referralLink)
@@ -84,8 +90,8 @@ export default function PromoterDashboardPage() {
   }
 
   const handleWithdraw = async () => {
-    const amt = parseInt(withdrawAmount, 10)
-    if (!amt) return setNotification('Enter a valid amount')
+    const amt = Number(withdrawAmount)
+    if (!amt || amt <= 0) return setNotification('Enter a valid amount')
     try {
       setNotification('')
       const res = await promoterApi.post('/promoters/withdraw', { amount: amt })
@@ -93,6 +99,8 @@ export default function PromoterDashboardPage() {
         setNotification(res.data.message)
         setWithdrawAmount('')
         await loadDashboard()
+        setTimeout(() => setNotification(''), 9000) // success message is long — keep it visible
+        return
       }
     } catch (err) {
       setNotification(err.response?.data?.message || 'Withdrawal failed')
@@ -190,10 +198,22 @@ export default function PromoterDashboardPage() {
                 </div>
               )}
             </div>
-            <button 
-              type="button" 
-              onClick={() => setIsSettingsOpen(true)} 
-              className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg" 
+            <button
+              type="button"
+              onClick={() => setIsProfileOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium"
+              aria-label="Profile and KYC"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span className="hidden sm:inline">Profile &amp; KYC</span>
+              {promoter?.kyc?.status && promoter.kyc.status !== 'verified' && (
+                <span className="w-2 h-2 bg-amber-400 rounded-full" title="Complete your KYC" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg"
               aria-label="Settings"
             >
               <Settings className="h-5 w-5" />
@@ -336,7 +356,7 @@ export default function PromoterDashboardPage() {
               <h3 className="font-bold mb-3 flex items-center gap-2 text-slate-700">
                 <Wallet className="h-5 w-5 text-accent" /> Request payout
               </h3>
-              <p className="text-slate-500 text-sm mb-3">Available: ₹{(promoter.pendingPayout || 0).toLocaleString('en-IN')} (min ₹500)</p>
+              <p className="text-slate-500 text-sm mb-3">Available: ₹{(promoter.pendingPayout || 0).toLocaleString('en-IN')}</p>
               <input type="number" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)}
                 placeholder="Amount in ₹"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-3 text-slate-800"
@@ -390,6 +410,15 @@ export default function PromoterDashboardPage() {
           onSaveProfile={handleSaveProfile}
           onChangePassword={handleChangePassword}
           role="promoter"
+        />
+      )}
+
+      {promoter && isProfileOpen && (
+        <PromoterProfileModal
+          open={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+          promoter={promoter}
+          onUpdated={(p) => { setPromoter(p); localStorage.setItem('promoter', JSON.stringify(p)) }}
         />
       )}
     </div>

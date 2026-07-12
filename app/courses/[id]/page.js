@@ -690,7 +690,10 @@ function CourseDetailsContent() {
           doc={previewDoc} 
           onClose={() => setPreviewDoc(null)} 
           user={user}
-          isPurchased={user && user.purchasedCourses && user.purchasedCourses.some(pc => (pc._id || pc) === course._id)}
+          isPurchased={!!(course?.viewerAuthorized || (user && user.purchasedCourses && user.purchasedCourses.some(pc => {
+            const entry = String(pc._id || pc); const base = entry.includes('_') ? entry.split('_')[0] : entry
+            return base === course._id || entry === course._id
+          })))}
           onRequireLogin={() => {
             setPreviewDoc(null);
             showError("Please login or register to download materials.");

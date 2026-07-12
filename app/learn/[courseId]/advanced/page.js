@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useSelector } from 'react-redux'
 import { BookOpen, CheckCircle, PlayCircle, FileText, Lock, Clock, Award, TrendingUp, AlertCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
@@ -13,6 +14,7 @@ const PdfPreviewModal = dynamic(() => import('@/components/PdfPreviewModal'), { 
 export default function AdvancedLearnPage() {
   const params = useParams()
   const router = useRouter()
+  const { user } = useSelector((state) => state.auth)
   const [course, setCourse] = useState(null)
   const [modules, setModules] = useState([])
   const [activeModule, setActiveModule] = useState(null)
@@ -430,13 +432,17 @@ export default function AdvancedLearnPage() {
                                     const completed = prev?.lessonsCompleted || []
                                     if (!completed.includes(activeLesson._id)) {
                                       const newCompleted = [...completed, activeLesson._id]
+                                      // Count ALL learnable items: lessons + direct subtopics across
+                                      // every module (subtopic-based courses have empty m.lessons).
                                       const totalLessons = modules.reduce((acc, m) => {
-                                        return acc + (m.lessons || []).length;
-                                      }, 0) || newCompleted.length
+                                        return acc + (m.lessons?.length || 0) + (m.directSubtopics?.length || 0)
+                                      }, 0)
                                       return {
                                         ...prev,
                                         lessonsCompleted: newCompleted,
-                                        completionPercentage: Math.round((newCompleted.length / Math.max(totalLessons, newCompleted.length)) * 100)
+                                        completionPercentage: totalLessons > 0
+                                          ? Math.min(100, Math.round((newCompleted.length / totalLessons) * 100))
+                                          : 0
                                       }
                                     }
                                     return prev
@@ -487,7 +493,14 @@ export default function AdvancedLearnPage() {
         </div>
       </div>
       {previewDoc && (
-        <PdfPreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} isPurchased={true} user={{ _id: 'dummy' }} />
+        <PdfPreviewModal
+          doc={previewDoc}
+          onClose={() => setPreviewDoc(null)}
+          isPurchased={!!course?.viewerAuthorized}
+          user={user}
+          onRequireLogin={() => router.push('/auth/login')}
+          onRequirePurchase={() => router.push(`/courses/${params.courseId}`)}
+        />
       )}
     </div>
   )

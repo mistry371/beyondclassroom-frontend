@@ -121,8 +121,8 @@ export default function LearnPage() {
     router.push(`/learn/${params.courseId}/lesson/${lessonId}`)
   }
 
-  const handleStartSubtopic = (subtopicId, moduleIndex) => {
-    if (!hasAccess) return
+  const handleStartSubtopic = (subtopicId, moduleIndex, isPreview = false) => {
+    if (!hasAccess && !isPreview) return // preview topics are viewable without access
     if (!isModuleUnlocked(moduleIndex)) return
     router.push(`/learn/${params.courseId}/subtopic/${subtopicId}`)
   }
@@ -352,7 +352,7 @@ export default function LearnPage() {
                             transition={{ delay: subtopicIndex * 0.05 }}
                             className={`flex items-center justify-between p-4 rounded-xl transition-all relative bg-academic border border-primary/10 hover:border-primary/30`}
                           >
-                            {!hasAccess && <div className="absolute inset-0 backdrop-blur-[2px] bg-black/30 rounded-xl" />}
+                            {!hasAccess && !subtopic.isPreview && <div className="absolute inset-0 backdrop-blur-[2px] bg-black/30 rounded-xl" />}
                             <div className="flex items-center gap-4 flex-1 min-w-0">
                                 <PlayCircle className="h-5 w-5 text-secondary flex-shrink-0" />
                               <div className="min-w-0 flex-1">
@@ -361,22 +361,29 @@ export default function LearnPage() {
                                   <span className="text-xs px-2 py-1 bg-secondary/20 text-secondary rounded">
                                     Topic
                                   </span>
+                                  {!hasAccess && subtopic.isPreview && (
+                                    <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded font-semibold">Free Preview</span>
+                                  )}
                                 </div>
                               </div>
                             </div>
 
                             <button
-                              onClick={() => handleStartSubtopic(subtopic._id, moduleIndex)}
+                              onClick={() => handleStartSubtopic(subtopic._id, moduleIndex, subtopic.isPreview)}
                               disabled={!isModuleUnlocked(moduleIndex)}
-                              className={`px-6 py-2 rounded-lg font-medium transition-all flex-shrink-0 ml-4 ${
+                              className={`px-6 py-2 rounded-lg font-medium transition-all flex-shrink-0 ml-4 relative z-10 ${
                                 !isModuleUnlocked(moduleIndex)
                                   ? 'bg-gray-500/20 text-muted cursor-not-allowed'
+                                  : (!hasAccess && !subtopic.isPreview)
+                                  ? 'bg-gray-500/20 text-muted'
                                   : 'bg-gradient-to-r from-secondary to-primary text-white hover:opacity-90'
                               }`}
                             >
                               {!isModuleUnlocked(moduleIndex) ? (
                                 <span className="flex items-center gap-2"><Lock className="h-4 w-4" />Locked</span>
-                              ) : 'View Topic'}
+                              ) : (!hasAccess && !subtopic.isPreview) ? (
+                                <span className="flex items-center gap-2"><Lock className="h-4 w-4" />Locked</span>
+                              ) : (!hasAccess && subtopic.isPreview) ? 'Preview' : 'View Topic'}
                             </button>
                           </motion.div>
                         ))}

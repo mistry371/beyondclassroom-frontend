@@ -14,12 +14,17 @@ const emptyForm = {
   usageLimit: '',
   active: true,
   assignedTo: '', // promoter ID or name (optional)
+  applicableType: 'all', // 'all' | 'packages' | 'courses'
+  applicablePackageIds: [],
+  applicableCourseIds: [],
 }
 
 export default function AdminPromoCodes() {
   const router = useRouter()
   const [promoCodes, setPromoCodes] = useState([])
   const [promoters, setPromoters] = useState([])
+  const [packages, setPackages] = useState([])
+  const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [selectedCode, setSelectedCode] = useState(null)
@@ -30,6 +35,7 @@ export default function AdminPromoCodes() {
   useEffect(() => {
     fetchPromoCodes()
     fetchPromoters()
+    fetchCatalog()
   }, [])
 
   const fetchPromoters = async () => {
@@ -39,6 +45,26 @@ export default function AdminPromoCodes() {
     } catch {
       console.error('Failed to fetch promoters')
     }
+  }
+
+  const fetchCatalog = async () => {
+    try {
+      const [pkgRes, courseRes] = await Promise.all([
+        api.get('/packages'),
+        api.get('/courses'),
+      ])
+      setPackages(pkgRes.data.packages || pkgRes.data || [])
+      setCourses(courseRes.data.courses || [])
+    } catch {
+      console.error('Failed to fetch packages/courses')
+    }
+  }
+
+  const toggleInArray = (field, id) => {
+    setFormData((prev) => {
+      const arr = prev[field] || []
+      return { ...prev, [field]: arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id] }
+    })
   }
 
   const fetchPromoCodes = async () => {
@@ -69,6 +95,9 @@ export default function AdminPromoCodes() {
       usageLimit: code.usageLimit || '',
       active: code.active !== false,
       assignedTo: code.assignedTo || '',
+      applicableType: code.applicableType || 'all',
+      applicablePackageIds: code.applicablePackageIds || [],
+      applicableCourseIds: code.applicableCourseIds || [],
     })
     setError('')
     setShowModal(true)
@@ -177,6 +206,7 @@ export default function AdminPromoCodes() {
                 <tr className="border-b border-white/10 text-left">
                   <th className="pb-3 text-muted font-semibold text-sm px-2">Code</th>
                   <th className="pb-3 text-muted font-semibold text-sm px-2">Discount</th>
+                  <th className="pb-3 text-muted font-semibold text-sm px-2">Applies To</th>
                   <th className="pb-3 text-muted font-semibold text-sm px-2">Expiry</th>
                   <th className="pb-3 text-muted font-semibold text-sm px-2">Usage</th>
                   <th className="pb-3 text-muted font-semibold text-sm px-2">Assigned To</th>
@@ -200,6 +230,16 @@ export default function AdminPromoCodes() {
                     </td>
                     <td className="py-4 px-2">
                       <span className="text-secondary font-bold">{code.discountPercent}%</span>
+                    </td>
+                    <td className="py-4 px-2">
+                      <span className="text-ink text-sm">
+                        {(() => {
+                          const t = code.applicableType || 'all'
+                          if (t === 'packages') return `${(code.applicablePackageIds || []).length} package(s)`
+                          if (t === 'courses') return `${(code.applicableCourseIds || []).length} course(s)`
+                          return 'All'
+                        })()}
+                      </span>
                     </td>
                     <td className="py-4 px-2">
                       <span className={`text-sm ${isExpired(code.expiryDate) ? 'text-red-400' : 'text-ink'}`}>
@@ -377,6 +417,53 @@ export default function AdminPromoCodes() {
                     ))}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-ink text-sm font-medium mb-1">Applicable To</label>
+                  <select
+                    value={formData.applicableType}
+                    onChange={(e) => setFormData({ ...formData, applicableType: e.target.value })}
+                    className="w-full px-4 py-2 bg-academic border border-white/10 rounded-lg text-navy focus:outline-none focus:border-primary"
+                  >
+                    <option value="all">All packages &amp; courses</option>
+                    <option value="packages">Selected packages only</option>
+                    <option value="courses">Specific courses only</option>
+                  </select>
+                </div>
+
+                {formData.applicableType === 'packages' && (
+                  <div className="max-h-40 overflow-y-auto rounded-lg border border-white/10 p-3 space-y-2 bg-academic">
+                    {packages.length === 0 && <p className="text-muted text-sm">No packages found</p>}
+                    {packages.map((p) => (
+                      <label key={p._id} className="flex items-center gap-2 cursor-pointer text-sm text-ink">
+                        <input
+                          type="checkbox"
+                          checked={(formData.applicablePackageIds || []).includes(p._id)}
+                          onChange={() => toggleInArray('applicablePackageIds', p._id)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                        <span>{p.name} <span className="text-muted">(₹{p.priceINR})</span></span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                {formData.applicableType === 'courses' && (
+                  <div className="max-h-40 overflow-y-auto rounded-lg border border-white/10 p-3 space-y-2 bg-academic">
+                    {courses.length === 0 && <p className="text-muted text-sm">No courses found</p>}
+                    {courses.map((c) => (
+                      <label key={c._id} className="flex items-center gap-2 cursor-pointer text-sm text-ink">
+                        <input
+                          type="checkbox"
+                          checked={(formData.applicableCourseIds || []).includes(c._id)}
+                          onChange={() => toggleInArray('applicableCourseIds', c._id)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                        <span>{c.title}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
 
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input

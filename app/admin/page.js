@@ -7,10 +7,13 @@ import {
   Users, BookOpen, DollarSign, TrendingUp, Activity,
   ShoppingCart, Award, Bell, Settings, BarChart3,
   Package, Tag, Layers, FileText, ListTree, HelpCircle,
-  MessageSquare, CheckSquare, Image, Shield, Star
+  MessageSquare, CheckSquare, Image, Shield, Star,
+  Wallet, ShieldCheck, ArrowRight
 } from 'lucide-react'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
+import { invalidateCache } from '@/lib/apiCache'
+import usePolling from '@/hooks/usePolling'
 import { motion } from 'framer-motion'
 
 export default function AdminDashboard() {
@@ -23,6 +26,9 @@ export default function AdminDashboard() {
     if (!authReady) return
     fetchDashboardStats()
   }, [authReady])
+
+  // Auto-refresh stats and pending-action counts every 45s (#2).
+  usePolling(() => { invalidateCache('GET:/admin/dashboard/stats'); fetchDashboardStats() }, 45000, authReady)
 
   const fetchDashboardStats = async () => {
     setStatsLoading(true)
@@ -56,9 +62,31 @@ export default function AdminDashboard() {
               </h1>
               <p className="text-slate-500 mt-1">Welcome back, {user?.name || 'Admin'}</p>
             </div>
-            <Link href="/" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all">
-              Back to Site
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/admin/analytics" className="hidden sm:inline-flex px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-all font-medium items-center gap-2">
+                <BarChart3 className="h-4 w-4" /> Analytics
+              </Link>
+              <Link href="/" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all">
+                Back to Site
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick actions — one click to the most frequent operations (#4) */}
+          <div className="flex flex-wrap gap-2 mt-5">
+            {[
+              { href: '/admin/courses', label: 'Manage Courses', icon: BookOpen },
+              { href: '/admin/promo-codes', label: 'New Promo Code', icon: Tag },
+              { href: '/admin/kyc', label: 'Review KYC', icon: ShieldCheck },
+              { href: '/admin/promoters', label: 'Payouts', icon: Wallet },
+              { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+              { href: '/admin/notifications', label: 'Send Notice', icon: Bell },
+            ].map((q) => (
+              <Link key={q.href} href={q.href}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-primary/40 hover:text-primary transition-all">
+                <q.icon className="h-4 w-4" /> {q.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
@@ -72,6 +100,40 @@ export default function AdminDashboard() {
             </button>
           </div>
         )}
+
+        {!statsLoading && stats?.pendingActions && (() => {
+          const pa = stats.pendingActions
+          const items = [
+            { key: 'withdrawals', label: 'Withdrawal requests', count: pa.withdrawals || 0, href: '/admin/promoters', icon: Wallet, color: 'text-emerald-600 bg-emerald-50' },
+            { key: 'kyc', label: 'KYC to review', count: pa.kyc || 0, href: '/admin/kyc', icon: ShieldCheck, color: 'text-indigo-600 bg-indigo-50' },
+            { key: 'customRequests', label: 'Custom requests', count: pa.customRequests || 0, href: '/admin/custom-requests', icon: MessageSquare, color: 'text-rose-600 bg-rose-50' },
+          ]
+          const totalPending = items.reduce((s, i) => s + i.count, 0)
+          if (totalPending === 0) return null
+          return (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                <Bell className="h-5 w-5 text-primary" /> Pending Actions
+                <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{totalPending}</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {items.filter((i) => i.count > 0).map((i) => (
+                  <Link key={i.key} href={i.href}
+                    className="flex items-center justify-between bg-white border border-slate-200 shadow-sm rounded-2xl p-5 hover:border-primary/40 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-xl ${i.color}`}><i.icon className="h-6 w-6" /></div>
+                      <div>
+                        <p className="text-3xl font-black text-slate-800 leading-none">{i.count}</p>
+                        <p className="text-slate-500 text-sm mt-1">{i.label}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-slate-400" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 ${statsLoading ? 'opacity-60' : ''}`}>
           {statCards.map((stat, index) => (
@@ -101,6 +163,7 @@ export default function AdminDashboard() {
           <QuickActionCard href="/admin/testimonials" title="Testimonials" description="Manage student success stories" icon={Star} color="bg-yellow-50 text-yellow-600" />
           <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={MessageSquare} color="bg-rose-50 text-rose-600" />
           <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/kyc" title="KYC Management" description="Verify promoter documents" icon={ShieldCheck} color="bg-indigo-50 text-indigo-600" />
           <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" />
           <QuickActionCard href="/admin/media" title="Media Library" description="Upload and manage media" icon={Image} color="bg-pink-50 text-pink-600" />
         </AdminSection>

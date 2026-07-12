@@ -106,6 +106,17 @@ export default function ScreenProtection() {
       } catch (_) {}
     }
 
+    // Devtools-open detection: cover the protected content while devtools is
+    // open (docked-panel size heuristic).
+    const DEVTOOLS_THRESHOLD = 170
+    const checkDevtools = () => {
+      const open = (window.outerWidth - window.innerWidth) > DEVTOOLS_THRESHOLD ||
+        (window.outerHeight - window.innerHeight) > DEVTOOLS_THRESHOLD
+      if (open) showOverlay(); else hideOverlay()
+    }
+    const devtoolsPoll = setInterval(checkDevtools, 1000)
+    window.addEventListener('resize', checkDevtools)
+
     let touchTimer = null
     const onTouchStart = () => { touchTimer = setTimeout(flashOverlay, 500) }
     const onTouchEnd = () => { if (touchTimer) clearTimeout(touchTimer) }
@@ -134,6 +145,8 @@ export default function ScreenProtection() {
       document.removeEventListener('selectstart', blockSelect, true)
       document.removeEventListener('touchstart', onTouchStart)
       document.removeEventListener('touchend', onTouchEnd)
+      clearInterval(devtoolsPoll)
+      window.removeEventListener('resize', checkDevtools)
       window.removeEventListener('beforeprint', blockPrint)
       window.removeEventListener('afterprint', blockPrint)
       document.getElementById('sp-css')?.remove()

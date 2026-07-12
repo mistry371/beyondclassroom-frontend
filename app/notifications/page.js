@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Bell, AlertCircle, MessageSquare, Info, Clock, CheckCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import api from '@/utils/api'
+import usePolling from '@/hooks/usePolling'
 import { motion } from 'framer-motion'
 
 export default function NotificationsPage() {
@@ -13,6 +14,9 @@ export default function NotificationsPage() {
   useEffect(() => {
     fetchNotifications()
   }, [])
+
+  // Auto-refresh notifications every 30s (#2).
+  usePolling(() => fetchNotifications(), 30000)
 
   const fetchNotifications = async () => {
     try {

@@ -112,9 +112,12 @@ function AdminSubtopicsContent() {
         reader.readAsDataURL(file)
       })))
       setFormData(prev => {
-        const existingNames = new Set(prev.documents.map(d => d.name))
-        const newDocs = encoded.filter(d => !existingNames.has(d.name))
-        return { ...prev, documents: [...prev.documents, ...newDocs] }
+        // Re-uploading a file with the same name REPLACES the existing entry.
+        // This lets an admin fix a document whose file data was lost (it would
+        // otherwise be a name-only placeholder) by simply re-uploading it.
+        const byName = new Map(prev.documents.map(d => [d.name, d]))
+        encoded.forEach(d => byName.set(d.name, d))
+        return { ...prev, documents: Array.from(byName.values()) }
       })
     } finally {
       setUploading(false)

@@ -36,15 +36,26 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
         } else if (doc.url) {
           setFile(doc.url)
         } else if (doc.subtopicId) {
-          const res = await api.get(`/subtopics/${doc.subtopicId}`)
+          let res
+          try {
+            res = await api.get(`/subtopics/${doc.subtopicId}`)
+          } catch (err) {
+            // 403 = locked/premium content → prompt login or purchase.
+            if (err.response?.status === 403) {
+              onClose()
+              if (!user) onRequireLogin(); else onRequirePurchase()
+              return
+            }
+            throw err
+          }
           const fetchedSubtopic = res.data.subtopic
           let matchingDoc = null;
           if (fetchedSubtopic.documents && fetchedSubtopic.documents.length > 0) {
-             matchingDoc = fetchedSubtopic.documents.find(d => d.name === doc.name)
+             matchingDoc = fetchedSubtopic.documents.find(d => d.name === doc.name) || fetchedSubtopic.documents[0]
           } else if (fetchedSubtopic.document) {
              matchingDoc = fetchedSubtopic.document
           }
-          
+
           if (matchingDoc && matchingDoc.data) {
             const byteChars = atob(matchingDoc.data)
             const byteNums = new Array(byteChars.length)
@@ -53,6 +64,8 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             }
             const byteArray = new Uint8Array(byteNums)
             setFile({ data: byteArray, base64: matchingDoc.data })
+          } else if (matchingDoc && matchingDoc.url) {
+            setFile(matchingDoc.url) // preview via streamable url (no base64)
           } else {
             onClose()
             if (!user) {

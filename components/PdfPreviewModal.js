@@ -14,6 +14,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
   const [scale, setScale] = useState(1.0)
   const [file, setFile] = useState(null)
   const [error, setError] = useState(false)
+  const [notAvailable, setNotAvailable] = useState(false)
   const containerRef = useRef(null)
 
   const [loadingFile, setLoadingFile] = useState(false)
@@ -49,12 +50,18 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             throw err
           }
           const fetchedSubtopic = res.data.subtopic
-          let matchingDoc = null;
-          if (fetchedSubtopic.documents && fetchedSubtopic.documents.length > 0) {
-             matchingDoc = fetchedSubtopic.documents.find(d => d.name === doc.name) || fetchedSubtopic.documents[0]
-          } else if (fetchedSubtopic.document) {
-             matchingDoc = fetchedSubtopic.document
-          }
+          // Search BOTH the documents[] array and the singular document{} for a
+          // usable copy (by exact name first, then any with data/url).
+          const candidates = [
+            ...(fetchedSubtopic.documents || []),
+            ...(fetchedSubtopic.document ? [fetchedSubtopic.document] : []),
+          ]
+          const usable = (d) => d && (d.data || d.url)
+          let matchingDoc =
+            candidates.find(d => d.name === doc.name && usable(d)) ||
+            candidates.find(usable) ||
+            candidates.find(d => d.name === doc.name) ||
+            candidates[0] || null
 
           if (matchingDoc && matchingDoc.data) {
             const byteChars = atob(matchingDoc.data)
@@ -67,12 +74,9 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
           } else if (matchingDoc && matchingDoc.url) {
             setFile(matchingDoc.url) // preview via streamable url (no base64)
           } else {
-            onClose()
-            if (!user) {
-              onRequireLogin()
-            } else {
-              onRequirePurchase()
-            }
+            // The file was never uploaded (metadata only) — this is NOT an auth
+            // issue, so show a clear message instead of redirecting to login.
+            setNotAvailable(true)
           }
         } else {
           onClose()
@@ -207,7 +211,13 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
           className="flex-1 overflow-auto relative bg-academic/50 select-none custom-scrollbar flex justify-center p-4"
           ref={containerRef}
         >
-          {error ? (
+          {notAvailable ? (
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-muted m-auto p-8 text-center max-w-md">
+              <FileText className="h-16 w-16 text-primary/30" />
+              <p className="font-semibold text-lg text-navy">Preview not available yet</p>
+              <p className="text-sm">This document hasn&apos;t been uploaded yet. Please check back later or contact support.</p>
+            </div>
+          ) : error ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-muted m-auto">
               <FileText className="h-16 w-16 text-primary/30" />
               <p className="font-semibold text-lg">Unable to load document</p>

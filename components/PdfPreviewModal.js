@@ -5,6 +5,14 @@ import { FileText, X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download } fro
 import { Document, Page, pdfjs } from 'react-pdf'
 import api from '@/utils/api'
 
+// Resolve a stored /uploads/<key> path to the backend origin (files live in S3
+// and are streamed by the backend proxy, not the frontend host).
+const resolveFileUrl = (u) => {
+  if (!u || /^https?:\/\//.test(u)) return u
+  const base = api.defaults.baseURL ? api.defaults.baseURL.replace(/\/api\/?$/, '') : ''
+  return u.startsWith('/uploads') ? base + u : u
+}
+
 // Set worker url
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
@@ -68,7 +76,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
           const byteArray = new Uint8Array(byteNums)
           setFile({ data: byteArray, base64: doc.data })
         } else if (doc.url) {
-          setFile(doc.url)
+          setFile(resolveFileUrl(doc.url))
         } else if (doc.subtopicId) {
           let res
           try {
@@ -105,7 +113,7 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             const byteArray = new Uint8Array(byteNums)
             setFile({ data: byteArray, base64: matchingDoc.data })
           } else if (matchingDoc && matchingDoc.url) {
-            setFile(matchingDoc.url) // preview via streamable url (no base64)
+            setFile(resolveFileUrl(matchingDoc.url)) // preview via streamable url (no base64)
           } else {
             // The file was never uploaded (metadata only) — this is NOT an auth
             // issue, so show a clear message instead of redirecting to login.
@@ -135,9 +143,9 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
       return;
     }
 
-    if (doc.url) {
+    if (doc.url || (typeof file === 'string')) {
       const link = document.createElement('a');
-      link.href = doc.url;
+      link.href = resolveFileUrl(doc.url || file);
       link.download = doc.name || 'document.pdf';
       document.body.appendChild(link);
       link.click();

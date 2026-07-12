@@ -106,19 +106,23 @@ function AdminSubtopicsContent() {
 
     setUploading(true)
     try {
-      const encoded = await Promise.all(files.map(file => new Promise((resolve) => {
-        const reader = new FileReader()
-        reader.onload = (ev) => resolve({ name: file.name, size: file.size, type: file.type, data: ev.target.result.split(',')[1] })
-        reader.readAsDataURL(file)
-      })))
+      // Upload each file to S3 via /api/upload; store ONLY the URL + metadata in
+      // MongoDB (files → S3, text/metadata → Mongo). No more base64 in the DB.
+      const uploaded = await Promise.all(files.map(async (file) => {
+        const fd = new FormData()
+        fd.append('file', file)
+        const res = await api.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        if (!res.data?.fileUrl) throw new Error('Upload failed')
+        return { name: file.name, size: file.size, type: file.type, url: res.data.fileUrl }
+      }))
       setFormData(prev => {
         // Re-uploading a file with the same name REPLACES the existing entry.
-        // This lets an admin fix a document whose file data was lost (it would
-        // otherwise be a name-only placeholder) by simply re-uploading it.
         const byName = new Map(prev.documents.map(d => [d.name, d]))
-        encoded.forEach(d => byName.set(d.name, d))
+        uploaded.forEach(d => byName.set(d.name, d))
         return { ...prev, documents: Array.from(byName.values()) }
       })
+    } catch (err) {
+      setDocError(err.response?.data?.message || 'Upload failed. Please try again.')
     } finally {
       setUploading(false)
       e.target.value = ''

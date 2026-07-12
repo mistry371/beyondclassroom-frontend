@@ -49,6 +49,10 @@ export default function PaymentModal({ isOpen, onClose, course, item, isPackage,
       const res = await api.post('/promo-codes/validate', {
         code: promoCode.trim(),
         amount: originalAmount,
+        // Item context so the server can enforce package/course restrictions (#9)
+        packageId: isPackage ? currentItem?._id : undefined,
+        courseId: isPackage ? undefined : currentItem?._id,
+        selectedCourseIds: selectedCourseIds && selectedCourseIds.length ? selectedCourseIds : undefined,
       })
       if (res.data.success) {
         setPromoApplied(res.data)

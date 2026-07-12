@@ -84,8 +84,8 @@ export default function PromoterDashboardPage() {
   }
 
   const handleWithdraw = async () => {
-    const amt = parseInt(withdrawAmount, 10)
-    if (!amt) return setNotification('Enter a valid amount')
+    const amt = Number(withdrawAmount)
+    if (!amt || amt <= 0) return setNotification('Enter a valid amount')
     try {
       setNotification('')
       const res = await promoterApi.post('/promoters/withdraw', { amount: amt })
@@ -93,6 +93,8 @@ export default function PromoterDashboardPage() {
         setNotification(res.data.message)
         setWithdrawAmount('')
         await loadDashboard()
+        setTimeout(() => setNotification(''), 9000) // success message is long — keep it visible
+        return
       }
     } catch (err) {
       setNotification(err.response?.data?.message || 'Withdrawal failed')
@@ -336,7 +338,7 @@ export default function PromoterDashboardPage() {
               <h3 className="font-bold mb-3 flex items-center gap-2 text-slate-700">
                 <Wallet className="h-5 w-5 text-accent" /> Request payout
               </h3>
-              <p className="text-slate-500 text-sm mb-3">Available: ₹{(promoter.pendingPayout || 0).toLocaleString('en-IN')} (min ₹500)</p>
+              <p className="text-slate-500 text-sm mb-3">Available: ₹{(promoter.pendingPayout || 0).toLocaleString('en-IN')}</p>
               <input type="number" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)}
                 placeholder="Amount in ₹"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 mb-3 text-slate-800"

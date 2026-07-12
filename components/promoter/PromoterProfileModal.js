@@ -2,8 +2,15 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Building2, ShieldCheck, Upload, CheckCircle2, Clock, AlertCircle, Loader2 } from 'lucide-react'
+import { X, User, Building2, ShieldCheck, Upload, CheckCircle2, Clock, AlertCircle, Loader2, Eye, Trash2, RotateCcw } from 'lucide-react'
 import promoterApi from '@/utils/promoterApi'
+
+const docFileUrl = (u) => {
+  if (!u) return ''
+  if (u.startsWith('http')) return u
+  const base = promoterApi.defaults.baseURL ? promoterApi.defaults.baseURL.replace('/api', '') : ''
+  return `${base}${u}`
+}
 
 const TABS = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -15,6 +22,7 @@ const KYC_BADGE = {
   verified: { label: 'Verified', cls: 'bg-green-100 text-green-700', icon: CheckCircle2 },
   submitted: { label: 'Under review', cls: 'bg-amber-100 text-amber-700', icon: Clock },
   rejected: { label: 'Rejected', cls: 'bg-red-100 text-red-700', icon: AlertCircle },
+  resubmit: { label: 'Re-submission requested', cls: 'bg-orange-100 text-orange-700', icon: RotateCcw },
   pending: { label: 'Not submitted', cls: 'bg-slate-100 text-slate-600', icon: AlertCircle },
 }
 
@@ -67,11 +75,25 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
       const res = await promoterApi.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       if (res.data.success && res.data.fileUrl) {
         setKyc((k) => ({ ...k, [field]: res.data.fileUrl }))
-        flash('success', 'Document uploaded')
+        flash('success', 'Document uploaded — click "Submit for Verification" to save.')
       }
     } catch {
       flash('error', 'Upload failed')
     } finally { setUploading('') }
+  }
+
+  const deleteDoc = async (field) => {
+    if (!window.confirm('Remove this document?')) return
+    try {
+      const res = await promoterApi.put('/promoters/kyc-doc/delete', { field })
+      if (res.data.success) {
+        setKyc((k) => ({ ...k, [field]: '' }))
+        if (res.data.promoter) onUpdated?.(res.data.promoter)
+        flash('success', 'Document removed')
+      }
+    } catch (err) {
+      flash('error', err.response?.data?.message || 'Could not remove document')
+    }
   }
 
   const kycStatus = promoter?.kyc?.status || 'pending'
@@ -152,21 +174,32 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
                 <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm ${badge.cls}`}>
                   <badge.icon className="h-4 w-4" /> KYC status: <span className="font-semibold">{badge.label}</span>
                 </div>
-                {kycStatus === 'rejected' && promoter?.kyc?.rejectionReason && (
-                  <p className="text-sm text-red-600">Reason: {promoter.kyc.rejectionReason}</p>
+                {(kycStatus === 'rejected' || kycStatus === 'resubmit') && promoter?.kyc?.rejectionReason && (
+                  <div className="text-sm text-red-700 bg-red-50 rounded-lg px-4 py-2.5">
+                    <strong>Admin note:</strong> {promoter.kyc.rejectionReason}
+                    <div className="text-red-500 mt-1">Please re-upload the requested document(s) and submit again.</div>
+                  </div>
+                )}
+                {kycStatus === 'verified' && (
+                  <p className="text-sm text-green-700">Your KYC is verified. Documents are locked and can no longer be changed.</p>
                 )}
                 <DocRow label="PAN Card" numberLabel="PAN Number" numberVal={kyc.panNumber}
                   onNumber={(v) => setKyc({ ...kyc, panNumber: v.toUpperCase() })} docUrl={kyc.panDocUrl}
-                  uploading={uploading === 'panDocUrl'} onFile={(f) => uploadDoc('panDocUrl', f)} field={field} labelCls={label} />
+                  uploading={uploading === 'panDocUrl'} onFile={(f) => uploadDoc('panDocUrl', f)}
+                  onDelete={() => deleteDoc('panDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
                 <DocRow label="Aadhaar Card" numberLabel="Aadhaar Number" numberVal={kyc.aadhaarNumber}
                   onNumber={(v) => setKyc({ ...kyc, aadhaarNumber: v })} docUrl={kyc.aadhaarDocUrl}
-                  uploading={uploading === 'aadhaarDocUrl'} onFile={(f) => uploadDoc('aadhaarDocUrl', f)} field={field} labelCls={label} />
+                  uploading={uploading === 'aadhaarDocUrl'} onFile={(f) => uploadDoc('aadhaarDocUrl', f)}
+                  onDelete={() => deleteDoc('aadhaarDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
                 <DocRow label="Bank Passbook / Cancelled Cheque" docUrl={kyc.passbookDocUrl}
-                  uploading={uploading === 'passbookDocUrl'} onFile={(f) => uploadDoc('passbookDocUrl', f)} field={field} labelCls={label} />
-                <button disabled={saving} onClick={() => save('/promoters/kyc', kyc, 'KYC submitted for verification')}
-                  className="w-full py-2.5 bg-primary text-white rounded-xl font-semibold hover:opacity-90 disabled:opacity-60">
-                  {saving ? 'Saving…' : 'Submit for Verification'}
-                </button>
+                  uploading={uploading === 'passbookDocUrl'} onFile={(f) => uploadDoc('passbookDocUrl', f)}
+                  onDelete={() => deleteDoc('passbookDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
+                {kycStatus !== 'verified' && (
+                  <button disabled={saving} onClick={() => save('/promoters/kyc', kyc, 'KYC submitted for verification')}
+                    className="w-full py-2.5 bg-primary text-white rounded-xl font-semibold hover:opacity-90 disabled:opacity-60">
+                    {saving ? 'Saving…' : (kycStatus === 'rejected' || kycStatus === 'resubmit') ? 'Re-submit for Verification' : 'Submit for Verification'}
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -176,20 +209,34 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
   )
 }
 
-function DocRow({ label, numberLabel, numberVal, onNumber, docUrl, uploading, onFile, field, labelCls }) {
+function DocRow({ label, numberLabel, numberVal, onNumber, docUrl, uploading, onFile, onDelete, locked, field, labelCls }) {
   return (
     <div className="border border-slate-200 rounded-xl p-4 space-y-3">
       <p className="font-semibold text-slate-700 text-sm">{label}</p>
       {numberLabel && (
         <div><label className={labelCls}>{numberLabel}</label>
-          <input className={field} value={numberVal} onChange={(e) => onNumber(e.target.value)} /></div>
+          <input className={field} value={numberVal} onChange={(e) => onNumber(e.target.value)} disabled={locked} /></div>
       )}
-      <div className="flex items-center gap-3">
-        <label className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium text-slate-700 cursor-pointer">
-          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {uploading ? 'Uploading…' : docUrl ? 'Replace file' : 'Upload file'}
-          <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
-        </label>
+      <div className="flex items-center gap-2 flex-wrap">
+        {docUrl && (
+          <a href={docFileUrl(docUrl)} target="_blank" rel="noopener"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium text-slate-700">
+            <Eye className="h-4 w-4" /> View / Download
+          </a>
+        )}
+        {!locked && (
+          <label className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium text-slate-700 cursor-pointer">
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {uploading ? 'Uploading…' : docUrl ? 'Replace' : 'Upload file'}
+            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+          </label>
+        )}
+        {docUrl && !locked && (
+          <button type="button" onClick={onDelete}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium">
+            <Trash2 className="h-4 w-4" /> Delete
+          </button>
+        )}
         {docUrl && <span className="inline-flex items-center gap-1 text-green-600 text-sm"><CheckCircle2 className="h-4 w-4" /> Uploaded</span>}
       </div>
     </div>

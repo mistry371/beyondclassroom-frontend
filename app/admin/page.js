@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           const pa = stats.pendingActions
           const items = [
             { key: 'withdrawals', label: 'Withdrawal requests', count: pa.withdrawals || 0, href: '/admin/promoters', icon: Wallet, color: 'text-emerald-600 bg-emerald-50' },
-            { key: 'kyc', label: 'KYC to review', count: pa.kyc || 0, href: '/admin/promoters', icon: ShieldCheck, color: 'text-indigo-600 bg-indigo-50' },
+            { key: 'kyc', label: 'KYC to review', count: pa.kyc || 0, href: '/admin/kyc', icon: ShieldCheck, color: 'text-indigo-600 bg-indigo-50' },
             { key: 'customRequests', label: 'Custom requests', count: pa.customRequests || 0, href: '/admin/custom-requests', icon: MessageSquare, color: 'text-rose-600 bg-rose-50' },
           ]
           const totalPending = items.reduce((s, i) => s + i.count, 0)
@@ -136,6 +136,7 @@ export default function AdminDashboard() {
           <QuickActionCard href="/admin/testimonials" title="Testimonials" description="Manage student success stories" icon={Star} color="bg-yellow-50 text-yellow-600" />
           <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={MessageSquare} color="bg-rose-50 text-rose-600" />
           <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="bg-emerald-50 text-emerald-600" />
+          <QuickActionCard href="/admin/kyc" title="KYC Management" description="Verify promoter documents" icon={ShieldCheck} color="bg-indigo-50 text-indigo-600" />
           <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" />
           <QuickActionCard href="/admin/media" title="Media Library" description="Upload and manage media" icon={Image} color="bg-pink-50 text-pink-600" />
         </AdminSection>

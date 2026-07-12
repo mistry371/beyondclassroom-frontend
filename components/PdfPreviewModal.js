@@ -52,12 +52,16 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             const byteArray = new Uint8Array(byteNums)
             setFile({ data: byteArray, base64: matchingDoc.data })
           } else {
-            alert("Sorry, you don't have access to this document or it was not found.")
             onClose()
+            if (!user) {
+              onRequireLogin()
+            } else {
+              onRequirePurchase()
+            }
           }
         } else {
-          alert("Sorry, the file for this document has not been uploaded yet.")
           onClose()
+          alert("Sorry, the file for this document has not been uploaded yet.")
         }
       } catch (e) {
         console.error('PDF preview error:', e)

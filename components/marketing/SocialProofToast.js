@@ -9,16 +9,18 @@ export default function SocialProofToast() {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
+    let innerTimer
     const showTimer = setTimeout(() => setShow(true), 4000)
     const cycle = setInterval(() => {
       setShow(false)
-      setTimeout(() => {
+      innerTimer = setTimeout(() => {
         setIndex((i) => (i + 1) % recentActivity.length)
         setShow(true)
       }, 400)
     }, 8000)
     return () => {
       clearTimeout(showTimer)
+      clearTimeout(innerTimer)
       clearInterval(cycle)
     }
   }, [])

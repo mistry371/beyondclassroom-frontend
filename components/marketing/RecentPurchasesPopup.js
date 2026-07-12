@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle2, X } from 'lucide-react'
 
@@ -16,34 +16,28 @@ const purchases = [
 export default function RecentPurchasesPopup() {
   const [currentPurchase, setCurrentPurchase] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
+  const timers = useRef([])
 
   useEffect(() => {
-    // Start showing popups after a short delay
-    const initialDelay = setTimeout(() => {
-      showNextPurchase()
-    }, 5000)
+    const track = (id) => { timers.current.push(id); return id }
 
-    return () => clearTimeout(initialDelay)
+    const showNextPurchase = () => {
+      const randomIndex = Math.floor(Math.random() * purchases.length)
+      setCurrentPurchase(purchases[randomIndex])
+      setIsVisible(true)
+      // Hide after 5s, then schedule the next one 10-25s later.
+      track(setTimeout(() => {
+        setIsVisible(false)
+        const nextDelay = Math.floor(Math.random() * 15000) + 10000
+        track(setTimeout(showNextPurchase, nextDelay))
+      }, 5000))
+    }
+
+    track(setTimeout(showNextPurchase, 5000))
+
+    // Clear every scheduled timer on unmount so nothing leaks across navigations.
+    return () => { timers.current.forEach(clearTimeout); timers.current = [] }
   }, [])
-
-  const showNextPurchase = () => {
-    // Pick a random purchase
-    const randomIndex = Math.floor(Math.random() * purchases.length)
-    setCurrentPurchase(purchases[randomIndex])
-    setIsVisible(true)
-
-    // Hide after 5 seconds
-    setTimeout(() => {
-      setIsVisible(false)
-      
-      // Wait for a random interval between 10 to 25 seconds before showing the next one
-      const nextDelay = Math.floor(Math.random() * 15000) + 10000
-      setTimeout(() => {
-        showNextPurchase()
-      }, nextDelay)
-      
-    }, 5000)
-  }
 
   return (
     <AnimatePresence>

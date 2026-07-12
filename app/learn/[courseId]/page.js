@@ -40,7 +40,15 @@ export default function LearnPage() {
         const profileRes = await api.get('/profile')
         purchasedIds = (profileRes.data?.user?.purchasedCourses || []).map((c) => c?._id || c)
         userRole = profileRes.data?.user?.role || 'user'
-        setHasAccess(freeCourse || purchasedIds.includes(params.courseId))
+        // purchasedIds hold composite "courseId_packageId" entries (plus bare
+        // package ids); match on the base course id, not an exact string.
+        const baseParam = params.courseId.includes('_') ? params.courseId.split('_')[0] : params.courseId
+        const owns = purchasedIds.some((id) => {
+          const entry = String(id)
+          const base = entry.includes('_') ? entry.split('_')[0] : entry
+          return base === baseParam || entry === params.courseId
+        })
+        setHasAccess(freeCourse || owns)
       } catch (_) {
         // Not logged in — only free/demo courses accessible
         setHasAccess(!!freeCourse)

@@ -34,6 +34,13 @@ const authSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload
     },
+    // Merge fresh user fields (e.g. purchasedCourses after a purchase) and persist
+    updateUser: (state, action) => {
+      state.user = { ...(state.user || {}), ...action.payload }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(state.user))
+      }
+    },
     // Action to restore state from localStorage
     restoreAuth: (state) => {
       if (typeof window !== 'undefined') {
@@ -54,7 +61,7 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, logout, setLoading, restoreAuth } = authSlice.actions
+export const { setCredentials, logout, setLoading, restoreAuth, updateUser } = authSlice.actions
 export default authSlice.reducer
 
 // Selectors

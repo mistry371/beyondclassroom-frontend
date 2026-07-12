@@ -452,7 +452,11 @@ function CourseDetailsContent() {
 
           {/* Right Column */}
           {(() => {
-            const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.some(pc => (pc._id || pc) === course._id))
+            const isAlreadyPurchased = !!(user && user.purchasedCourses && user.purchasedCourses.some(pc => {
+              const entry = String(pc._id || pc)
+              const base = entry.includes('_') ? entry.split('_')[0] : entry
+              return base === course._id || entry === course._id
+            }))
             const isFreeOrDemo = course.isFree || course.isDemo
             const hasAvailablePackage = !!(usageLimit && (usageLimit.hasUnlimited || usageLimit.used < usageLimit.limit))
 

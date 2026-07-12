@@ -114,7 +114,7 @@ export default function ScreenProtection() {
         (window.outerHeight - window.innerHeight) > DEVTOOLS_THRESHOLD
       if (open) showOverlay(); else hideOverlay()
     }
-    const devtoolsPoll = setInterval(checkDevtools, 1000)
+    const devtoolsPoll = setInterval(checkDevtools, 3000)
     window.addEventListener('resize', checkDevtools)
 
     let touchTimer = null

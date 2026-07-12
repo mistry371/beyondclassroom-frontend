@@ -53,7 +53,7 @@ export default function SecurityWrapper() {
     document.addEventListener('contextmenu', onContextMenu)
     document.addEventListener('keydown', onKeyDown, true)
     window.addEventListener('resize', onResize)
-    const poll = setInterval(checkDevtools, 2000)
+    const poll = setInterval(checkDevtools, 4000)
     checkDevtools()
 
     return () => {

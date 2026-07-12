@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, GraduationCap, PlayCircle, ShieldCheck, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import api from '@/utils/api'
+import api, { cachedGet } from '@/utils/api'
 import PremiumButton from '@/components/marketing/PremiumButton'
 import { brand, trustBadges } from '@/data/marketingContent'
 import Link from 'next/link'
@@ -31,7 +31,9 @@ export default function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '10%'])
 
   useEffect(() => {
-    api.get('/admin/content')
+    // Cached (5 min) + deduped — this rarely-changing content was refetched on
+    // every homepage mount.
+    cachedGet('/admin/content', 5 * 60 * 1000)
       .then((res) => {
         const c = res.data.content
         if (c?.heroTitle) setContent((prev) => ({ ...prev, heroTitle: c.heroTitle }))
@@ -51,9 +53,13 @@ export default function Hero() {
       </motion.div>
 
       <div className="w-full relative z-10 block bg-white border-b border-primary/10">
-        <img
+        <Image
           src="/main-header.png"
           alt="Beyond Classroom: Where Mathematics Meets Personalization"
+          width={1920}
+          height={600}
+          priority
+          sizes="100vw"
           className="w-full h-auto object-cover"
         />
       </div>
@@ -166,9 +172,13 @@ export default function Hero() {
               <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               
               <div className="w-24 h-24 md:w-36 md:h-36 rounded-full overflow-hidden flex-shrink-0 bg-white shadow-[0_4px_20px_rgb(0,0,0,0.05)] border-4 border-slate-50 group-hover:border-white transition-all duration-300 relative z-10 group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)]">
-                <img
+                <Image
                   src={`/class_images/${grade.label}.png`}
                   alt={grade.label}
+                  width={144}
+                  height={144}
+                  sizes="144px"
+                  loading="lazy"
                   className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500"
                   onError={(e) => { e.target.style.display = 'none' }}
                 />

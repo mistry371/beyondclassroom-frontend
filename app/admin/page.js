@@ -57,9 +57,31 @@ export default function AdminDashboard() {
               </h1>
               <p className="text-slate-500 mt-1">Welcome back, {user?.name || 'Admin'}</p>
             </div>
-            <Link href="/" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all">
-              Back to Site
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/admin/analytics" className="hidden sm:inline-flex px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-all font-medium items-center gap-2">
+                <BarChart3 className="h-4 w-4" /> Analytics
+              </Link>
+              <Link href="/" className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all">
+                Back to Site
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick actions — one click to the most frequent operations (#4) */}
+          <div className="flex flex-wrap gap-2 mt-5">
+            {[
+              { href: '/admin/courses', label: 'Manage Courses', icon: BookOpen },
+              { href: '/admin/promo-codes', label: 'New Promo Code', icon: Tag },
+              { href: '/admin/kyc', label: 'Review KYC', icon: ShieldCheck },
+              { href: '/admin/promoters', label: 'Payouts', icon: Wallet },
+              { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+              { href: '/admin/notifications', label: 'Send Notice', icon: Bell },
+            ].map((q) => (
+              <Link key={q.href} href={q.href}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:border-primary/40 hover:text-primary transition-all">
+                <q.icon className="h-4 w-4" /> {q.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

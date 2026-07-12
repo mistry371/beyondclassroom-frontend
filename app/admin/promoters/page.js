@@ -30,6 +30,7 @@ export default function AdminPromotersPage() {
   const [loading, setLoading] = useState(true)
   const [detail, setDetail] = useState(null)
   const [detailLoading, setDetailLoading] = useState(false)
+  const [promoterDetail, setPromoterDetail] = useState(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -66,6 +67,17 @@ export default function AdminPromotersPage() {
       setDetail(null)
     } finally {
       setDetailLoading(false)
+    }
+  }
+
+  const openPromoter = async (id) => {
+    setPromoterDetail({ loading: true })
+    try {
+      const res = await api.get(`/promoters/admin/promoter/${id}`)
+      if (res.data.success) setPromoterDetail(res.data.detail)
+    } catch {
+      showError('Failed to load promoter')
+      setPromoterDetail(null)
     }
   }
 
@@ -183,8 +195,8 @@ export default function AdminPromotersPage() {
               </thead>
               <tbody>
                 {promoters.map((p) => (
-                  <tr key={p.id} className="border-b border-primary/5 text-ink">
-                    <td className="p-4">{p.name}</td>
+                  <tr key={p.id} onClick={() => openPromoter(p.id)} className="border-b border-primary/5 text-ink cursor-pointer hover:bg-primary/5">
+                    <td className="p-4 font-medium text-primary">{p.name}</td>
                     <td className="p-4">{p.email}</td>
                     <td className="p-4 font-mono text-primary">{p.referralCode}</td>
                     <td className="p-4 text-center">{p.referrals}</td>
@@ -207,6 +219,88 @@ export default function AdminPromotersPage() {
           onReviewKyc={reviewKyc}
         />
       )}
+
+      {promoterDetail && (
+        <PromoterDetailModal detail={promoterDetail} onClose={() => setPromoterDetail(null)} />
+      )}
+    </div>
+  )
+}
+
+function PromoterDetailModal({ detail, onClose }) {
+  if (detail.loading) {
+    return <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}><div className="bg-white rounded-2xl p-8">Loading…</div></div>
+  }
+  const { promoter, bankDetails = {}, kyc = {}, promoCodes = [], studentPurchases = [], payoutHistory = [], stats = {} } = detail
+  const kb = KYC_BADGE[kyc.status] || KYC_BADGE.pending
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[92vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div>
+            <h2 className="text-lg font-bold text-slate-800">{promoter?.name}</h2>
+            <p className="text-sm text-slate-500">{promoter?.email} · {promoter?.referralCode} · {promoter?.phone}</p>
+          </div>
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-lg"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="p-6 overflow-y-auto space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: 'Total earnings', value: money(stats.totalEarnings) },
+              { label: 'Available', value: money(stats.pendingPayout) },
+              { label: 'Paid out', value: money(stats.totalPaidOut) },
+              { label: 'Conversion', value: `${stats.conversionRate || 0}%` },
+            ].map((s) => (
+              <div key={s.label} className="bg-slate-50 rounded-xl p-3 text-center">
+                <p className="text-xl font-bold text-slate-800">{s.value}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Section title="Performance">
+              <Row label="Referrals" value={stats.referrals} />
+              <Row label="Students joined" value={stats.studentsJoined} />
+              <Row label="Rank" value={stats.rank} />
+              <Row label="Commission rate" value={`${Math.round((stats.commissionRate || 0) * 100)}%`} />
+              <Row label="Member since" value={stats.memberSince ? new Date(stats.memberSince).toLocaleDateString('en-IN') : '—'} />
+            </Section>
+            <Section title="KYC & Bank">
+              <div className="mb-2"><span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${kb.cls}`}><kb.icon className="h-3.5 w-3.5" /> {kb.label}</span></div>
+              <Row label="Bank" value={bankDetails.bankName} />
+              <Row label="Account" value={bankDetails.accountNumber} />
+              <Row label="IFSC" value={bankDetails.ifsc} />
+              <Row label="UPI" value={bankDetails.upiId} />
+            </Section>
+            <Section title={`Assigned promo codes (${promoCodes.length})`}>
+              {promoCodes.length === 0 && <p className="text-sm text-slate-400">None</p>}
+              {promoCodes.map((c, i) => (
+                <div key={i} className="flex justify-between text-sm py-1"><span className="font-mono text-primary">{c.code}</span><span className="text-slate-500">{c.discountPercent}% · used {c.usedCount}</span></div>
+              ))}
+            </Section>
+            <Section title={`Student purchases (${studentPurchases.length})`}>
+              <div className="max-h-36 overflow-y-auto">
+                {studentPurchases.length === 0 && <p className="text-sm text-slate-400">No purchases yet</p>}
+                {studentPurchases.map((s, i) => (
+                  <div key={i} className="flex justify-between text-sm py-1"><span className="text-slate-700">{s.userName}{s.promoCode ? ` · ${s.promoCode}` : ''}</span><span className="text-green-600 font-medium">+{money(s.commissionAmount)}</span></div>
+                ))}
+              </div>
+            </Section>
+          </div>
+          <Section title={`Withdrawal history (${payoutHistory.length})`}>
+            <div className="max-h-36 overflow-y-auto">
+              {payoutHistory.length === 0 && <p className="text-sm text-slate-400">No withdrawals</p>}
+              {payoutHistory.map((p, i) => (
+                <div key={i} className="flex justify-between items-center text-sm py-1">
+                  <span className="text-slate-600">{new Date(p.createdAt).toLocaleDateString('en-IN')}</span>
+                  <span className="text-slate-800">{money(p.amount)}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${p.status === 'pending' ? 'bg-amber-100 text-amber-700' : p.status === 'rejected' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{p.status}</span>
+                </div>
+              ))}
+            </div>
+          </Section>
+        </div>
+      </div>
     </div>
   )
 }

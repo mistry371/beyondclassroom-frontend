@@ -18,6 +18,8 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
 
   const [loadingFile, setLoadingFile] = useState(false)
 
+  const isPdf = doc?.name ? doc.name.toLowerCase().endsWith('.pdf') : true;
+
   useEffect(() => {
     if (!doc) return
     const loadFile = async () => {
@@ -97,15 +99,27 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
         byteNums[i] = byteChars.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNums);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
+      
+      let mimeType = 'application/pdf';
+      if (doc.name) {
+        const lowerName = doc.name.toLowerCase();
+        if (lowerName.endsWith('.docx')) mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        else if (lowerName.endsWith('.doc')) mimeType = 'application/msword';
+        else if (lowerName.endsWith('.pptx')) mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+        else if (lowerName.endsWith('.xlsx')) mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        else if (lowerName.endsWith('.png')) mimeType = 'image/png';
+        else if (lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg')) mimeType = 'image/jpeg';
+      }
+      
+      const blob = new Blob([byteArray], { type: mimeType });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = doc.name || 'document.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   }
 
@@ -184,6 +198,15 @@ export default function PdfPreviewModal({ doc, onClose, isPurchased = false, use
             <div className="flex flex-col items-center justify-center h-full gap-4 text-muted m-auto">
               <FileText className="h-16 w-16 text-primary/30" />
               <p className="font-semibold text-lg">Unable to load document</p>
+            </div>
+          ) : !isPdf ? (
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-muted m-auto p-8 text-center max-w-md">
+              <FileText className="h-16 w-16 text-primary/30" />
+              <p className="font-semibold text-lg text-navy">Preview Not Available</p>
+              <p className="text-sm">
+                This document is a {doc?.name?.split('.').pop()?.toUpperCase()} file. Browser previews are only supported for PDF files. 
+                {isPurchased ? " Please use the download button to view it locally." : " Please sign up or unlock the course to download and view this file."}
+              </p>
             </div>
           ) : !file ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 m-auto">

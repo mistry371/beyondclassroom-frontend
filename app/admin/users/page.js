@@ -90,11 +90,14 @@ export default function AdminUsers() {
 
   const handleDelete = async (userId) => {
     if (!confirm('Are you sure you want to delete this user?')) return
+    const prev = users
+    // Optimistically remove the row immediately so the deletion is instant.
+    setUsers((list) => list.filter((u) => u._id !== userId))
     try {
       await api.delete(`/admin/users/${userId}`)
       showSuccess('User deleted')
-      fetchUsers()
     } catch (error) {
+      setUsers(prev) // rollback on failure
       showError(error.response?.data?.message || 'Delete failed')
     }
   }

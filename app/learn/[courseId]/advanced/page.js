@@ -430,13 +430,17 @@ export default function AdvancedLearnPage() {
                                     const completed = prev?.lessonsCompleted || []
                                     if (!completed.includes(activeLesson._id)) {
                                       const newCompleted = [...completed, activeLesson._id]
+                                      // Count ALL learnable items: lessons + direct subtopics across
+                                      // every module (subtopic-based courses have empty m.lessons).
                                       const totalLessons = modules.reduce((acc, m) => {
-                                        return acc + (m.lessons || []).length;
-                                      }, 0) || newCompleted.length
+                                        return acc + (m.lessons?.length || 0) + (m.directSubtopics?.length || 0)
+                                      }, 0)
                                       return {
                                         ...prev,
                                         lessonsCompleted: newCompleted,
-                                        completionPercentage: Math.round((newCompleted.length / Math.max(totalLessons, newCompleted.length)) * 100)
+                                        completionPercentage: totalLessons > 0
+                                          ? Math.min(100, Math.round((newCompleted.length / totalLessons) * 100))
+                                          : 0
                                       }
                                     }
                                     return prev

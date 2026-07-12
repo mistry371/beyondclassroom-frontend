@@ -457,12 +457,20 @@ input, textarea, select, button, a, label {
   background: #EFF6FF !important;
 }
 
-/* Keep gradient buttons as-is */
-.admin-panel .bg-gradient-to-r.from-primary,
-.admin-panel .bg-gradient-to-r.from-green-500,
-.admin-panel .bg-gradient-to-r.from-red-500,
-.admin-panel .bg-gradient-to-r.from-secondary {
+/* Keep gradient BUTTONS white — but NOT gradient-clip-text headings, which use
+   the same from-primary gradient as their text fill (forcing them white made the
+   page titles invisible on the light header bars). */
+.admin-panel .bg-gradient-to-r.from-primary:not(.bg-clip-text),
+.admin-panel .bg-gradient-to-r.from-green-500:not(.bg-clip-text),
+.admin-panel .bg-gradient-to-r.from-red-500:not(.bg-clip-text),
+.admin-panel .bg-gradient-to-r.from-secondary:not(.bg-clip-text) {
   color: #FFFFFF !important;
+}
+
+/* Gradient-clip-text page titles: render the brand gradient as the text fill. */
+.admin-panel .bg-clip-text.text-transparent {
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 
 /* Admin stat cards keep their gradient */

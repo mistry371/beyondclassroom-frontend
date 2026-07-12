@@ -7,7 +7,8 @@ import {
   Users, BookOpen, DollarSign, TrendingUp, Activity,
   ShoppingCart, Award, Bell, Settings, BarChart3,
   Package, Tag, Layers, FileText, ListTree, HelpCircle,
-  MessageSquare, CheckSquare, Image, Shield, Star
+  MessageSquare, CheckSquare, Image, Shield, Star,
+  Wallet, ShieldCheck, ArrowRight
 } from 'lucide-react'
 import api from '@/utils/api'
 import { cachedGet } from '@/utils/api'
@@ -72,6 +73,40 @@ export default function AdminDashboard() {
             </button>
           </div>
         )}
+
+        {!statsLoading && stats?.pendingActions && (() => {
+          const pa = stats.pendingActions
+          const items = [
+            { key: 'withdrawals', label: 'Withdrawal requests', count: pa.withdrawals || 0, href: '/admin/promoters', icon: Wallet, color: 'text-emerald-600 bg-emerald-50' },
+            { key: 'kyc', label: 'KYC to review', count: pa.kyc || 0, href: '/admin/promoters', icon: ShieldCheck, color: 'text-indigo-600 bg-indigo-50' },
+            { key: 'customRequests', label: 'Custom requests', count: pa.customRequests || 0, href: '/admin/custom-requests', icon: MessageSquare, color: 'text-rose-600 bg-rose-50' },
+          ]
+          const totalPending = items.reduce((s, i) => s + i.count, 0)
+          if (totalPending === 0) return null
+          return (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                <Bell className="h-5 w-5 text-primary" /> Pending Actions
+                <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{totalPending}</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {items.filter((i) => i.count > 0).map((i) => (
+                  <Link key={i.key} href={i.href}
+                    className="flex items-center justify-between bg-white border border-slate-200 shadow-sm rounded-2xl p-5 hover:border-primary/40 hover:shadow-md transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-xl ${i.color}`}><i.icon className="h-6 w-6" /></div>
+                      <div>
+                        <p className="text-3xl font-black text-slate-800 leading-none">{i.count}</p>
+                        <p className="text-slate-500 text-sm mt-1">{i.label}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-slate-400" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 ${statsLoading ? 'opacity-60' : ''}`}>
           {statCards.map((stat, index) => (

@@ -39,6 +39,8 @@ api.interceptors.response.use(
       if (msg.includes('another device') || msg.includes('Session expired')) {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        localStorage.removeItem('promoterToken')
+        localStorage.removeItem('promoter')
         invalidateCache('')
         // Force redirect immediately so the user doesn't stay on a dead page
         window.location.href = '/auth/login?expired=true'
@@ -56,13 +58,24 @@ api.interceptors.response.use(
       const hasToken = !!localStorage.getItem('token')
 
       if (currentPath.startsWith('/admin') && hasToken) {
-        error.userMessage = error.userMessage || 'Request failed. Refresh the page or sign in again.'
+        // A 401 on an admin route means the token is genuinely rejected
+        // (expired/invalid). Clear the dead session and send to login instead of
+        // leaving the admin stranded on a broken page.
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('promoterToken')
+        localStorage.removeItem('promoter')
+        invalidateCache('')
+        error.userMessage = error.userMessage || 'Your session has expired. Please sign in again.'
+        window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
         return Promise.reject(error)
       }
 
       if (!isPublicPath && !isAuthPage) {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        localStorage.removeItem('promoterToken')
+        localStorage.removeItem('promoter')
         invalidateCache('')
         window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
       }
@@ -72,6 +85,19 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// Best-effort server-side logout: invalidates the single-session marker so the
+// JWT is dead and the next login doesn't hit the "already_logged_in" prompt.
+// Never throws — the client clears local state regardless of the result.
+export async function serverLogout() {
+  try {
+    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+      await api.post('/auth/logout')
+    }
+  } catch (_) {
+    // ignore — network/expired-token failures shouldn't block local logout
+  }
+}
 
 export async function cachedGet(url, ttlMs = 90 * 1000) {
   return dedupeGet(`GET:${url}`, async () => {

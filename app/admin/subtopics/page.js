@@ -36,15 +36,22 @@ function AdminSubtopicsContent() {
       const modRes = await api.get('/modules')
       const allModules = modRes.data.modules || []
       setModules(allModules)
-      
-      if (!selectedModule && allModules.length > 0) {
-        setSelectedModule(allModules[0]._id)
-      }
 
       const lessonPromises = allModules.map(m => api.get(`/lessons/module/${m._id}`))
       const lessonResults = await Promise.all(lessonPromises)
       const allLessons = lessonResults.flatMap(r => r.data.lessons || [])
       setLessons(allLessons)
+
+      // Resolve which module to select. Priority: explicit ?moduleId, else the
+      // module owning the ?lessonId (when opened from a Chapter's "Subtopics"
+      // button), else the first module. Without this, opening from a Chapter
+      // silently defaulted to the first GLOBAL module and mis-linked subtopics.
+      if (!selectedModule) {
+        const lessonParam = searchParams.get('lessonId')
+        const lessonMatch = lessonParam ? allLessons.find(l => l._id === lessonParam) : null
+        if (lessonMatch) setSelectedModule(lessonMatch.moduleId)
+        else if (allModules.length > 0) setSelectedModule(allModules[0]._id)
+      }
 
       try {
         const pkgRes = await api.get('/packages/admin')
@@ -64,14 +71,20 @@ function AdminSubtopicsContent() {
     setSelectedSubtopic(null)
     setDocError('')
     const foundModule = modules.find(m => m._id === selectedModule)
-    setFormData({ 
-      title: '', 
-      content: '', 
-      lessonId: '', // Optional now
-      moduleId: foundModule?._id || '', 
-      courseId: foundModule?.courseId || '', 
-      order: subtopics.length + 1, 
-      isPublished: true, 
+    // If opened from a Chapter (?lessonId), pre-select that chapter — but only
+    // if it belongs to the currently selected module.
+    const lessonParam = searchParams.get('lessonId') || ''
+    const presetLessonId = lessonParam && lessons.some(l => l._id === lessonParam && l.moduleId === foundModule?._id)
+      ? lessonParam
+      : ''
+    setFormData({
+      title: '',
+      content: '',
+      lessonId: presetLessonId, // Optional; pre-filled when creating under a Chapter
+      moduleId: foundModule?._id || '',
+      courseId: foundModule?.courseId || '',
+      order: subtopics.length + 1,
+      isPublished: true,
       documents: [],
       packageIds: []
     })

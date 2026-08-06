@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/utils/api'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
-import { ShieldCheck, Clock, AlertCircle, ArrowLeft, X, FileText, Check, RotateCcw, History } from 'lucide-react'
+import { ShieldCheck, Clock, AlertCircle, ArrowLeft, X, FileText, Check, RotateCcw, History, Eye, Download } from 'lucide-react'
 import { showSuccess, showError } from '@/components/ui/Toast'
+import DocPreviewModal, { resolveDocUrl } from '@/components/admin/DocPreviewModal'
 
 const BADGE = {
   verified: { label: 'Verified', cls: 'bg-green-100 text-green-700', icon: ShieldCheck },
@@ -14,13 +15,6 @@ const BADGE = {
   resubmit: { label: 'Re-submission requested', cls: 'bg-orange-100 text-orange-700', icon: RotateCcw },
   pending: { label: 'Not submitted', cls: 'bg-slate-100 text-slate-600', icon: AlertCircle },
 }
-const fileUrl = (u) => {
-  if (!u) return ''
-  if (u.startsWith('http')) return u
-  const base = api.defaults.baseURL ? api.defaults.baseURL.replace('/api', '') : ''
-  return `${base}${u}`
-}
-
 const FILTERS = ['submitted', 'resubmit', 'verified', 'rejected', 'all']
 
 export default function AdminKyc() {
@@ -69,7 +63,7 @@ export default function AdminKyc() {
         <div className="flex gap-2 mb-6 flex-wrap">
           {FILTERS.map((f) => (
             <button key={f} onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${filter === f ? 'bg-primary text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${filter === f ? 'bg-primary !text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
               {f === 'submitted' ? 'Pending' : f}
             </button>
           ))}
@@ -108,18 +102,52 @@ export default function AdminKyc() {
   )
 }
 
-function DocLink({ label, url }) {
-  if (!url) return <div className="flex items-center gap-2 text-sm text-slate-400"><FileText className="h-4 w-4" /> {label}: not uploaded</div>
+function DocRow({ label, url, onView }) {
+  const downloadDoc = async () => {
+    try {
+      const res = await fetch(resolveDocUrl(url))
+      const blob = await res.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      const clean = String(url).split('#')[0].split('?')[0]
+      const ext = (clean.match(/\.([a-z0-9]+)$/i) || [])[1] || (blob.type || '').split('/').pop() || 'pdf'
+      a.download = `${label.replace(/\s+/g, '_')}.${ext}`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000)
+    } catch (e) {
+      showError('Download failed. Please try again.')
+    }
+  }
+
   return (
-    <a href={fileUrl(url)} target="_blank" rel="noopener" className="flex items-center gap-2 text-sm text-primary hover:underline">
-      <FileText className="h-4 w-4" /> {label} — preview / download
-    </a>
+    <div className="flex items-center justify-between gap-2 rounded-lg bg-white border border-slate-200 px-3 py-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <FileText className={`h-4 w-4 shrink-0 ${url ? 'text-primary' : 'text-slate-300'}`} />
+        <span className="text-sm text-slate-700 truncate">{label}</span>
+      </div>
+      {url ? (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button onClick={() => onView({ url, title: label })} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-md hover:bg-primary hover:text-white transition-colors">
+            <Eye className="h-3.5 w-3.5" /> View
+          </button>
+          <button onClick={downloadDoc} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors">
+            <Download className="h-3.5 w-3.5" /> Download
+          </button>
+        </div>
+      ) : (
+        <span className="text-xs text-slate-400 shrink-0">Not uploaded</span>
+      )}
+    </div>
   )
 }
 
 function KycReviewModal({ item, onClose, onReview }) {
   const k = item.kyc || {}
   const b = BADGE[k.status] || BADGE.pending
+  const [docPreview, setDocPreview] = useState(null)
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl w-full max-w-lg max-h-[92vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -140,9 +168,9 @@ function KycReviewModal({ item, onClose, onReview }) {
 
           <div className="space-y-2">
             <p className="text-sm font-semibold text-slate-700">Documents</p>
-            <DocLink label="PAN Card" url={k.panDocUrl} />
-            <DocLink label="Aadhaar Card" url={k.aadhaarDocUrl} />
-            <DocLink label="Passbook / Cheque" url={k.passbookDocUrl} />
+            <DocRow label="PAN Card" url={k.panDocUrl} onView={setDocPreview} />
+            <DocRow label="Aadhaar Card" url={k.aadhaarDocUrl} onView={setDocPreview} />
+            <DocRow label="Passbook / Cheque" url={k.passbookDocUrl} onView={setDocPreview} />
           </div>
 
           {k.status === 'rejected' && k.rejectionReason && (
@@ -165,11 +193,15 @@ function KycReviewModal({ item, onClose, onReview }) {
         </div>
 
         {k.status !== 'verified' && (
-          <div className="flex gap-2 px-6 py-4 border-t border-slate-100">
-            <button onClick={() => onReview(item.promoterId, 'resubmit')} className="flex-1 py-2.5 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 text-sm flex items-center justify-center gap-1"><RotateCcw className="h-4 w-4" /> Request re-submit</button>
-            <button onClick={() => onReview(item.promoterId, 'rejected')} className="flex-1 py-2.5 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 text-sm">Reject</button>
-            <button onClick={() => onReview(item.promoterId, 'verified')} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500 text-sm flex items-center justify-center gap-1"><Check className="h-4 w-4" /> Verify</button>
+          <div className="flex flex-wrap gap-2 px-6 py-4 border-t border-slate-100">
+            <button onClick={() => onReview(item.promoterId, 'resubmit')} className="flex-1 min-w-[130px] py-2.5 px-3 bg-orange-500 !text-white rounded-xl font-semibold hover:bg-orange-600 text-sm inline-flex items-center justify-center gap-1.5 whitespace-nowrap"><RotateCcw className="h-4 w-4 shrink-0" /> Request re-submit</button>
+            <button onClick={() => onReview(item.promoterId, 'rejected')} className="flex-1 min-w-[100px] py-2.5 px-3 bg-red-500 !text-white rounded-xl font-semibold hover:bg-red-600 text-sm inline-flex items-center justify-center gap-1.5 whitespace-nowrap"><X className="h-4 w-4 shrink-0" /> Reject</button>
+            <button onClick={() => onReview(item.promoterId, 'verified')} className="flex-1 min-w-[100px] py-2.5 px-3 bg-green-600 !text-white rounded-xl font-semibold hover:bg-green-500 text-sm inline-flex items-center justify-center gap-1.5 whitespace-nowrap"><Check className="h-4 w-4 shrink-0" /> Verify</button>
           </div>
+        )}
+
+        {docPreview && (
+          <DocPreviewModal url={docPreview.url} title={docPreview.title} onClose={() => setDocPreview(null)} />
         )}
       </div>
     </div>

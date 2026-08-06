@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { logout } from '@/store/slices/authSlice'
+import { serverLogout } from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LogOut, MonitorSmartphone } from 'lucide-react'
 
@@ -27,8 +28,9 @@ export default function SessionGuard() {
     return () => { sessionExpiredListeners = sessionExpiredListeners.filter(l => l !== handler) }
   }, [isAuthenticated])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setShowModal(false)
+    await serverLogout()
     dispatch(logout())
     router.push('/auth/login')
   }

@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/utils/api'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
-import { Trophy, Wallet, Users, Check, X, Eye, ShieldCheck, Clock, AlertCircle } from 'lucide-react'
+import { Trophy, Wallet, Users, Check, X, Eye, ShieldCheck, Clock, AlertCircle, FileText, Download } from 'lucide-react'
 import { showSuccess, showError } from '@/components/ui/Toast'
+import DocPreviewModal, { resolveDocUrl } from '@/components/admin/DocPreviewModal'
 
 const KYC_BADGE = {
   verified: { label: 'Verified', cls: 'bg-green-100 text-green-700', icon: ShieldCheck },
@@ -15,12 +16,6 @@ const KYC_BADGE = {
 }
 
 const money = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`
-const fileUrl = (u) => {
-  if (!u) return ''
-  if (u.startsWith('http')) return u
-  const base = api.defaults.baseURL ? api.defaults.baseURL.replace('/api', '') : ''
-  return `${base}${u}`
-}
 
 export default function AdminPromotersPage() {
   const router = useRouter()
@@ -163,11 +158,11 @@ export default function AdminPromotersPage() {
                       <Eye className="h-4 w-4" /> Review
                     </button>
                     <button onClick={() => processPayout(p._id, 'paid')}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-1 hover:bg-green-500">
+                      className="px-4 py-2 bg-green-600 !text-white rounded-lg flex items-center gap-1 hover:bg-green-500">
                       <Check className="h-4 w-4" /> Approve &amp; Pay
                     </button>
                     <button onClick={() => processPayout(p._id, 'rejected')}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg flex items-center gap-1 hover:bg-red-600">
+                      className="px-4 py-2 bg-red-500 !text-white rounded-lg flex items-center gap-1 hover:bg-red-600">
                       <X className="h-4 w-4" /> Reject
                     </button>
                   </div>
@@ -323,7 +318,52 @@ function Section({ title, children }) {
   )
 }
 
+// A KYC document row: label + View (opens in-app preview) + Download (blob save).
+function DocRow({ label, url, onView }) {
+  const downloadDoc = async () => {
+    try {
+      const resolved = resolveDocUrl(url)
+      const res = await fetch(resolved)
+      const blob = await res.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      const clean = String(url).split('#')[0].split('?')[0]
+      const ext = (clean.match(/\.([a-z0-9]+)$/i) || [])[1] || (blob.type || '').split('/').pop() || 'pdf'
+      a.download = `${label.replace(/\s+/g, '_')}.${ext}`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000)
+    } catch (e) {
+      showError('Download failed. Please try again.')
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-2 rounded-lg bg-white border border-slate-200 px-3 py-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <FileText className={`h-4 w-4 shrink-0 ${url ? 'text-primary' : 'text-slate-300'}`} />
+        <span className="text-sm text-slate-700 truncate">{label}</span>
+      </div>
+      {url ? (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button onClick={() => onView({ url, title: label })} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-primary/10 text-primary rounded-md hover:bg-primary hover:text-white transition-colors">
+            <Eye className="h-3.5 w-3.5" /> View
+          </button>
+          <button onClick={downloadDoc} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-md hover:bg-slate-200 transition-colors">
+            <Download className="h-3.5 w-3.5" /> Download
+          </button>
+        </div>
+      ) : (
+        <span className="text-xs text-slate-400 shrink-0">Not uploaded</span>
+      )}
+    </div>
+  )
+}
+
 function WithdrawalDetailModal({ detail, loading, onClose, onProcess, onReviewKyc }) {
+  const [docPreview, setDocPreview] = useState(null)
   if (detail.loading || loading) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -385,17 +425,17 @@ function WithdrawalDetailModal({ detail, loading, onClose, onProcess, onReviewKy
               </span>
               {kyc.status !== 'verified' && (
                 <div className="flex gap-2">
-                  <button onClick={() => onReviewKyc(promoter.id, 'verified')} className="text-xs px-2.5 py-1 bg-green-600 text-white rounded-lg">Verify</button>
-                  <button onClick={() => onReviewKyc(promoter.id, 'rejected')} className="text-xs px-2.5 py-1 bg-red-500 text-white rounded-lg">Reject</button>
+                  <button onClick={() => onReviewKyc(promoter.id, 'verified')} className="text-xs px-2.5 py-1 bg-green-600 !text-white rounded-lg">Verify</button>
+                  <button onClick={() => onReviewKyc(promoter.id, 'rejected')} className="text-xs px-2.5 py-1 bg-red-500 !text-white rounded-lg">Reject</button>
                 </div>
               )}
             </div>
             <Row label="PAN" value={kyc.panNumber} />
             <Row label="Aadhaar" value={kyc.aadhaarNumber} />
-            <div className="flex gap-3 mt-2 flex-wrap">
-              {kyc.panDocUrl && <a href={fileUrl(kyc.panDocUrl)} target="_blank" rel="noopener" className="text-xs text-primary underline">PAN doc</a>}
-              {kyc.aadhaarDocUrl && <a href={fileUrl(kyc.aadhaarDocUrl)} target="_blank" rel="noopener" className="text-xs text-primary underline">Aadhaar doc</a>}
-              {kyc.passbookDocUrl && <a href={fileUrl(kyc.passbookDocUrl)} target="_blank" rel="noopener" className="text-xs text-primary underline">Passbook/Cheque</a>}
+            <div className="mt-3 space-y-2">
+              <DocRow label="PAN Card" url={kyc.panDocUrl} onView={setDocPreview} />
+              <DocRow label="Aadhaar Card" url={kyc.aadhaarDocUrl} onView={setDocPreview} />
+              <DocRow label="Passbook / Cheque" url={kyc.passbookDocUrl} onView={setDocPreview} />
             </div>
           </Section>
 
@@ -435,9 +475,13 @@ function WithdrawalDetailModal({ detail, loading, onClose, onProcess, onReviewKy
 
         {isPending && (
           <div className="flex gap-3 px-6 py-4 border-t border-slate-100">
-            <button onClick={() => onProcess(payout._id, 'rejected')} className="flex-1 py-2.5 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600">Reject</button>
-            <button onClick={() => onProcess(payout._id, 'paid')} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500">Approve &amp; Mark Paid</button>
+            <button onClick={() => onProcess(payout._id, 'rejected')} className="flex-1 py-2.5 bg-red-500 !text-white rounded-xl font-semibold hover:bg-red-600">Reject</button>
+            <button onClick={() => onProcess(payout._id, 'paid')} className="flex-1 py-2.5 bg-green-600 !text-white rounded-xl font-semibold hover:bg-green-500">Approve &amp; Mark Paid</button>
           </div>
+        )}
+
+        {docPreview && (
+          <DocPreviewModal url={docPreview.url} title={docPreview.title} onClose={() => setDocPreview(null)} />
         )}
       </div>
     </div>

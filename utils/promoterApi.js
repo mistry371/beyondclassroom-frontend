@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getErrorMessage } from '@/lib/getErrorMessage'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://beyondclassroom-backend.onrender.com/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.beyondclassroom.co.in/api'
 
 const promoterApi = axios.create({
   baseURL: API_URL,
@@ -45,6 +45,9 @@ export function savePromoterSession(token, promoter) {
 export function clearPromoterSession() {
   localStorage.removeItem('promoterToken')
   localStorage.removeItem('promoter')
+  // Also clear any student/admin session so a shared device is fully signed out.
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
 }
 
 export function getStoredPromoter() {

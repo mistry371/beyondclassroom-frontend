@@ -16,6 +16,7 @@ export default function LessonPage() {
   const params = useParams()
   const router = useRouter()
   const [lesson, setLesson] = useState(null)
+  const [subtopics, setSubtopics] = useState([])
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
   const [previewDoc, setPreviewDoc] = useState(null)

@@ -28,6 +28,9 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        // Clear any promoter session too so a shared device is fully signed out.
+        localStorage.removeItem('promoterToken')
+        localStorage.removeItem('promoter')
         invalidateCache('')
       }
     },

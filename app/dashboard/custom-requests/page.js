@@ -16,6 +16,41 @@ const STATUS_COLORS = {
   rejected: 'bg-red-100 text-red-800',
 }
 
+// Derive a filename (with extension) from a stored /uploads/<key> path or url.
+const fileNameFromUrl = (url, fallback = 'document.pdf') => {
+  try {
+    const clean = String(url).split('?')[0].split('#')[0]
+    const base = clean.split('/').pop()
+    return base && base.includes('.') ? base : fallback
+  } catch { return fallback }
+}
+
+// Build a doc object for PdfPreviewModal from a stored file value. Handles the
+// new S3 `/uploads/<key>` (or absolute) urls AND legacy base64 `data:` strings.
+const buildDocFromFile = (val, name) => {
+  if (!val) return null
+  const strVal = String(val)
+  if (strVal.startsWith('data:')) {
+    const base64 = strVal.split(',')[1] || ''
+    return { data: base64, name: name || 'document.pdf' }
+  }
+  return { url: strVal, name: name || fileNameFromUrl(strVal) }
+}
+
+// Resolve a stored file value to a directly-downloadable URL (backend origin for
+// /uploads keys; data:/http left as-is).
+const resolveDownloadUrl = (val) => {
+  const s = String(val)
+  if (s.startsWith('data:') || /^https?:\/\//.test(s)) return s
+  let url = `${API_URL.replace('/api', '')}${s.startsWith('/') ? '' : '/'}${s}`
+  // The /uploads proxy requires a session for documents (BC-011); pass the token.
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token') || localStorage.getItem('promoterToken')
+    if (token) url += (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token)
+  }
+  return url
+}
+
 export default function CustomRequestsPage() {
   const router = useRouter()
   const { user } = useSelector(s => s.auth)
@@ -148,6 +183,50 @@ export default function CustomRequestsPage() {
                     <span key={`${t.subtopicId}-${t.name}`} className="px-3 py-1 bg-orange-100 text-orange-700 font-semibold rounded-full text-xs">{t.name}</span>
                   ))}
                 </div>
+
+                {/* Documents attached to this request — student's own uploads */}
+                {(() => {
+                  const attachments = []
+                  if (req.studentAttachedFile) {
+                    attachments.push({ value: req.studentAttachedFile, name: fileNameFromUrl(req.studentAttachedFile, 'Reference Material.pdf'), label: 'Your Attached Reference' })
+                  }
+                  ;(req.selectedPdfs || []).forEach((t, idx) => {
+                    if (t && t.url) attachments.push({ value: t.url, name: t.name || fileNameFromUrl(t.url), label: t.name || `Attached PDF ${idx + 1}` })
+                  })
+                  if (attachments.length === 0) return null
+                  return (
+                    <div className="mb-4 rounded-2xl border border-primary/10 bg-academic p-4">
+                      <p className="text-xs font-bold uppercase tracking-wide text-navy mb-3">Attached Documents</p>
+                      <div className="space-y-2">
+                        {attachments.map((a, idx) => (
+                          <div key={`${a.name}-${idx}`} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl bg-white border border-primary/5 p-3">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <BookOpen className="h-4 w-4 text-primary flex-shrink-0" />
+                              <span className="text-sm font-semibold text-ink truncate">{a.name}</span>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <button
+                                onClick={() => setSelectedPdf(buildDocFromFile(a.value, a.name))}
+                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
+                              >
+                                View
+                              </button>
+                              <a
+                                href={resolveDownloadUrl(a.value)}
+                                download={a.name}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                              >
+                                Download
+                              </a>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })()}
                 <div className="flex gap-5 text-sm font-medium text-muted bg-academic p-4 rounded-2xl border border-primary/5 inline-flex mb-4">
                   <span>Type: <span className="text-navy font-bold capitalize">{(req.deliverable || 'package').replace('_',' ')}</span></span>
                   {req.estimatedDuration && <span>Duration: <span className="text-navy font-bold">{req.estimatedDuration}</span></span>}

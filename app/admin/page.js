@@ -159,12 +159,14 @@ export default function AdminDashboard() {
           <QuickActionCard href="/admin/modules" title="Modules" description="Manage course modules" icon={Layers} color="bg-indigo-50 text-indigo-600" />
           <QuickActionCard href="/admin/lessons" title="Lessons" description="Create and edit lessons" icon={FileText} color="bg-blue-50 text-blue-600" />
           <QuickActionCard href="/admin/subtopics" title="Subtopics" description="Manage lesson subtopics" icon={ListTree} color="bg-cyan-50 text-cyan-600" />
-          <QuickActionCard href="/admin/quizzes" title="Quizzes" description="Manage quizzes and questions" icon={HelpCircle} color="bg-purple-50 text-purple-600" />
+          {/* Quizzes section hidden per request — page still exists at /admin/quizzes */}
+          {/* <QuickActionCard href="/admin/quizzes" title="Quizzes" description="Manage quizzes and questions" icon={HelpCircle} color="bg-purple-50 text-purple-600" /> */}
           <QuickActionCard href="/admin/testimonials" title="Testimonials" description="Manage student success stories" icon={Star} color="bg-yellow-50 text-yellow-600" />
           <QuickActionCard href="/admin/custom-requests" title="Custom Requests" description="Manage student custom requests" icon={MessageSquare} color="bg-rose-50 text-rose-600" />
           <QuickActionCard href="/admin/promoters" title="Promoters" description="Referrals, commissions & payouts" icon={Users} color="bg-emerald-50 text-emerald-600" />
           <QuickActionCard href="/admin/kyc" title="KYC Management" description="Verify promoter documents" icon={ShieldCheck} color="bg-indigo-50 text-indigo-600" />
-          <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" />
+          {/* Examinations section hidden per request — page still exists at /admin/exams */}
+          {/* <QuickActionCard href="/admin/exams" title="Examinations" description="Create & manage full exams" icon={CheckSquare} color="bg-red-50 text-red-600" /> */}
           <QuickActionCard href="/admin/media" title="Media Library" description="Upload and manage media" icon={Image} color="bg-pink-50 text-pink-600" />
         </AdminSection>
 
@@ -187,14 +189,17 @@ export default function AdminDashboard() {
           <QuickActionCard href="/admin/team" title="Team & Faculty" description="Manage team members" icon={Users} color="bg-indigo-50 text-indigo-600" />
           <QuickActionCard href="/admin/courses" title="Courses" description="Manage courses" icon={BookOpen} color="bg-emerald-50 text-emerald-600" />
           <QuickActionCard href="/admin/content" title="Content" description="Edit website content" icon={FileText} color="bg-teal-50 text-teal-600" />
-          <QuickActionCard href="/admin/badges" title="Badges" description="Create achievement badges" icon={Award} color="bg-purple-50 text-purple-600" />
+          {/* Badges section hidden per request — page still exists at /admin/badges */}
+          {/* <QuickActionCard href="/admin/badges" title="Badges" description="Create achievement badges" icon={Award} color="bg-purple-50 text-purple-600" /> */}
         </AdminSection>
 
         <AdminSection title="Security & Tools">
           <QuickActionCard href="/admin/security" title="Security" description="Monitor security" icon={Shield} color="bg-rose-50 text-rose-600" />
-          <QuickActionCard href="/admin/tools" title="Tools" description="Manage learning tools" icon={Settings} color="bg-blue-50 text-blue-600" />
+          {/* Tools section hidden per request — page still exists at /admin/tools */}
+          {/* <QuickActionCard href="/admin/tools" title="Tools" description="Manage learning tools" icon={Settings} color="bg-blue-50 text-blue-600" /> */}
           <QuickActionCard href="/admin/settings" title="Settings" description="Platform settings" icon={Settings} color="bg-emerald-50 text-emerald-600" />
-          <QuickActionCard href="/admin/live" title="Live Classes" description="Schedule & manage live sessions" icon={Activity} color="bg-red-50 text-red-600" />
+          {/* Live Classes section hidden per request — page still exists at /admin/live */}
+          {/* <QuickActionCard href="/admin/live" title="Live Classes" description="Schedule & manage live sessions" icon={Activity} color="bg-red-50 text-red-600" /> */}
         </AdminSection>
 
         {!statsLoading && stats?.recentUsers?.length > 0 && (

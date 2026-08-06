@@ -17,10 +17,16 @@ export default function PromoterRegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // Mobile number must be exactly 10 digits.
+    const phoneDigits = (form.phone || '').replace(/\D/g, '')
+    if (phoneDigits.length !== 10) {
+      setError('Mobile number must be exactly 10 digits')
+      return
+    }
     try {
       setLoading(true)
       setError('')
-      const res = await promoterApi.post('/promoters/register', form)
+      const res = await promoterApi.post('/promoters/register', { ...form, phone: phoneDigits })
       if (res.data.success) {
         savePromoterSession(res.data.token, res.data.promoter)
         router.push('/promoter/dashboard')
@@ -56,7 +62,16 @@ export default function PromoterRegisterPage() {
                 <label className="text-ink text-sm mb-1 block font-medium">{label}</label>
                 <div className="relative">
                   <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" />
-                  <input type={type} required={required} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  <input
+                    type={type}
+                    required={required}
+                    value={form[key]}
+                    onChange={(e) => {
+                      // Restrict the mobile field to digits, max 10.
+                      const val = key === 'phone' ? e.target.value.replace(/\D/g, '').slice(0, 10) : e.target.value
+                      setForm({ ...form, [key]: val })
+                    }}
+                    {...(key === 'phone' ? { inputMode: 'numeric', maxLength: 10, pattern: '\\d{10}' } : {})}
                     className="w-full pl-12 pr-4 py-3 bg-academic border border-primary/10 rounded-xl text-ink focus:ring-2 focus:ring-primary outline-none transition"
                   />
                 </div>

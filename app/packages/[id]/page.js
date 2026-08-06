@@ -7,7 +7,7 @@ import { ArrowRight, CheckCircle, ChevronLeft, Lock, Star, ShieldCheck, PlayCirc
 import Navbar from '@/components/Navbar'
 import MarketingShell from '@/components/marketing/MarketingShell'
 import PaymentModal from '@/components/PaymentModal'
-import api from '@/utils/api'
+import api, { cachedGet } from '@/utils/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import { showSuccess, showError } from '@/components/ui/Toast'
 import Link from 'next/link'
@@ -21,10 +21,21 @@ export default function PackageDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [selectedCourses, setSelectedCourses] = useState([])
+  const [purchasedBaseIds, setPurchasedBaseIds] = useState([])
+
+  // purchasedCourses holds composite "courseId_packageId" entries (and bare
+  // package ids). A course is owned only if its bare course id matches the base
+  // of some entry — owning the package alone does NOT count as owning a class.
+  const isCoursePurchased = (courseId) => {
+    if (!courseId) return false
+    const base = String(courseId).includes('_') ? String(courseId).split('_')[0] : String(courseId)
+    return purchasedBaseIds.includes(base)
+  }
 
   const toggleCourseSelection = (courseId) => {
-    setSelectedCourses(prev => 
-      prev.includes(courseId) 
+    if (isCoursePurchased(courseId)) return // already owned — not selectable
+    setSelectedCourses(prev =>
+      prev.includes(courseId)
         ? prev.filter(id => id !== courseId)
         : [...prev, courseId]
     )
@@ -33,6 +44,34 @@ export default function PackageDetailsPage() {
   useEffect(() => {
     fetchPackageData()
   }, [params.id])
+
+  // Load fresh purchase state from the server (Redux/localStorage user can be
+  // stale right after a purchase), so just-bought classes reflect immediately.
+  useEffect(() => {
+    let cancelled = false
+    const loadPurchases = async () => {
+      if (!user) { setPurchasedBaseIds([]); return }
+      try {
+        const res = await api.get('/profile')
+        const owned = res.data.user?.purchasedCourses || []
+        const bases = owned.map((pc) => {
+          const entry = String(pc._id || pc)
+          return entry.includes('_') ? entry.split('_')[0] : entry
+        })
+        if (!cancelled) setPurchasedBaseIds(bases)
+      } catch (e) {
+        // Fall back to whatever is in the Redux user so we still reflect owned classes
+        const owned = user?.purchasedCourses || []
+        const bases = owned.map((pc) => {
+          const entry = String(pc._id || pc)
+          return entry.includes('_') ? entry.split('_')[0] : entry
+        })
+        if (!cancelled) setPurchasedBaseIds(bases)
+      }
+    }
+    loadPurchases()
+    return () => { cancelled = true }
+  }, [user])
 
   useEffect(() => {
     if (pkg && user) {
@@ -55,7 +94,8 @@ export default function PackageDetailsPage() {
   const fetchPackageData = async () => {
     try {
       setLoading(true)
-      const res = await api.get(`/packages/${params.id}?populate=true`)
+      // Cache the (now-lightweight) package hierarchy so repeat visits are instant.
+      const res = await cachedGet(`/packages/${params.id}?populate=true`, 3 * 60 * 1000)
       setPkg(res.data.package)
       
       // The backend now populates the courses array inside the package
@@ -168,25 +208,38 @@ export default function PackageDetailsPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {courses.map((course, index) => (
+            {courses.map((course, index) => {
+              const purchased = isCoursePurchased(course._id)
+              return (
               <motion.article
                 key={course._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.04, 0.3) }}
-                className={`overflow-hidden rounded-3xl border ${selectedCourses.includes(course._id) ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-primary/10 bg-white'} shadow-premium cursor-pointer transition-all`}
+                className={`overflow-hidden rounded-3xl border ${purchased ? 'border-green-300 ring-2 ring-green-100 bg-green-50/40' : selectedCourses.includes(course._id) ? 'border-primary ring-2 ring-primary/20 bg-primary/5 cursor-pointer' : 'border-primary/10 bg-white cursor-pointer'} shadow-premium transition-all`}
                 onClick={() => toggleCourseSelection(course._id)}
               >
                 <div className="h-2 bg-brand-gradient" />
                 <div className="p-6 sm:p-8">
                   <div className="mb-4 flex items-start justify-between gap-3 flex-wrap">
                     <div className="flex gap-3 items-center">
-                      <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${selectedCourses.includes(course._id) ? 'border-primary bg-primary' : 'border-gray-300 bg-white'}`}>
-                        {selectedCourses.includes(course._id) && <CheckCircle className="h-4 w-4 text-white" />}
-                      </div>
+                      {purchased ? (
+                        <div className="h-6 w-6 rounded-md border-2 border-green-500 bg-green-500 flex items-center justify-center flex-shrink-0" title="Already purchased">
+                          <CheckCircle className="h-4 w-4 text-white" />
+                        </div>
+                      ) : (
+                        <div className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 ${selectedCourses.includes(course._id) ? 'border-primary bg-primary' : 'border-gray-300 bg-white'}`}>
+                          {selectedCourses.includes(course._id) && <CheckCircle className="h-4 w-4 text-white" />}
+                        </div>
+                      )}
                       <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{course.category || 'Mathematics'}</span>
                       {course.grade && (
                         <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">{course.grade}</span>
+                      )}
+                      {purchased && (
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 inline-flex items-center gap-1">
+                          <CheckCircle className="h-3.5 w-3.5" /> Purchased
+                        </span>
                       )}
                     </div>
                     <div className="flex items-center gap-3 text-sm font-semibold text-muted">
@@ -230,18 +283,38 @@ export default function PackageDetailsPage() {
                     )}
                   </div>
 
-                  <div className="mt-6 flex items-center justify-end border-t border-primary/10 pt-6">
-                    <Link 
-                      href={`/courses/${course._id}?packageId=${pkg._id}`} 
+                  {purchased && (
+                    <div className="mt-6 flex items-start gap-3 rounded-2xl border border-green-200 bg-green-50 p-4">
+                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold text-green-800">You already own this class</p>
+                        <p className="text-sm text-green-700 mt-0.5">You purchased this class from this package — continue right where you left off.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 border-t border-primary/10 pt-6">
+                    <Link
+                      href={`/courses/${course._id}?packageId=${pkg._id}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-2 rounded-xl bg-white border border-primary/20 px-6 py-3 text-sm font-bold text-primary shadow-sm transition hover:bg-primary/5"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-primary/20 px-6 py-3 text-sm font-bold text-primary shadow-sm transition hover:bg-primary/5"
                     >
                       Preview Class Details <ArrowRight className="h-4 w-4" />
                     </Link>
+                    {purchased && (
+                      <Link
+                        href={`/learn/${course._id}_${pkg._id}/advanced`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-gradient px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-95"
+                      >
+                        <PlayCircle className="h-4 w-4" /> Go to My Course
+                      </Link>
+                    )}
                   </div>
                 </div>
               </motion.article>
-            ))}
+              )
+            })}
           </div>
         )}
       </main>

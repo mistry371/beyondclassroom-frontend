@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useRouter, usePathname } from 'next/navigation'
 import { Bell, ShoppingCart, LogOut, Menu, X } from 'lucide-react'
 import { logout } from '@/store/slices/authSlice'
+import { serverLogout } from '@/utils/api'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -40,7 +41,9 @@ export default function Navbar() {
   const dashboardText = isAdmin ? 'Admin Panel' : 'Dashboard'
   const isMarketing = !pathname?.startsWith('/admin') && !pathname?.startsWith('/learn')
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Invalidate the session server-side first (best-effort), then clear locally.
+    await serverLogout()
     dispatch(logout())
     router.push('/auth/login')
   }

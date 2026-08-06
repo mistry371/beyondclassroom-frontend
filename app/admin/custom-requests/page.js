@@ -9,8 +9,16 @@ import { showSuccess, showError } from '@/components/ui/Toast'
 
 const getFullUrl = (url) => {
   if (!url) return '';
-  if (url.startsWith('http')) return url;
-  return API_URL.replace('/api', '') + (url.startsWith('/') ? url : '/' + url);
+  // Legacy base64 docs are stored inline — never prepend an origin to them.
+  if (url.startsWith('data:') || url.startsWith('http')) return url;
+  let full = API_URL.replace('/api', '') + (url.startsWith('/') ? url : '/' + url);
+  // The /uploads proxy requires a session for documents (BC-011); pass the token
+  // as a query param so <iframe>/download can carry it.
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token') || localStorage.getItem('promoterToken');
+    if (token) full += (full.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token);
+  }
+  return full;
 };
 
 const STATUS_COLORS = {
@@ -258,7 +266,12 @@ export default function AdminCustomRequests() {
                         const blobUrl = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = blobUrl;
-                        a.download = `Reference_Document_${selected._id}.${url.split('.').pop() || 'pdf'}`;
+                        // Derive extension from the file's mime type (works for both
+                        // data: URIs and streamed S3 files); fall back to the url ext.
+                        const mimeExt = (blob.type || '').split('/').pop();
+                        const urlExt = url.startsWith('data:') ? '' : (url.split('.').pop() || '');
+                        const ext = (urlExt && urlExt.length <= 5 ? urlExt : mimeExt) || 'pdf';
+                        a.download = `Reference_Document_${selected._id}.${ext}`;
                         document.body.appendChild(a);
                         a.click();
                         window.URL.revokeObjectURL(blobUrl);
@@ -348,10 +361,13 @@ export default function AdminCustomRequests() {
             </div>
             <div className="flex-1 bg-slate-100 rounded-b-3xl overflow-hidden relative">
               {(() => {
+                const isDataUri = previewUrl.startsWith('data:');
                 const cleanUrl = previewUrl.split('#')[0].split('?')[0].toLowerCase();
                 const isPdfOrImage = cleanUrl.endsWith('.pdf') || cleanUrl.match(/\.(png|jpe?g|gif|webp|svg)$/);
 
-                if (isPdfOrImage) {
+                // Data URIs (legacy inline base64) can't be routed through Google
+                // Docs Viewer — render them straight in an iframe (pdf/images).
+                if (isPdfOrImage || isDataUri) {
                   return <iframe src={previewUrl} className="w-full h-full border-0" title="Document Preview" />;
                 }
 

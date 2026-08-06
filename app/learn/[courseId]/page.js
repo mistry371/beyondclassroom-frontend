@@ -54,12 +54,19 @@ export default function LearnPage() {
         setHasAccess(!!freeCourse)
       }
 
-      // Filter restricted subtopics based on user packages
+      // Filter restricted subtopics based on user packages. purchasedIds holds
+      // composite "courseId_pkgId" entries AND bare package ids, while st.packageIds
+      // holds BARE package ids — so match on either form (a bare id OR the "_pkg"
+      // suffix of a composite entry), else package-restricted content is wrongly hidden.
+      const ownsPackage = (pkgId) => purchasedIds.some(id => {
+        const s = String(id)
+        return s === pkgId || s.endsWith(`_${pkgId}`)
+      })
       const filterSubtopics = (subtopicsList) => {
         if (userRole === 'admin' || userRole === 'super_admin') return subtopicsList;
         return subtopicsList.filter(st => {
           if (!st.packageIds || st.packageIds.length === 0) return true;
-          return st.packageIds.some(pkgId => purchasedIds.includes(pkgId));
+          return st.packageIds.some(pkgId => ownsPackage(pkgId));
         });
       };
 

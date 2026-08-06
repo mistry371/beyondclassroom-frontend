@@ -10,7 +10,15 @@ import api from '@/utils/api'
 const resolveFileUrl = (u) => {
   if (!u || /^https?:\/\//.test(u)) return u
   const base = api.defaults.baseURL ? api.defaults.baseURL.replace(/\/api\/?$/, '') : ''
-  return u.startsWith('/uploads') ? base + u : u
+  if (!u.startsWith('/uploads')) return u
+  let url = base + u
+  // The /uploads proxy now requires a session for documents (BC-011). Pass the
+  // token via query param (react-pdf / <iframe> can't set an auth header).
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token') || localStorage.getItem('promoterToken')
+    if (token) url += (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token)
+  }
+  return url
 }
 
 // Set worker url

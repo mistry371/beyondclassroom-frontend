@@ -7,9 +7,16 @@ import promoterApi from '@/utils/promoterApi'
 
 const docFileUrl = (u) => {
   if (!u) return ''
-  if (u.startsWith('http')) return u
+  if (u.startsWith('data:') || u.startsWith('http')) return u
   const base = promoterApi.defaults.baseURL ? promoterApi.defaults.baseURL.replace('/api', '') : ''
-  return `${base}${u}`
+  let url = `${base}${u}`
+  // The /uploads proxy requires a session for documents (BC-011); the promoter
+  // carries a promoterToken, passed via query param since <a>/<img> can't set headers.
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('promoterToken') || localStorage.getItem('token')
+    if (token) url += (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token)
+  }
+  return url
 }
 
 const TABS = [
@@ -48,10 +55,35 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
     passbookDocUrl: promoter?.kyc?.passbookDocUrl || '',
   })
   const [uploading, setUploading] = useState('')
+  const [kycErrors, setKycErrors] = useState({})
 
   if (!open) return null
 
   const flash = (type, text) => { setMsg({ type, text }); setTimeout(() => setMsg(null), 5000) }
+
+  // Validate all mandatory KYC fields/documents before submission (#1).
+  const validateKyc = () => {
+    const e = {}
+    const pan = (kyc.panNumber || '').trim().toUpperCase()
+    const aadhaar = (kyc.aadhaarNumber || '').replace(/\s/g, '')
+    if (!pan) e.panNumber = 'PAN number is required.'
+    else if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) e.panNumber = 'Enter a valid PAN (e.g. ABCDE1234F).'
+    if (!kyc.panDocUrl) e.panDocUrl = 'PAN card document is required.'
+    if (!aadhaar) e.aadhaarNumber = 'Aadhaar number is required.'
+    else if (!/^[0-9]{12}$/.test(aadhaar)) e.aadhaarNumber = 'Aadhaar must be 12 digits.'
+    if (!kyc.aadhaarDocUrl) e.aadhaarDocUrl = 'Aadhaar card document is required.'
+    if (!kyc.passbookDocUrl) e.passbookDocUrl = 'Bank passbook / cancelled cheque is required.'
+    setKycErrors(e)
+    return Object.keys(e).length === 0
+  }
+
+  const submitKyc = () => {
+    if (!validateKyc()) {
+      flash('error', 'Please complete all required KYC fields and documents.')
+      return
+    }
+    save('/promoters/kyc', kyc, 'KYC submitted for verification')
+  }
 
   const save = async (path, body, okText) => {
     setSaving(true); setMsg(null)
@@ -75,6 +107,7 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
       const res = await promoterApi.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       if (res.data.success && res.data.fileUrl) {
         setKyc((k) => ({ ...k, [field]: res.data.fileUrl }))
+        setKycErrors((e) => ({ ...e, [field]: undefined }))
         flash('success', 'Document uploaded — click "Submit for Verification" to save.')
       }
     } catch {
@@ -183,19 +216,22 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
                 {kycStatus === 'verified' && (
                   <p className="text-sm text-green-700">Your KYC is verified. Documents are locked and can no longer be changed.</p>
                 )}
-                <DocRow label="PAN Card" numberLabel="PAN Number" numberVal={kyc.panNumber}
-                  onNumber={(v) => setKyc({ ...kyc, panNumber: v.toUpperCase() })} docUrl={kyc.panDocUrl}
+                <DocRow label="PAN Card *" numberLabel="PAN Number *" numberVal={kyc.panNumber}
+                  onNumber={(v) => { setKyc({ ...kyc, panNumber: v.toUpperCase() }); setKycErrors((e) => ({ ...e, panNumber: undefined })) }} docUrl={kyc.panDocUrl}
                   uploading={uploading === 'panDocUrl'} onFile={(f) => uploadDoc('panDocUrl', f)}
-                  onDelete={() => deleteDoc('panDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
-                <DocRow label="Aadhaar Card" numberLabel="Aadhaar Number" numberVal={kyc.aadhaarNumber}
-                  onNumber={(v) => setKyc({ ...kyc, aadhaarNumber: v })} docUrl={kyc.aadhaarDocUrl}
+                  onDelete={() => deleteDoc('panDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label}
+                  numberError={kycErrors.panNumber} docError={kycErrors.panDocUrl} />
+                <DocRow label="Aadhaar Card *" numberLabel="Aadhaar Number *" numberVal={kyc.aadhaarNumber}
+                  onNumber={(v) => { setKyc({ ...kyc, aadhaarNumber: v }); setKycErrors((e) => ({ ...e, aadhaarNumber: undefined })) }} docUrl={kyc.aadhaarDocUrl}
                   uploading={uploading === 'aadhaarDocUrl'} onFile={(f) => uploadDoc('aadhaarDocUrl', f)}
-                  onDelete={() => deleteDoc('aadhaarDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
-                <DocRow label="Bank Passbook / Cancelled Cheque" docUrl={kyc.passbookDocUrl}
+                  onDelete={() => deleteDoc('aadhaarDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label}
+                  numberError={kycErrors.aadhaarNumber} docError={kycErrors.aadhaarDocUrl} />
+                <DocRow label="Bank Passbook / Cancelled Cheque *" docUrl={kyc.passbookDocUrl}
                   uploading={uploading === 'passbookDocUrl'} onFile={(f) => uploadDoc('passbookDocUrl', f)}
-                  onDelete={() => deleteDoc('passbookDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label} />
+                  onDelete={() => deleteDoc('passbookDocUrl')} locked={kycStatus === 'verified'} field={field} labelCls={label}
+                  docError={kycErrors.passbookDocUrl} />
                 {kycStatus !== 'verified' && (
-                  <button disabled={saving} onClick={() => save('/promoters/kyc', kyc, 'KYC submitted for verification')}
+                  <button disabled={saving} onClick={submitKyc}
                     className="w-full py-2.5 bg-primary text-white rounded-xl font-semibold hover:opacity-90 disabled:opacity-60">
                     {saving ? 'Saving…' : (kycStatus === 'rejected' || kycStatus === 'resubmit') ? 'Re-submit for Verification' : 'Submit for Verification'}
                   </button>
@@ -209,13 +245,15 @@ export default function PromoterProfileModal({ open, onClose, promoter, onUpdate
   )
 }
 
-function DocRow({ label, numberLabel, numberVal, onNumber, docUrl, uploading, onFile, onDelete, locked, field, labelCls }) {
+function DocRow({ label, numberLabel, numberVal, onNumber, docUrl, uploading, onFile, onDelete, locked, field, labelCls, numberError, docError }) {
   return (
-    <div className="border border-slate-200 rounded-xl p-4 space-y-3">
+    <div className={`border rounded-xl p-4 space-y-3 ${docError ? 'border-red-300' : 'border-slate-200'}`}>
       <p className="font-semibold text-slate-700 text-sm">{label}</p>
       {numberLabel && (
         <div><label className={labelCls}>{numberLabel}</label>
-          <input className={field} value={numberVal} onChange={(e) => onNumber(e.target.value)} disabled={locked} /></div>
+          <input className={`${field}${numberError ? ' border-red-400' : ''}`} value={numberVal} onChange={(e) => onNumber(e.target.value)} disabled={locked} />
+          {numberError && <p className="text-red-600 text-xs mt-1">{numberError}</p>}
+        </div>
       )}
       <div className="flex items-center gap-2 flex-wrap">
         {docUrl && (
@@ -239,6 +277,7 @@ function DocRow({ label, numberLabel, numberVal, onNumber, docUrl, uploading, on
         )}
         {docUrl && <span className="inline-flex items-center gap-1 text-green-600 text-sm"><CheckCircle2 className="h-4 w-4" /> Uploaded</span>}
       </div>
+      {docError && <p className="text-red-600 text-xs">{docError}</p>}
     </div>
   )
 }
